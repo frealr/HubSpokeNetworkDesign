@@ -1,0 +1,345 @@
+
+--- Job mip.gms Start 01/14/26 16:53:29 50.4.0 c55df396 DAX-DAC arm 64bit/macOS
+--- Applying:
+    /Library/Frameworks/GAMS.framework/Versions/50/Resources/gmsprmun.txt
+    /Users/fernandorealrojas/Library/Preferences/GAMS/gamsconfig.yaml
+--- GAMS Parameters defined
+    Input /Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/6node/mip.gms
+    PageSize 0
+    ScrDir /Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/6node/225b/
+    SysDir /Library/Frameworks/GAMS.framework/Versions/50/Resources/
+    LogOption 3
+    AppendLog 1
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+Licensee: Luis Cadarso Morga                             G250911+0003Ac-GEN
+          University Rey Juan Carlos                                DCE4613
+          225b/gamslice.dat
+          node:26751803 mem:16 cores:8 ipport:51125 v:2                    
+          Course license for use within the course and related course work
+          The expiration date of time-limited license is Feb 08, 2026
+System information: 8 physical cores and 16 Gb physical memory detected
+GAMS 50.4.0   Copyright (C) 1987-2025 GAMS Development. All rights reserved
+--- Starting compilation
+--- mip.gms(4) 2 Mb
+--- . param_definition.gms(18) 3 Mb
+--- .. b.txt(360) 3 Mb
+--- . param_definition.gms(24) 3 Mb
+--- .. bord.txt(360) 3 Mb
+--- . param_definition.gms(29) 3 Mb
+--- .. lin_coef.txt(360) 3 Mb
+--- . param_definition.gms(36) 3 Mb
+--- .. demand.txt(36) 3 Mb
+--- . param_definition.gms(42) 3 Mb
+--- .. alt_time.txt(36) 3 Mb
+--- . param_definition.gms(48) 3 Mb
+--- .. alt_price.txt(36) 3 Mb
+--- . param_definition.gms(54) 3 Mb
+--- .. link_cost.txt(36) 3 Mb
+--- . param_definition.gms(59) 3 Mb
+--- .. link_capacity_slope.txt(36) 3 Mb
+--- . param_definition.gms(64) 3 Mb
+--- .. prices.txt(36) 3 Mb
+--- . param_definition.gms(69) 3 Mb
+--- .. op_link_cost.txt(36) 3 Mb
+--- . param_definition.gms(74) 3 Mb
+--- .. congestion_coefs_links.txt(36) 3 Mb
+--- . param_definition.gms(84) 3 Mb
+--- .. candidates.txt(36) 3 Mb
+--- . param_definition.gms(89) 3 Mb
+--- .. travel_time.txt(36) 3 Mb
+--- . param_definition.gms(95) 3 Mb
+--- .. station_cost.txt(6) 3 Mb
+--- . param_definition.gms(100) 3 Mb
+--- .. station_capacity_slope.txt(6) 3 Mb
+--- . param_definition.gms(105) 3 Mb
+--- .. congestion_coefs_stations.txt(6) 3 Mb
+--- . param_definition.gms(111) 3 Mb
+--- .. a_prev.txt(36) 3 Mb
+--- . param_definition.gms(116) 3 Mb
+--- .. s_prev.txt(6) 3 Mb
+--- . param_definition.gms(132) 3 Mb
+--- .. lam.txt(1) 3 Mb
+--- . param_definition.gms(136) 3 Mb
+--- .. alfa.txt(1) 3 Mb
+--- . param_definition.gms(140) 3 Mb
+--- .. beta.txt(1) 3 Mb
+--- . param_definition.gms(144) 3 Mb
+--- .. dm_pax.txt(1) 3 Mb
+--- . param_definition.gms(148) 3 Mb
+--- .. dm_op.txt(1) 3 Mb
+--- . param_definition.gms(152) 3 Mb
+--- .. budget.txt(1) 3 Mb
+--- . param_definition.gms(157) 3 Mb
+--- .. budget.txt(1) 3 Mb
+--- . param_definition.gms(165) 3 Mb
+--- mip.gms(266) 3 Mb
+--- Starting execution: elapsed 0:00:00.012
+--- mip.gms(1839) 4 Mb
+--- Generating MIP model netdesign
+--- mip.gms(1843) 6 Mb
+---   5,730 rows  3,460 columns  18,484 non-zeroes
+---   1,674 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 3.476E-02, 1.000E+05] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E+00, 1.000E+00] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.052E-04, 1.640E+06]
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:00.028
+
+MOSEK            50.4.0 c55df396 Aug 12, 2025          DAC arm 64bit/macOS    
+
+	M O S E K       version 11.0.27 (Build date: 2025-7-30 14:26:05)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+GAMS/MOSEK license detected
+
+Setting up initial integer solution.
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : LO (linear optimization problem)
+  Constraints            : 5729            
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 0               
+  Scalar variables       : 3459            
+  Matrix variables       : 0               
+  Integer variables      : 1674            
+
+Optimizer started.
+Mixed integer optimizer started.
+Threads used: 8
+Presolve started.
+Presolve terminated. Time = 0.04, probing time =  0.01
+Presolved problem: 1247 variables, 1692 constraints, 6419 non-zeros
+Presolved problem: 0 general integer, 641 binary, 606 continuous
+Clique table size: 2077
+Symmetry factor  : 0.06 (detection time = 0.00)
+Removed blocks   : 6
+BRANCHES RELAXS   ACT_NDS  DEPTH    BEST_INT_OBJ         BEST_RELAX_OBJ       REL_GAP(%)  TIME  
+0        6        1        0        NA                   NA                   NA          0.0   
+0        7        1        0        -3.2801689726e+04    -3.0852502334e+06    9.31e+03    0.1   
+Root cut generation started.
+0        7        1        0        -3.2801689726e+04    -3.0852502334e+06    9.31e+03    0.1   
+0        8        1        0        -3.2801689726e+04    -2.0459770461e+06    6.14e+03    0.2   
+0        9        1        0        -3.2801689726e+04    -1.8591494087e+06    5.57e+03    0.3   
+0        10       1        0        -3.2801689726e+04    -1.7975520579e+06    5.38e+03    0.6   
+0        11       1        0        -3.2801689726e+04    -1.7838245631e+06    5.34e+03    0.9   
+0        12       1        0        -3.2801689726e+04    -1.7787561235e+06    5.32e+03    1.1   
+0        13       1        0        -3.2801689726e+04    -1.7748722644e+06    5.31e+03    1.5   
+Root cut generation terminated. Time = 1.17
+0        15       1        0        -3.2801689726e+04    -1.7737883988e+06    5.31e+03    1.8   
+0        16       1        0        -1.3720012493e+06    -1.7737883988e+06    29.28       1.8   
+0        17       1        0        -1.7679052361e+06    -1.7737883988e+06    0.33        1.8   
+
+Repeating presolve.
+Presolve terminated. Time = 0.43, probing time =  0.38
+Presolved problem: 1172 variables, 1947 constraints, 19911 non-zeros
+Presolved problem: 0 general integer, 594 binary, 578 continuous
+Clique table size: 1940
+Symmetry factor  : 0.02 (detection time = 0.00)
+Removed blocks   : 6
+BRANCHES RELAXS   ACT_NDS  DEPTH    BEST_INT_OBJ         BEST_RELAX_OBJ       REL_GAP(%)  TIME  
+0        17       1        0        -1.7679052361e+06    -1.7737883988e+06    0.33        2.2   
+0        18       1        0        -1.7695824625e+06    -1.7711519877e+06    0.09        2.4   
+
+Repeating presolve.
+Presolve terminated. Time = 0.74, probing time =  0.68
+Presolved problem: 1043 variables, 1778 constraints, 17433 non-zeros
+Presolved problem: 0 general integer, 516 binary, 527 continuous
+Clique table size: 1110
+Symmetry factor  : 0.01 (detection time = 0.00)
+Removed blocks   : 6
+BRANCHES RELAXS   ACT_NDS  DEPTH    BEST_INT_OBJ         BEST_RELAX_OBJ       REL_GAP(%)  TIME  
+0        19       1        0        -1.7695824625e+06    -1.7711519877e+06    0.09        2.7   
+
+Repeating presolve.
+Presolve terminated. Time = 0.99, probing time =  0.91
+Presolved problem: 915 variables, 1561 constraints, 15141 non-zeros
+Presolved problem: 0 general integer, 447 binary, 468 continuous
+Clique table size: 879
+Symmetry factor  : 0.01 (detection time = 0.01)
+Removed blocks   : 6
+BRANCHES RELAXS   ACT_NDS  DEPTH    BEST_INT_OBJ         BEST_RELAX_OBJ       REL_GAP(%)  TIME  
+0        21       1        0        -1.7695824625e+06    -1.7711511386e+06    0.09        3.2   
+
+Repeating presolve.
+Presolve terminated. Time = 1.13, probing time =  1.04
+Presolved problem: 856 variables, 1453 constraints, 14241 non-zeros
+Presolved problem: 0 general integer, 419 binary, 437 continuous
+Clique table size: 828
+Symmetry factor  : 0.01 (detection time = 0.01)
+Removed blocks   : 6
+BRANCHES RELAXS   ACT_NDS  DEPTH    BEST_INT_OBJ         BEST_RELAX_OBJ       REL_GAP(%)  TIME  
+0        23       1        0        -1.7695824625e+06    -1.7711421869e+06    0.09        3.6   
+8        35       1        0        -1.7695824625e+06    -1.7711210449e+06    0.09        3.7   
+21       46       1        0        -1.7695824625e+06    -1.7711210449e+06    0.09        3.7   
+33       58       1        0        -1.7695824625e+06    -1.7711210449e+06    0.09        3.7   
+66       88       1        0        -1.7695824625e+06    -1.7711210449e+06    0.09        3.7   
+89       111      1        0        -1.7695824625e+06    -1.7711210449e+06    0.09        3.7   
+113      135      1        0        -1.7695824625e+06    -1.7711210449e+06    0.09        3.7   
+129      151      1        0        -1.7695824625e+06    -1.7711210449e+06    0.09        3.7   
+141      163      1        0        -1.7695824625e+06    -1.7711210449e+06    0.09        3.7   
+155      174      1        0        -1.7696036057e+06    -1.7711210449e+06    0.09        3.8   
+167      186      1        0        -1.7696036057e+06    -1.7711210449e+06    0.09        3.8   
+170      209      2        0        -1.7696036057e+06    -1.7702670498e+06    0.04        3.9   
+171      242      3        1        -1.7696036057e+06    -1.7702670498e+06    0.04        4.0   
+172      259      4        1        -1.7696036057e+06    -1.7702092252e+06    0.03        4.1   
+173      276      5        2        -1.7696036057e+06    -1.7702092252e+06    0.03        4.2   
+175      317      7        2        -1.7696036057e+06    -1.7702092252e+06    0.03        4.4   
+177      343      9        2        -1.7696036057e+06    -1.7701359382e+06    0.03        4.5   
+180      370      12       3        -1.7696036057e+06    -1.7701359382e+06    0.03        4.5   
+183      387      13       4        -1.7696036057e+06    -1.7701359382e+06    0.03        4.6   
+188      406      10       5        -1.7696036057e+06    -1.7701359382e+06    0.03        4.6   
+193      441      13       3        -1.7696036057e+06    -1.7701359382e+06    0.03        4.7   
+197      482      15       4        -1.7696036057e+06    -1.7701359382e+06    0.03        4.8   
+203      497      15       5        -1.7696036057e+06    -1.7701359382e+06    0.03        4.8   
+209      519      17       6        -1.7696036057e+06    -1.7701359382e+06    0.03        4.8   
+221      558      15       3        -1.7696036057e+06    -1.7700260294e+06    0.02        4.9   
+227      570      15       8        -1.7696036057e+06    -1.7700260294e+06    0.02        4.9   
+233      593      15       9        -1.7696036057e+06    -1.7700260294e+06    0.02        4.9   
+239      609      15       10       -1.7696036057e+06    -1.7700260294e+06    0.02        5.0   
+245      621      15       11       -1.7696036057e+06    -1.7700260294e+06    0.02        5.0   
+251      633      15       10       -1.7696036057e+06    -1.7700260294e+06    0.02        5.0   
+263      658      11       10       -1.7696036057e+06    -1.7700260294e+06    0.02        5.0   
+268      688      10       4        -1.7696036057e+06    -1.7700069659e+06    0.02        5.1   
+273      716      11       3        -1.7696036057e+06    -1.7699904400e+06    0.02        5.2   
+277      729      11       10       -1.7696036057e+06    -1.7699904400e+06    0.02        5.2   
+282      746      14       11       -1.7696036057e+06    -1.7699904400e+06    0.02        5.3   
+294      801      16       15       -1.7696036057e+06    -1.7699904400e+06    0.02        5.4   
+307      842      17       16       -1.7696036057e+06    -1.7699904400e+06    0.02        5.4   
+321      879      19       17       -1.7696036057e+06    -1.7699904400e+06    0.02        5.5   
+334      927      22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.6   
+342      939      22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+359      956      22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+383      978      22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+423      1015     22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+495      1082     22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+591      1167     22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+711      1274     22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+847      1398     22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+1015     1547     22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+1231     1741     22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+1479     1956     22       19       -1.7697472207e+06    -1.7699904400e+06    0.01        5.7   
+1494     1977     13       5        -1.7697472207e+06    -1.7699001948e+06    8.64e-03    5.8   
+An optimal solution satisfying the relative gap tolerance of 1.00e-02(%) has been located.
+The relative gap is 8.64e-03(%).
+
+Objective of best integer solution : -1.769747220670e+06     
+Best objective bound               : -1.769900194780e+06     
+Initial feasible solution objective: Undefined
+Construct solution objective       : Not employed
+User objective cut value           : Not employed
+Number of cuts generated           : 1890
+  Number of Gomory cuts            : 367
+  Number of CMIR cuts              : 574
+  Number of clique cuts            : 131
+  Number of implied bound cuts     : 618
+  Number of knapsack_cover cuts    : 200
+Number of branches                 : 1494
+Number of relaxations solved       : 1977
+Number of interior point iterations: 36
+Number of simplex iterations       : 57466
+Time spend presolving the root     : 1.13
+Time spend optimizing the root     : 0.26
+Mixed integer optimizer terminated. Time: 5.77
+
+Optimizer terminated. Time: 5.78    
+
+
+Integer solution solution summary
+  Problem status  : PRIMAL_FEASIBLE
+  Solution status : INTEGER_OPTIMAL
+  Primal.  obj: -1.7697472207e+06   nrm: 2e+06    Viol.  con: 2e-08    var: 1e-11    itg: 2e-11  
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
+
+Solving fixed problem...
+
+MOSEK            50.4.0 c55df396 Aug 12, 2025          DAC arm 64bit/macOS    
+
+	M O S E K       version 11.0.27 (Build date: 2025-7-30 14:26:05)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+GAMS/MOSEK license detected
+
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : LO (linear optimization problem)
+  Constraints            : 5729            
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 0               
+  Scalar variables       : 3459            
+  Matrix variables       : 0               
+  Integer variables      : 0               
+
+Optimizer started.
+Simplex optimizer started.
+Presolve started.
+Linear dependency checker started.
+Linear dependency checker terminated.
+Eliminator started.
+Freed constraints in eliminator : 41
+Eliminator terminated.
+Eliminator - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - primal attempts        : 1                 successes              : 1               
+Lin. dep.  - dual attempts          : 0                 successes              : 0               
+Lin. dep.  - primal deps.           : 0                 dual deps.             : 0               
+The bounds of the constraints and variables was perturbed. The number of perturbations is 1 and the sum of perturbations is 1.79e-08.
+ (803)
+Presolve terminated. Time: 0.00    
+Dual simplex optimizer started.
+Dual simplex optimizer setup started.
+Dual simplex optimizer setup terminated.
+Optimizer  - solved problem         : the primal      
+Optimizer  - Constraints            : 18              
+Optimizer  - Scalar variables       : 56                conic                  : 0               
+Optimizer  - hotstart               : no              
+ITER      DEGITER(%)  PFEAS       DFEAS       POBJ                  DOBJ                  TIME      TOTTIME 
+0         0.00        NA          0.00e+00    NA                    -1.8056908888e+06     0.00      0.01    
+12        7.69        NA          0.00e+00    NA                    -1.7697472167e+06     0.00      0.01    
+Dual simplex optimizer terminated.
+Simplex optimizer terminated. Time: 0.01. 
+
+Optimizer terminated. Time: 0.01    
+
+
+Basic solution summary
+  Problem status  : PRIMAL_AND_DUAL_FEASIBLE
+  Solution status : OPTIMAL
+  Primal.  obj: -1.7697472207e+06   nrm: 2e+06    Viol.  con: 2e-08    var: 0e+00  
+  Dual.    obj: -1.7697472207e+06   nrm: 3e+08    Viol.  con: 4e-18    var: 4e-10  
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
+
+MIP Solution:     -1769747.220670   (57502 iterations, 1494 nodes)
+Final Solve:      -1769747.220670   (12 iterations)
+
+Best possible:    -1769900.194780
+Absolute gap:          152.974110
+Relative gap:            0.000086
+--- Reading solution for model netdesign
+--- Executing after solve: elapsed 0:00:05.886
+--- mip.gms(1862) 6 Mb
+--- GDX File (execute_unload) /Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/6node/resultado.gdx
+--- mip.gms(1871) 8 Mb
+--- Initialize embedded library libembconnectcclib64.dylib
+--- Execute embedded library libembconnectcclib64.dylib
+--- mip.gms(1884) 8 Mb
+--- Initialize embedded library libembconnectcclib64.dylib
+--- Execute embedded library libembconnectcclib64.dylib
+--- mip.gms(1897) 9 Mb
+--- Initialize embedded library libembconnectcclib64.dylib
+--- Execute embedded library libembconnectcclib64.dylib
+--- Putfile fijx /Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/6node/fij_long.csv
+*** Status: Normal completion
+--- Job mip.gms Stop 01/14/26 16:53:37 elapsed 0:00:07.347
