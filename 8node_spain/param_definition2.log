@@ -1,0 +1,82 @@
+
+--- Job param_definition.gms Start 01/19/26 12:41:59 50.4.0 c55df396 DAX-DAC arm 64bit/macOS
+--- Applying:
+    /Library/Frameworks/GAMS.framework/Versions/50/Resources/gmsprmun.txt
+    /Users/fernandorealrojas/Library/Preferences/GAMS/gamsconfig.yaml
+--- GAMS Parameters defined
+    Input /Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/param_definition.gms
+    PageSize 0
+    ScrDir /Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225a/
+    SysDir /Library/Frameworks/GAMS.framework/Versions/50/Resources/
+    LogOption 3
+    AppendLog 1
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+Licensee: Luis Cadarso Morga                             G250911+0003Ac-GEN
+          University Rey Juan Carlos                                DCE4613
+          225a/gamslice.dat
+          node:26751803 mem:16 cores:8 ipport:55821 v:2                    
+          Course license for use within the course and related course work
+          The expiration date of time-limited license is Feb 08, 2026
+System information: 8 physical cores and 16 Gb physical memory detected
+GAMS 50.4.0   Copyright (C) 1987-2025 GAMS Development. All rights reserved
+--- Starting compilation
+--- param_definition.gms(18) 3 Mb
+--- . b.txt(640) 3 Mb
+--- param_definition.gms(24) 3 Mb
+--- . bord.txt(640) 3 Mb
+--- param_definition.gms(29) 3 Mb
+--- . lin_coef.txt(640) 3 Mb
+--- param_definition.gms(36) 3 Mb
+--- . demand.txt(64) 3 Mb
+--- param_definition.gms(42) 3 Mb
+--- . alt_time.txt(64) 3 Mb
+--- param_definition.gms(48) 3 Mb
+--- . alt_price.txt(64) 3 Mb
+--- param_definition.gms(54) 3 Mb
+--- . link_cost.txt(64) 3 Mb
+--- param_definition.gms(59) 3 Mb
+--- . link_capacity_slope.txt(64) 3 Mb
+--- param_definition.gms(64) 3 Mb
+--- . prices.txt(64) 3 Mb
+--- param_definition.gms(69) 3 Mb
+--- . op_link_cost.txt(64) 3 Mb
+--- param_definition.gms(74) 3 Mb
+--- . congestion_coefs_links.txt(64) 3 Mb
+--- param_definition.gms(84) 3 Mb
+--- . candidates.txt(64) 3 Mb
+--- param_definition.gms(89) 3 Mb
+--- . travel_time.txt(64) 3 Mb
+--- param_definition.gms(95) 3 Mb
+--- . station_cost.txt(8) 3 Mb
+--- param_definition.gms(100) 3 Mb
+--- . hub_cost.txt(8) 3 Mb
+--- param_definition.gms(105) 3 Mb
+--- . station_capacity_slope.txt(8) 3 Mb
+--- param_definition.gms(110) 3 Mb
+--- . congestion_coefs_stations.txt(8) 3 Mb
+--- param_definition.gms(116) 3 Mb
+--- . a_prev.txt(64) 3 Mb
+--- param_definition.gms(121) 3 Mb
+--- . s_prev.txt(8) 3 Mb
+--- param_definition.gms(137) 3 Mb
+--- . lam.txt(1) 3 Mb
+--- param_definition.gms(141) 3 Mb
+--- . alfa.txt(1) 3 Mb
+--- param_definition.gms(145) 3 Mb
+--- . beta.txt(1) 3 Mb
+--- param_definition.gms(149) 3 Mb
+--- . dm_pax.txt(1) 3 Mb
+--- param_definition.gms(153) 3 Mb
+--- . dm_op.txt(1) 3 Mb
+--- param_definition.gms(157) 3 Mb
+--- . budget.txt(1) 3 Mb
+--- param_definition.gms(162) 3 Mb
+--- . budget.txt(1) 3 Mb
+--- param_definition.gms(170) 3 Mb
+--- Starting execution: elapsed 0:00:00.013
+--- param_definition.gms(2840) 4 Mb
+*** Status: Normal completion
+--- Job param_definition.gms Stop 01/19/26 12:41:59 elapsed 0:00:00.013

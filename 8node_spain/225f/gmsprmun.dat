@@ -1,0 +1,12 @@
+Input=/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/mip.gms
+PageSize=0
+ScrDir=225f
+SysDir=/Library/Frameworks/GAMS.framework/Versions/50/Resources
+ScriptNext=225f/gamsnext.sh
+LogOption=3
+AppendLog=1
+ErrMsg=1
+ErrorLog=99
+IDE=1
+LstTitleLeftAligned=1
+NetLicense=225f/gamslice.dat

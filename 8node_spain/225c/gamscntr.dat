@@ -1,0 +1,204 @@
+53
+2 18 0 0 504  0.00000000000000E+0000 5  0.00000000000000E+0000 0 1
+15934 0 0 0 4714 2284 4096 9554 0 0 0 0
+9724 0 0 0 0 0 0 0
+53535 0
+4932 4792 0 0 0 0 0 4872 0 60
+0 0 0 0 0 0 0
+0 132 0
+0 0 20
+ 1.00000000000000E-0004  0.00000000000000E+0000 0
+0  0.00000000000000E+0000 0  0.00000000000000E+0000
+ 1.80000000000000E+0003 2147483647 0
+11 0
+ 0.00000000000000E+0000 0 0 0  1.00000000000000E+0000 0 60 0 0  1.00000000000000E-0005 0
+1 100
+0 0 0 0 0
+ 0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225c/gamsmatr.dat
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225c/gamsinst.dat
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/mosek.opt
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225c/gamsstat.dat
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225c/gamssolu.dat
+
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225c/gamsdict.dat
+3
+13:10:04
+01/19/26
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/
+/Library/Frameworks/GAMS.framework/Versions/50/Resources/
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225c/
+32767 2147483647
+0 0 130 46040 45940 62292
+Luis Cadarso Morga                             G250911+0003Ac-GEN0
+University Rey Juan Carlos                                       0
+01COCPMB                                                         0
+1 1 4 0
+225c/gmsprmun.dat
+15 44 32
+LP          10 0
+MIP         10 32
+RMIP        10 0
+NLP         5 0
+MCP         35 0
+MPEC        34 0
+RMPEC       34 0
+CNS         5 0
+DNLP        5 0
+RMINLP      5 0
+MINLP       14 0
+QCP         5 0
+MIQCP       39 0
+RMIQCP      5 0
+EMP         24 0
+ALPHAECP    11 5 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0
+gmsecpus.run
+gmsecpux.out
+ANTIGONE    2011 5 1 0 0 0 1 0 0 0 1 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+BARON       1001 5 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 0
+gmsba_us.run
+gmsba_ux.out
+CBC         2011 5 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgenus.run
+gmsgenux.out
+CONOPT      1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgenus.run
+gmsgenux.out
+CONOPT3     1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgenus.run
+gmsgenux.out
+CONOPT4     1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgenus.run optconopt.def
+gmsgenux.out
+CONVERT     103011 5 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+gmsgenus.run optconvert.def
+gmsgenux.out
+COPT        1011 5 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+CPLEX       2011 5 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+DE          102011 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+gmsgenus.run
+gmsgenux.out
+DECISC      2011 5 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+gmsdecus.run optdecis.def
+DECISM      2011 5 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+gmsdemus.run optdecis.def
+DICOPT      1 5 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0
+gmsdi_us.run
+gmsdi_ux.out
+EXAMINER    103011 5 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+EXAMINER2   103011 5 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 0
+gmsgenus.run optexaminer.def
+gmsgenux.out
+GAMSCHK     103011 5 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 0
+gmsck_us.run
+gmsck_ux.out
+GLOMIQO     2011 5 1 0 0 0 1 0 0 0 1 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+GUROBI      11 5 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+GUSS        1001 5 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+HIGHS       11 5 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgenus.run
+gmsgenux.out
+IPOPT       11 5 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgenus.run
+gmsgenux.out
+IPOPTH      11 5 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgenus.run optipopt.def
+gmsgenux.out
+JAMS        101011 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+gmsja_us.run
+gmsja_ux.out
+KESTREL     103010 5 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+gmske_us.run
+KNITRO      103011 5 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+LINDO       1 5 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 1
+gmsgenus.run
+gmsgenux.out
+LINDOGLOBAL 1 5 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+LOGMIP      101011 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+gmsja_us.run optjams.def
+gmsja_ux.out
+MILES       103001 5 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+gmsmceus.run
+gmsmceux.out
+MINOS       1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgenus.run
+gmsgenux.out
+MOSEK       11 5 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+MPSGE       100001 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgewus.run
+gmsgewux.out
+NLPEC       103001 0 1 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0
+gmscvnus.run
+gmscvnux.out
+PATH        103001 5 1 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0
+gmsgenus.run
+gmsgenux.out
+PATHNLP     11 5 1 1 0 1 1 0 0 0 0 1 1 0 1 0 1 0
+gmsptnus.run
+gmsptnux.out
+QUADMINOS   1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgenus.run optminos.def
+gmsgenux.out
+RESHOP      103011 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+gmsgenus.run
+gmsgenux.out
+SBB         11 5 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0
+gmssb_us.run
+gmssb_ux.out
+SCIP        2001 5 1 0 1 0 1 0 0 0 1 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+SHOT        1001 5 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0
+gmsgenus.run
+gmsgenux.out
+SNOPT       1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgenus.run
+gmsgenux.out
+SOPLEX      11 5 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgenus.run
+gmsgenux.out
+XPRESS      11 5 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 0
+gmsgenus.run
+gmsgenux.out
+05050505                                                         0
+DCE4613   d7f493a1-703d-423d-96d8-160ee6334eb6 N COURSE          0
+node:26751803 mem:16 cores:8 ipport:61407 v:2                    0
+MEYCIQDF8oOAbaAGVM5brJ2+FM6bJageOwfdiniixPQkO2XkOgIhAJq2e54aaFkZF0
+hqvsAxP5euNzP0stNdYHATsGfMhQtYy                                  0
+0 /Users/fernandorealrojas/Library/Application Support/GAMS/gamslice.txt
+1 /Library/Frameworks/GAMS.framework/Versions/50/Resources/gmscmpun.txt
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/mip.dat
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0  1.00000000000000E+0000 0 0
+0 0 0
+0 0 0 1 0
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/netdesign.dylib
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225c/sbbinfo.dat
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/225c/gamscntr.dat
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/
+dat
+ 1.00000000000000E+0299
+
+
+/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/mip.gms
+ 5.35350000000000E+0004  0.00000000000000E+0000

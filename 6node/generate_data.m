@@ -181,8 +181,6 @@ hold on;
 % Media
 h3 = plot(x, mu_MIPREG, 'x-', 'LineWidth',2,'Color',verde_col);
 
-
-
 grid on;
 xl = xlabel(['Budget'],'interpreter','latex');
 yl = ylabel('$t_{comp} [s]$','Interpreter','latex');
