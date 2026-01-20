@@ -1,79 +1,105 @@
 
 import pandas as pd
 import numpy as np
+import math
 
-files = ['Distancias_España.xlsx', 'YieldPKTnacional.xlsx']
 airports = ['MAD', 'BCN', 'PMI', 'AGP']
+coords = {
+    'MAD': (40.4983, -3.5676),
+    'BCN': (41.2974, 2.0833),
+    'PMI': (39.5517, 2.7388),
+    'AGP': (36.6749, -4.4991)
+}
+
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = math.sin(dphi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
+    c = 2*math.atan2(math.sqrt(a), math.sqrt(1-a))
+    return R*c
+
 n = len(airports)
-
-# Initialize matrices
 dist_matrix = np.zeros((n, n))
-price_matrix = np.zeros((n, n))
+yield_matrix = np.zeros((n, n))
 
-# Read Distances
+# 1. Distances
+# Initialize with Haversine
+for i in range(n):
+    for j in range(n):
+        if i == j: continue
+        o, d = airports[i], airports[j]
+        dist_matrix[i, j] = haversine(coords[o][0], coords[o][1], coords[d][0], coords[d][1])
+
+# Overwrite with Excel data if available
 try:
     df_dist = pd.read_excel('Distancias_España.xlsx')
-    # Ensure columns are stripped of whitespace if any
     df_dist.columns = df_dist.columns.str.strip()
-    print("Unique Origins in Distance:", df_dist['Origen'].unique())
-    print("Unique Destinations in Distance:", df_dist['Destino'].unique())
     
-    # Create a dictionary for quick lookup
-    # Assuming 'Origen' and 'Destino' are the airport codes
-    # Check if codes are consistent (uppercase etc)
-    
-    for i, origin in enumerate(airports):
-        for j, dest in enumerate(airports):
-            if i == j:
-                dist_matrix[i, j] = 0
-                continue
+    for i in range(n):
+        for j in range(n):
+            if i == j: continue
+            o, d = airports[i], airports[j]
             
-            # Find row
-            row = df_dist[((df_dist['Origen'] == origin) & (df_dist['Destino'] == dest)) | 
-                          ((df_dist['Origen'] == dest) & (df_dist['Destino'] == origin))]
+            # Look for pair
+            row = df_dist[((df_dist['Origen'] == o) & (df_dist['Destino'] == d)) | 
+                          ((df_dist['Origen'] == d) & (df_dist['Destino'] == o))]
             
             if not row.empty:
-                # Assuming 'Distancia' is in km or similar. 
-                # The user script uses 1e4 scaling or something, but let's just get the raw value first.
-                # In the original script: distance(1, 2) = 0.75; which seems small. 
-                # Maybe it's 1000km units? Or just normalized?
-                # The user said "extrae las distancias ... del excel".
-                # I will print the raw values and we can adjust scaling later if needed.
+                # Take the first one found
                 val = row['Distancia'].values[0]
                 dist_matrix[i, j] = val
-            else:
-                print(f"Warning: No distance found for {origin}-{dest}")
-
 except Exception as e:
     print(f"Error reading distances: {e}")
 
-# Read Prices
+# 2. Yields
+global_yields = []
+
 try:
-    df_price = pd.read_excel('YieldPKTnacional.xlsx')
-    df_price.columns = df_price.columns.str.strip()
+    df_yield = pd.read_excel('YieldPKTnacional.xlsx')
+    df_yield.columns = df_yield.columns.str.strip()
     
-    for i, origin in enumerate(airports):
-        for j, dest in enumerate(airports):
-            if i == j:
-                price_matrix[i, j] = 0
-                continue
+    # Calculate average yield for each pair
+    for i in range(n):
+        for j in range(n):
+            if i == j: continue
+            o, d = airports[i], airports[j]
             
-            row = df_price[((df_price['Origen'] == origin) & (df_price['Destino'] == dest)) | 
-                           ((df_price['Origen'] == dest) & (df_price['Destino'] == origin))]
-             
-            if not row.empty:
-                val = row['YieldPKT'].values[0]
-                price_matrix[i, j] = val
+            rows = df_yield[((df_yield['Origen'] == o) & (df_yield['Destino'] == d)) | 
+                            ((df_yield['Origen'] == d) & (df_yield['Destino'] == o))]
+            
+            if not rows.empty:
+                avg_yield = rows['YieldPKT'].mean()
+                yield_matrix[i, j] = avg_yield
+                global_yields.append(avg_yield)
             else:
-                # Try to find average or something if missing? Or just 0?
-                # For now warn
-                print(f"Warning: No price found for {origin}-{dest}")
+                yield_matrix[i, j] = np.nan # Mark as missing
+
+    # Fill missing with global average
+    if global_yields:
+        avg_global = np.mean(global_yields)
+    else:
+        avg_global = 15.0 # Default fallback
+        
+    for i in range(n):
+        for j in range(n):
+            if i == j: continue
+            if np.isnan(yield_matrix[i, j]):
+                yield_matrix[i, j] = avg_global
+                
+    # Calculate Prices
+    # Yield is in cents/km. Distance is in km.
+    # Price = (Yield * Distance) / 100 (to get Euros)
+    price_matrix = (dist_matrix * yield_matrix) / 100.0
 
 except Exception as e:
-    print(f"Error reading prices: {e}")
+    print(f"Error reading yields: {e}")
+    price_matrix = dist_matrix * 0.15 # Fallback
 
 # Save to CSV
+# We use simple CSV format without headers/indices for easy MATLAB reading
 pd.DataFrame(dist_matrix).to_csv('distance.csv', index=False, header=False)
 pd.DataFrame(price_matrix).to_csv('prices.csv', index=False, header=False)
 
-print("Files 'distance.csv' and 'prices.csv' generated successfully.")
+print("Generated distance.csv and prices.csv")
