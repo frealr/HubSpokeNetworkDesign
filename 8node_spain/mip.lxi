@@ -1,0 +1,78 @@
+B 3 C o m p i l a t i o n
+B 3132 Include File Summary
+B 3170 E x e c u t i o n
+I 3170 travel_time
+I 3185 link_cost
+I 3199 link_capacity_slope
+I 3213 prices
+I 3227 candidates
+I 3241 station_cost
+I 3246 station_capacity_slope
+I 3252 a_max
+I 3253 demand
+B 3270 Equation Listing    SOLVE netdesign Using MIP From line 3025
+D 3273 def_bud
+D 3278 def_op_obj
+D 3283 def_pax_obj
+D 3288 def_obj
+D 3293 bigM_s
+D 3304 bigM_sh
+D 3315 bigM_a
+D 3326 relssh
+D 3337 bud_avail
+D 3342 link_cap
+D 3353 station_cap
+D 3364 hub_connect_cap
+D 3375 hub_direct_cap
+D 3386 tot_links
+D 3391 link_sym
+D 3402 fij_od_flow
+D 3413 fij_do_flow
+D 3424 fij_trans
+D 3435 diag_zero_fo
+D 3446 fij_zero_diag
+D 3457 fij_zero_oo
+D 3468 fij_zero_dd
+D 3479 split_fd
+D 3490 f_leq_Mz
+D 3501 cand_zero
+D 3512 zij_bigM_lb
+D 3523 zij_leq_f
+D 3534 zij_leq_Mfij
+D 3545 def_xlen
+D 3556 alfaseg_sum
+D 3567 delta_bound
+D 3578 delta_bound_last
+D 3589 slice_bound
+D 3600 xlen_interp
+D 3611 ghat_interp
+D 3622 f_leq_ghat
+B 3634 Column Listing      SOLVE netdesign Using MIP From line 3025
+E 3637 obj
+E 3644 op_obj
+E 3652 pax_obj
+E 3660 xlen
+E 3679 budvar
+E 3687 s
+E 3709 sh
+E 3779 a
+E 3813 f
+E 4221 fext
+E 4237 zij
+E 4261 delta
+E 4286 ghat
+E 4305 s_bin
+E 4327 sh_bin
+E 4349 a_bin
+E 4368 z
+E 4390 fij
+E 4418 alfaseg
+B 4441 Range Statistics    SOLVE netdesign Using MIP From line 3025
+B 4452 Model Statistics    SOLVE netdesign Using MIP From line 3025
+B 4465 Solution Report     SOLVE netdesign Using MIP From line 3025
+B 4487 E x e c u t i o n
+I 4487 b
+I 4575 budget
+I 4576 netdesign
+I 4577 netdesign
+I 4578 mipgap
