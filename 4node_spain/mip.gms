@@ -47,8 +47,6 @@ Equations
 
 
 def_bud.. budvar =e= sum(i, station_capacity_slope(i)*(s(i)+sh(i)))
-         + sum((i,j),
-                        link_cost(i,j)*a_bin(i,j))
          + sum(i,
                         station_cost(i)*s_bin(i))
          + lam*sum(i,
@@ -62,9 +60,7 @@ def_pax_obj..
     pax_obj =e= - sum((o,d), prices(o,d) * demand(o,d) * f(o,d));
 
 def_obj..
-    obj =e=  pax_obj + op_obj;
-
-    
+    obj =e=  pax_obj + op_obj + 1e-8*sum(i, station_capacity_slope(i)*(s(i)+sh(i)));
 
 
 * ---------- Restricciones de infraestructura ----------
@@ -152,7 +148,7 @@ Model netdesign /
     def_obj,
     bigM_s,
     bigM_sh,
-*    bigM_a,
+    bigM_a,
     relssh,
     bud_avail,
     link_cap,
@@ -172,7 +168,8 @@ Model netdesign /
     delta_bound_last
     slice_bound
     xlen_interp
-    ghat_interp, f_leq_ghat
+    ghat_interp,
+    f_leq_ghat
 /;
 
 
@@ -184,6 +181,7 @@ option mip     = cplex;
 option reslim = 600;
 
 Parameter mipgap;
+
 
 Solve netdesign using mip minimizing obj;
 
@@ -205,6 +203,7 @@ Parameter fnew(o,i,j,d);
 
 fnew(o,i,j,d)=fij.l(i,j,o,d);
 execute_unload "resultado.gdx";
+
 
 
 file fijx /'fij_long.csv'/; put fijx;

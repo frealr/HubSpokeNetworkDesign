@@ -59,8 +59,9 @@ write_gams_param_iii('./export_txt/bord.txt', bord);
 % === 2D matrices ===
 write_gams_param_ii('./export_txt/demand.txt', demand);
 write_gams_param_ii('./export_txt/travel_time.txt', travel_time);
-% write_gams_param_ii('./export_txt/alt_time.txt', alt_time);
-% write_gams_param_ii('./export_txt/alt_price.txt', alt_price);
+write_gams_param_ii('./export_txt/alt_utility.txt', alt_utility);
+
+
 write_gams_param_ii('./export_txt/link_cost.txt', link_cost);
 write_gams_param_ii('./export_txt/link_capacity_slope.txt', link_capacity_slope);
 write_gams_param_ii('./export_txt/prices.txt', prices);

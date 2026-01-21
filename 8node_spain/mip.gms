@@ -62,7 +62,8 @@ def_pax_obj..
     pax_obj =e= - sum((o,d), prices(o,d) * demand(o,d) * f(o,d));
 
 def_obj..
-    obj =e=  pax_obj + op_obj;
+    obj =e=  pax_obj + op_obj  + 1e-8*sum(i, station_capacity_slope(i)*(s(i)+sh(i)));
+;
 
     
 
@@ -152,7 +153,7 @@ Model netdesign /
     def_obj,
     bigM_s,
     bigM_sh,
-    bigM_a,
+*    bigM_a,
     relssh,
     bud_avail,
     link_cap,
