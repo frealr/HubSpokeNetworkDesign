@@ -3,7 +3,8 @@ clear all;
 clc;
 
 % === 1) RUTA de tu GAMS ===
-gamsHome = '/Library/Frameworks/GAMS.framework/Resources/gams';  % <-- CAMBIA esto
+% === 1) RUTA de tu GAMS ===
+gamsHome = 'C:\GAMS\50';  % <-- CAMBIA esto
 
 [basedir,~,~] = fileparts(mfilename('fullpath'));
 basedir = fullfile(basedir, 'export_csv');   % subcarpeta de exportación
@@ -14,14 +15,15 @@ if ~exist(basedir,'dir'); mkdir(basedir); end
 [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
-    congestion_coef_links,travel_time,alt_time,alt_price,a_nom,tau,eta,...
-    a_max,candidasourcertes] = parameters_4node_network();
+    congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_4node_network();
 
 M = 1e4;
 nreg = 10;
 eps = 1e-3;
+n_airlines = 5;
 vals_regs = linspace(0.005,0.995,nreg-1);
-[lin_coef,bord,b] = get_linearization(n,nreg,alt_time,alt_price,-0.2,-0.2,vals_regs);
+[lin_coef,bord,b] = get_linearization(n,nreg,alt_utility,vals_regs,n_airlines);
 
 candidates = zeros(n);
 for i=1:n
@@ -58,8 +60,7 @@ write_gams_param_iii('./export_txt/bord.txt', bord);
 % === 2D matrices ===
 write_gams_param_ii('./export_txt/demand.txt', demand);
 write_gams_param_ii('./export_txt/travel_time.txt', travel_time);
-write_gams_param_ii('./export_txt/alt_time.txt', alt_time);
-write_gams_param_ii('./export_txt/alt_price.txt', alt_price);
+write_gams_param_ii('./export_txt/alt_utility.txt', alt_utility);
 write_gams_param_ii('./export_txt/link_cost.txt', link_cost);
 write_gams_param_ii('./export_txt/link_capacity_slope.txt', link_capacity_slope);
 write_gams_param_ii('./export_txt/prices.txt', prices);
@@ -551,13 +552,12 @@ fclose(fid);
 
 
 %cmdpath = "cd C:\GAMS\50";
-cmdpath = "cd /Library/Frameworks/GAMS.framework/Resources"
+cmdpath = "cd C:\GAMS\50";
 
 system(cmdpath);
+gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\mip.gms';
 
-gmsFile  = '/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/4node_spain/mip.gms';
-
-gamsExe = '/Library/Frameworks/GAMS.framework/Resources/gams';
+gamsExe = 'C:\GAMS\50\gams.exe'; 
 
 
 
@@ -608,7 +608,7 @@ fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
 results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
 comp_time = table2array(results_file_ctime);
 [obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
-    prices,a,f,demand)
+prices,a,f,demand)
 budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam);
 filename = sprintf('./6node_hs_prueba_v0/beta=%d_lam=%d.mat',beta,lam);
@@ -731,7 +731,7 @@ end
 % parameters_6node_network_rand removed
 
 
-function [lin_coef,bord,b] = get_linearization(n,nreg,alt_time,alt_price,omega_t,omega_p,vals_regs)
+function [lin_coef,bord,b] = get_linearization(n,nreg,alt_utility,vals_regs,n_airlines)
 dmax = zeros(nreg,n,n);
 dmin = dmax;
 lin_coef = dmax;
@@ -740,12 +740,12 @@ bord = zeros(nreg,n,n);
 
 for o=1:n
     for d=1:n
-        u = omega_t*alt_time(o,d) + omega_p*alt_price(o,d);
+        u = alt_utility(o,d);
         for r=1:(nreg-1)
-            dmax(r,o,d) = min(0,u + log(vals_regs(r)/(1-vals_regs(r)))  );
+            dmax(r,o,d) = min(0,u + log(n_airlines*vals_regs(r)/(1-vals_regs(r)))  );
         end
         dmax(nreg,o,d) = 0;
-        dmin(1,o,d) = -2e2;
+        dmin(1,o,d) = -3e1;
         for r=2:nreg
             dmin(r,o,d) = dmax(r-1,o,d);
         end
@@ -863,10 +863,11 @@ end
 function [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
-    congestion_coef_links,travel_time,alt_time,alt_price,a_nom,tau,eta,...
-    a_max,candidates] = parameters_4node_network()
+    congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
+    a_max,candidates,omega_t,omega_p] = parameters_4node_network()
 
 n = 4;
+n_airlines = 5;
 
 % Candidates: Full connectivity assumption
 candidates = ones(n) - eye(n);
@@ -877,20 +878,24 @@ distance = readmatrix('distance.csv');
 % Prices (Euros)
 prices = readmatrix('prices.csv');
 
+omega_t = -0.02;
+omega_p = -0.02;
+
+
+
 % Heuristics for other parameters
 % Link Cost: proportional to distance
-link_cost = distance .* 0.5;
+link_cost = 10.* distance;
 link_cost(logical(eye(n))) = 1e4; % High cost for self-loops
 link_cost(link_cost == 0) = 1e4; % High cost for missing connections (if any)
 
-station_cost = 2 * ones(1, n); % Placeholder
-hub_cost = 100 * ones(1, n); % Placeholder
+station_cost = 2e3.*ones(1,n); %oficinas, tasas del aeropuerto 
+hub_cost = 5e3.*ones(1,n);
 
-link_capacity_slope = 0.04 .* link_cost;
-station_capacity_slope = 0.04 .* station_cost;
-
+link_capacity_slope = 0.2 .* link_cost;
+station_capacity_slope = (5*5e2 + 4*50*8).*ones(1,n); %500 e dia por estacionamiento aeronaves + 50e/hora personal*4pax
 % Demand: Placeholder 10000
-demand = 1e4 .* (ones(n) - eye(n));
+demand = readmatrix('demand.csv');
 
 load_factor = 0.25 .* ones(1, n);
 
@@ -904,13 +909,43 @@ cruise_time = 60 .* distance ./ 800;
 
 travel_time = cruise_time + takeoff_time + landing_time + taxi_time; % Approx 800 km/h speed -> minutes
 travel_time(logical(eye(n))) = 0;
-alt_time = travel_time .* 1.5; % Alternative is slower
-alt_price = prices .* 1.2; % Alternative is more expensive
+
+
+rng(123);
+p_escala = 0.4;
+
+alt_utility  = zeros(n);
+
+
+for i = 1:n
+    for j = i+1:n   % SOLO mitad superior
+        
+        escala = rand(1, n_airlines) < p_escala;
+
+        % --- TIEMPO ---
+        alt_time_vec = travel_time(i,j) .* (1 + 0.5 .* escala) ...
+                       + 60 .* escala;
+
+
+        % --- PRECIO ---
+        alt_price_vec = prices(i,j) ...
+            + 0.3 .* prices(i,j) .* (rand(1, n_airlines) - 0.5);
+
+        alt_u = log(sum(exp(omega_p.*alt_price_vec+omega_t*alt_time_vec))) - log(n_airlines);
+
+        % Asignación simétrica
+        alt_utility(i,j)  = alt_u;
+        alt_utility(j,i)  = alt_u;
+    end
+end
+alt_utility(1:n+1:end)  = 0;
+
+
 
 op_link_cost = 7600 .* travel_time./60; % Proportional to distance
 
 a_nom = 171;
-tau = 0.57;
+tau = 0.8;
 eta = 0.25;
 a_max = 1e9;
 

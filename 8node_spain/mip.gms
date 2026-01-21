@@ -1,7 +1,7 @@
 * ---------- Conjuntos ----------
-*$include "C:\Users\freal\MATLAB\Projects\untitled\code\8node\param_definition.gms";
+$include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\param_definition.gms";
 
-$include "/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/param_definition.gms"
+*$include "/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/param_definition.gms"
 
 * ---------- Variables ----------
 Variables

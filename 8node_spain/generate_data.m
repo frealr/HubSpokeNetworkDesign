@@ -912,7 +912,7 @@ alt_price = prices .* 1.2; % Alternative is more expensive
 op_link_cost = 7600 .* travel_time./60; % Proportional to distance
 
 a_nom = 171;
-tau = 0.57;
+tau = 0.8;
 eta = 0.25;
 a_max = 1e9;
 
