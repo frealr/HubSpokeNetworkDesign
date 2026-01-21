@@ -37,16 +37,10 @@ Parameter demand(o,d)
 $include "%TXTDIR%\demand.txt"
 /;
 
-Parameter alt_time(o,d)
+Parameter alt_utility(o,d)
 
 /
-$include "%TXTDIR%\alt_time.txt"
-/;
-
-* --- (o,d) ---
-Parameter alt_price(o,d)
-/
-$include "%TXTDIR%\alt_price.txt"
+$include "%TXTDIR%\alt_utility.txt"
 /;
 
 * --- (i,j) ---
@@ -123,12 +117,13 @@ $include "%TXTDIR%\s_prev.txt"
 /;
 
 
-Scalars tau, sigma, a_nom, a_max, M;
-tau = 0.57;
-sigma = 0.25;
-a_nom = 588;
-a_max = 1e5;
+Scalars tau, sigma, a_nom, a_max, M, n_airlines;
+tau = 0.85;
+sigma = 0.3;
+a_nom = 171;
+a_max = 1e7;
 M = 1e5;
+n_airlines = 5;
 
 Scalar n; n = card(i);
 
@@ -163,7 +158,7 @@ Scalar nom_bud
 $include "%TXTDIR%\budget.txt"
 /;
 
-Scalar logit_coef; logit_coef = 0.2;
+Scalar logit_coef; logit_coef = 0.02;
 
 
 

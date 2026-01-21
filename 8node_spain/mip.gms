@@ -9,7 +9,7 @@ Variables
 ;
 
 Positive Variables
-    s(i), sh(i), a(i,i), f(i,i), fext(i,i), zij(i,i,i,i),
+    s(i), sh(i), a(i,j), f(o,d), fext(o,d), zij(i,j,o,d),
     delta(seg,o,d), ghat(o,d)
 ;
 
@@ -63,7 +63,7 @@ def_pax_obj..
 
 def_obj..
     obj =e=  pax_obj + op_obj;
-*    obj =e= op_obj;
+
     
 
 
@@ -74,7 +74,7 @@ def_obj..
 bigM_s(i)..              s(i)   =l= M * s_bin(i);
 bigM_sh(i)..             sh(i)  =l= M * sh_bin(i);
 bigM_a(i,j)..            a(i,j) =l= M * a_bin(i,j);
-relssh(i)..              sh_bin(i) =l= M*s_bin(i);
+relssh(i)..              sh_bin(i) =l= s_bin(i);
 
 bud_avail..
     budvar =l= budget;
@@ -155,13 +155,17 @@ Model netdesign /
     bigM_a,
     relssh,
     bud_avail,
-    link_cap, station_cap, hub_connect_cap, hub_direct_cap,
-    tot_links, link_sym,
+    link_cap,
+    station_cap,
+    hub_connect_cap, hub_direct_cap,
+    tot_links,
+    link_sym,
     fij_od_flow, fij_do_flow, fij_trans
     diag_zero_fo, fij_zero_diag, fij_zero_oo, fij_zero_dd
     split_fd, f_leq_Mz
     cand_zero
-    zij_bigM_lb, zij_leq_f, zij_leq_Mfij 
+    zij_bigM_lb,
+    zij_leq_f, zij_leq_Mfij 
     def_xlen
     alfaseg_sum
     delta_bound
@@ -175,7 +179,7 @@ Model netdesign /
 
 
 option threads = 60;
-option mip     = mosek;
+option mip     = cplex;
 
 option reslim = 600;
 
