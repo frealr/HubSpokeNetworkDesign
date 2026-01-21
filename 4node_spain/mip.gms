@@ -60,7 +60,7 @@ def_pax_obj..
     pax_obj =e= - sum((o,d), prices(o,d) * demand(o,d) * f(o,d));
 
 def_obj..
-    obj =e=  pax_obj + op_obj + 1e-8*sum(i, station_capacity_slope(i)*(s(i)+sh(i)));
+    obj =e=  pax_obj + op_obj + 1e-4*sum(i, (1.0001*s(i)+sh(i)+s_bin(i)+sh_bin(i)));
 
 
 * ---------- Restricciones de infraestructura ----------
@@ -123,7 +123,7 @@ zij_leq_Mfij(i,j,o,d).. zij(i,j,o,d) =l= fij(i,j,o,d);
 
 * ---------- PWL con convex combination + binarios ----------
 def_xlen(o,d)$(ord(o)<>ord(d))..
-    xlen(o,d) =e= sum((i,j), fij(i,j,o,d) * logit_coef*(-travel_time(i,j))) + f(o,d)*logit_coef*(-prices(o,d));
+    xlen(o,d) =e= sum((i,j), fij(i,j,o,d) * logit_coef*(-travel_time(i,j))) + z(o,d)*logit_coef*(-prices(o,d));
     
 alfaseg_sum(o,d)$(ord(o)<>ord(d)).. sum(seg,alfaseg(seg,o,d)) =e= 1;
 

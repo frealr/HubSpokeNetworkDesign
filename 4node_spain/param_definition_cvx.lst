@@ -1,0 +1,404 @@
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 17:00:35 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1   
+   2   
+   3   
+   5   
+   6   
+   7   
+   8   
+   9  Set i "nodos" /i1*i9/;
+  10  Alias (i,j,o,d);
+  11  * === Auxiliares (decláralos UNA sola vez en tu código) ===
+  12  *
+  13   
+  14   
+  15  Parameter demand(o,d)
+  16   
+  17  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\demand.txt
+  19  i1.i1 0
+  20  i1.i2 2815.61369863
+  21  i1.i3 2995.35342466
+  22  i1.i4 930.279452055
+  23  i2.i1 2765.83013699
+  24  i2.i2 0
+  25  i2.i3 3169.55068493
+  26  i2.i4 1379.64657534
+  27  i3.i1 3051.2
+  28  i3.i2 3195.36164384
+  29  i3.i3 0
+  30  i3.i4 520.8
+  31  i4.i1 978.882191781
+  32  i4.i2 1394.03835616
+  33  i4.i3 525.323287671
+  34  i4.i4 0
+  35  /;
+  36   
+  37  Parameter alt_time(o,d)
+  38   
+  39  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\alt_time.txt
+  41  i1.i1 0
+  42  i1.i2 86.378
+  43  i1.i3 194.968562088
+  44  i1.i4 82.22075
+  45  i2.i1 86.378
+  46  i2.i2 0
+  47  i2.i3 156.102716477
+  48  i2.i4 107.472271692
+  49  i3.i1 194.968562088
+  50  i3.i2 156.102716477
+  51  i3.i3 0
+  52  i3.i4 103.184270116
+  53  i4.i1 82.22075
+  54  i4.i2 107.472271692
+  55  i4.i3 103.184270116
+  56  i4.i4 0
+  57  /;
+  58   
+  59  * --- (o,d) ---
+  60  Parameter alt_price(o,d)
+  61  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\alt_price.txt
+  63  i1.i1 0
+  64  i1.i2 83.4421440573
+  65  i1.i3 62.013666386
+  66  i1.i4 58.3672969445
+  67  i2.i1 83.4421440573
+  68  i2.i2 0
+  69  i2.i3 29.1268483566
+  70  i2.i4 114.258376151
+  71  i3.i1 62.013666386
+  72  i3.i2 29.1268483566
+  73  i3.i3 0
+  74  i3.i4 102.526438915
+  75  i4.i1 58.3672969445
+  76  i4.i2 114.258376151
+  77  i4.i3 102.526438915
+  78  i4.i4 0
+  79  /;
+  80   
+  81  * --- (i,j) ---
+  82  Parameter link_cost(i,j)
+  83  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\link_cost.txt
+  85  i1.i1 10000
+  86  i1.i2 4850.4
+  87  i1.i3 5473.6
+  88  i1.i4 4296.1
+  89  i2.i1 4850.4
+  90  i2.i2 10000
+  91  i2.i3 2018.85816799
+  92  i2.i4 7662.96955888
+  93  i3.i1 5473.6
+  94  i3.i2 2018.85816799
+  95  i3.i3 10000
+  96  i3.i4 7091.23601545
+  97  i4.i1 4296.1
+  98  i4.i2 7662.96955888
+  99  i4.i3 7091.23601545
+ 100  i4.i4 10000
+ 101  /;
+ 102   
+ 103  Parameter link_capacity_slope(i,j)
+ 104  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\link_capacity_slope.txt
+ 106  i1.i1 2000
+ 107  i1.i2 970.08
+ 108  i1.i3 1094.72
+ 109  i1.i4 859.22
+ 110  i2.i1 970.08
+ 111  i2.i2 2000
+ 112  i2.i3 403.771633598
+ 113  i2.i4 1532.59391178
+ 114  i3.i1 1094.72
+ 115  i3.i2 403.771633598
+ 116  i3.i3 2000
+ 117  i3.i4 1418.24720309
+ 118  i4.i1 859.22
+ 119  i4.i2 1532.59391178
+ 120  i4.i3 1418.24720309
+ 121  i4.i4 2000
+ 122  /;
+ 123   
+ 124  Parameter prices(i,j)
+ 125  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\prices.txt
+ 127  i1.i1 0
+ 128  i1.i2 74.3296853333
+ 129  i1.i3 59.3368648889
+ 130  i1.i4 57.6918495556
+ 131  i2.i1 74.3296853333
+ 132  i2.i2 0
+ 133  i2.i3 26.6448153286
+ 134  i2.i4 101.135588424
+ 135  i3.i1 59.3368648889
+ 136  i3.i2 26.6448153286
+ 137  i3.i3 0
+ 138  i3.i4 93.5898702936
+ 139  i4.i1 57.6918495556
+ 140  i4.i2 101.135588424
+ 141  i4.i3 93.5898702936
+ 142  i4.i4 0
+ 143  /;
+ 144   
+ 145  Parameter op_link_cost(i,j)
+ 146  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\op_link_cost.txt
+ 148  i1.i1 0
+ 149  i1.i2 10941.2133333
+ 150  i1.i3 11533.2533333
+ 151  i1.i4 10414.6283333
+ 152  i2.i1 10941.2133333
+ 153  i2.i2 0
+ 154  i2.i3 8251.24859292
+ 155  i2.i4 13613.1544143
+ 156  i3.i1 11533.2533333
+ 157  i3.i2 8251.24859292
+ 158  i3.i3 0
+ 159  i3.i4 13070.007548
+ 160  i4.i1 10414.6283333
+ 161  i4.i2 13613.1544143
+ 162  i4.i3 13070.007548
+ 163  i4.i4 0
+ 164  /;
+ 165   
+ 166   
+ 167  Parameter candidates(i,j)
+ 168  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\candidates.txt
+ 170  i1.i1 0
+ 171  i1.i2 1
+ 172  i1.i3 1
+ 173  i1.i4 1
+ 174  i2.i1 1
+ 175  i2.i2 0
+ 176  i2.i3 1
+ 177  i2.i4 1
+ 178  i3.i1 1
+ 179  i3.i2 1
+ 180  i3.i3 0
+ 181  i3.i4 1
+ 182  i4.i1 1
+ 183  i4.i2 1
+ 184  i4.i3 1
+ 185  i4.i4 0
+ 186  /;
+ 187   
+ 188  Parameter travel_time(i,j)
+ 189  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\travel_time.txt
+ 191  i1.i1 0
+ 192  i1.i2 86.378
+ 193  i1.i3 91.052
+ 194  i1.i4 82.22075
+ 195  i2.i1 86.378
+ 196  i2.i2 0
+ 197  i2.i3 65.1414362599
+ 198  i2.i4 107.472271692
+ 199  i3.i1 91.052
+ 200  i3.i2 65.1414362599
+ 201  i3.i3 0
+ 202  i3.i4 103.184270116
+ 203  i4.i1 82.22075
+ 204  i4.i2 107.472271692
+ 205  i4.i3 103.184270116
+ 206  i4.i4 0
+ 207  /;
+ 208   
+ 209  * --- (i) ---
+ 210  Parameter station_cost(i)
+ 211  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\station_cost.txt
+ 213  i1 2000
+ 214  i2 2000
+ 215  i3 2000
+ 216  i4 2000
+ 217  /;
+ 218   
+ 219  Parameter station_capacity_slope(i)
+ 220  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\station_capacity_slope.txt
+ 222  i1 4100
+ 223  i2 4100
+ 224  i3 4100
+ 225  i4 4100
+ 226  /;
+ 227   
+ 228   
+ 229   
+ 230   
+ 231  Parameter a_prev(i,j)
+ 232  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\a_prev.txt
+ 234  i1.i1 10000
+ 235  i1.i2 10000
+ 236  i1.i3 10000
+ 237  i1.i4 10000
+ 238  i1.i5 10000
+ 239  i1.i6 10000
+ 240  i1.i7 10000
+ 241  i1.i8 10000
+ 242  i2.i1 10000
+ 243  i2.i2 10000
+ 244  i2.i3 10000
+ 245  i2.i4 10000
+ 246  i2.i5 10000
+ 247  i2.i6 10000
+ 248  i2.i7 10000
+ 249  i2.i8 10000
+ 250  i3.i1 10000
+ 251  i3.i2 10000
+ 252  i3.i3 10000
+ 253  i3.i4 10000
+ 254  i3.i5 10000
+ 255  i3.i6 10000
+ 256  i3.i7 10000
+ 257  i3.i8 10000
+ 258  i4.i1 10000
+ 259  i4.i2 10000
+ 260  i4.i3 10000
+ 261  i4.i4 10000
+ 262  i4.i5 10000
+ 263  i4.i6 10000
+ 264  i4.i7 10000
+ 265  i4.i8 10000
+ 266  i5.i1 10000
+ 267  i5.i2 10000
+ 268  i5.i3 10000
+ 269  i5.i4 10000
+ 270  i5.i5 10000
+ 271  i5.i6 10000
+ 272  i5.i7 10000
+ 273  i5.i8 10000
+ 274  i6.i1 10000
+ 275  i6.i2 10000
+ 276  i6.i3 10000
+ 277  i6.i4 10000
+ 278  i6.i5 10000
+ 279  i6.i6 10000
+ 280  i6.i7 10000
+ 281  i6.i8 10000
+ 282  i7.i1 10000
+ 283  i7.i2 10000
+ 284  i7.i3 10000
+ 285  i7.i4 10000
+ 286  i7.i5 10000
+ 287  i7.i6 10000
+ 288  i7.i7 10000
+ 289  i7.i8 10000
+ 290  i8.i1 10000
+ 291  i8.i2 10000
+ 292  i8.i3 10000
+ 293  i8.i4 10000
+ 294  i8.i5 10000
+ 295  i8.i6 10000
+ 296  i8.i7 10000
+ 297  i8.i8 10000
+ 298  /;
+ 299   
+ 300   
+ 301  Parameter s_prev(i)
+ 302  /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\s_prev.txt
+ 304  i1 10000
+ 305  i2 10000
+ 306  i3 10000
+ 307  i4 10000
+ 308  i5 10000
+ 309  i6 10000
+ 310  i7 10000
+ 311  i8 10000
+ 312  /;
+ 313   
+ 314   
+ 315  Scalars tau, sigma, a_nom, a_max;
+ 316  tau = 0.57;
+ 317  sigma = 0.25;
+ 318  a_nom = 588;
+ 319  a_max = 1e5;
+ 320   
+ 321  Scalar n; n = card(i);
+ 322   
+ 323  Scalar epsi; epsi = 1e-3;
+ 324   
+ 325  Scalar lam /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\lam.txt
+ 327  5
+ 328  /;
+ 329   
+ 330  Scalar alfa /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\alfa.txt
+ 332  5.000000e-01
+ 333  /;
+ 334   
+ 335  Scalar beta /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\beta.txt
+ 337  1
+ 338  /;
+ 339   
+ 340  Scalar iter /
+ 341  $include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\current_iter.txt"
+****                                                                                                $282
+**** LINE    114 INPUT       C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition_cvx.gms
+**** 282  Unable to open include file
+****         Hint: Does the filename need to be quoted?
+ 342  /;
+ 343   
+ 344  Scalar niters /
+INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\niters.txt
+ 346  /;
+ 347   
+ 348  Scalar logit_coef; logit_coef = 0.2;
+ 349   
+ 350   
+ 351   
+ 352  display travel_time,link_cost,link_capacity_slope,prices,candidates,station_cost,station_capacity_slope,a_max;
+ 353   
+
+**** 1 ERROR(S)   0 WARNING(S)
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 17:00:35 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Include File Summary
+
+
+   SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
+
+     1        1 INPUT          0       0  C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition_cvx.gms
+     2       18 INCLUDE        1      18  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\demand.txt
+     3       40 INCLUDE        1      24  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\alt_time.txt
+     4       62 INCLUDE        1      30  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\alt_price.txt
+     5       84 INCLUDE        1      36  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\link_cost.txt
+     6      105 INCLUDE        1      41  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\link_capacity_slope.txt
+     7      126 INCLUDE        1      46  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\prices.txt
+     8      147 INCLUDE        1      51  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\op_link_cost.txt
+     9      169 INCLUDE        1      57  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\candidates.txt
+    10      190 INCLUDE        1      62  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\travel_time.txt
+    11      212 INCLUDE        1      68  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\station_cost.txt
+    12      221 INCLUDE        1      73  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\station_capacity_slope.txt
+    13      233 INCLUDE        1      81  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\a_prev.txt
+    14      303 INCLUDE        1      87  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\s_prev.txt
+    15      326 INCLUDE        1     102  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\lam.txt
+    16      331 INCLUDE        1     106  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\alfa.txt
+    17      336 INCLUDE        1     110  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\beta.txt
+    18      345 INCLUDE        1     118  .C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\niters.txt
+
+
+COMPILATION TIME     =        0.000 SECONDS      3 MB  50.4.1 84b10359 WEX-WEI
+
+
+USER: Luis Cadarso Morga                             G250911+0003Ac-GEN
+      University Rey Juan Carlos                                DCE4613
+      License for teaching and research at degree granting institutions
+
+
+**** FILE SUMMARY
+
+Input      C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition_cvx.gms
+Output     C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition_cvx.lst
+
+**** USER ERROR(S) ENCOUNTERED
