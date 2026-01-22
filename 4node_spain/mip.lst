@@ -1,4 +1,4 @@
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 1
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -897,10 +897,10 @@ INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\b
  893  station_cap(i)..   sigma * (sum(j, a(j,i)) + sum(j, a(i,j))) =l= s(i) + sh(i);
  894   
  895  hub_connect_cap(i).. sigma * (sum( (o,d,j)$(ord(o)<>ord(i)),
- 896      demand(o,d) * fij(i,j,o,d) / (a_nom * tau))  + sum( (o,d,j)$(ord(d)<>ord(i)),
- 897      demand(o,d) * fij(j,i,o,d) / (a_nom * tau))) =l= sh(i);
+ 896      demand(o,d) * zij(i,j,o,d) / (a_nom * tau))  + sum( (o,d,j)$(ord(d)<>ord(i)),
+ 897      demand(o,d) * zij(j,i,o,d) / (a_nom * tau))) =l= sh(i);
  898   
- 899  hub_direct_cap(o,d).. sigma * demand(o,d) * fij(o,d,o,d) / (a_nom * tau) =l= sh(o) + sh(d);
+ 899  hub_direct_cap(o,d).. sigma * demand(o,d) * zij(o,d,o,d) / (a_nom * tau) =l= sh(o) + sh(d);
  900   
  901  tot_links.. sum((i,j), a(i,j)) =l= a_max;
  902   
@@ -1101,7 +1101,7 @@ INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\b
 1097        - name: mip_opt_gap
 1098        - name: solver_time      
 1099  endEmbeddedCode
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 2
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -1135,8 +1135,8 @@ Include File Summary
     25      805 INCLUDE        2     157  ..C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\budget.txt
 
 
-COMPILATION TIME     =        0.000 SECONDS      3 MB  50.4.1 84b10359 WEX-WEI
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 3
+COMPILATION TIME     =        0.094 SECONDS      3 MB  50.4.1 84b10359 WEX-WEI
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -1212,7 +1212,7 @@ i2    2765.830                3169.551    1379.647
 i3    3051.200    3195.362                 520.800
 i4     978.882    1394.038     525.323
 
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 4
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 4
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Equation Listing    SOLVE netdesign Using MIP From line 998
 
@@ -1310,11 +1310,11 @@ REMAINING ENTRY SKIPPED
 
 ---- hub_connect_cap  =L=  
 
-hub_connect_cap(i1)..  - sh(i1) + 5.81138018293086*fij(i1,i1,i1,i2) + 6.18236000961816*fij(i1,i1,i1,i3) + 1.92008142839009*fij(i1,i1,i1,i4) + 5.70862773372549*fij(i1,i1,i2,i1) + 13.0838005569866*fij(i1,i1,i2,i3) + 5.6951355019195*fij(i1,i1,i2,i4) + 6.29762641898865*fij(i1,i1,i3,i1) + 13.1903473429928*fij(i1,i1,i3,i2) + 2.14984520123839*fij(i1,i1,i3,i4) + 2.02039668066254*fij(i1,i1,i4,i1) + 5.7545442978741*fij(i1,i1,i4,i2) + 2.16851718336842*fij(i1,i1,i4,i3) + 5.70862773372549*fij(i1,i2,i2,i1) + 6.54190027849329*fij(i1,i2,i2,i3) + 2.84756775095975*fij(i1,i2,i2,i4) + 6.29762641898865*fij(i1,i2,i3,i1) + 6.59517367149639*fij(i1,i2,i3,i2) + 1.07492260061919*fij(i1,i2,i3,i4) + 2.02039668066254*fij(i1,i2,i4,i1) + 2.87727214893705*fij(i1,i2,i4,i2) + 1.08425859168421*fij(i1,i2,i4,i3) + 5.70862773372549*fij(i1,i3,i2,i1) + 6.54190027849329*fij(i1,i3,i2,i3) + 2.84756775095975*fij(i1,i3,i2,i4) + 6.29762641898865*fij(i1,i3,i3,i1) + 6.59517367149639*fij(i1,i3,i3,i2) + 1.07492260061919*fij(i1,i3,i3,i4) + 2.02039668066254*fij(i1,i3,i4,i1) + 2.87727214893705*fij(i1,i3,i4,i2) + 1.08425859168421*fij(i1,i3,i4,i3) + 5.70862773372549*fij(i1,i4,i2,i1) + 6.54190027849329*fij(i1,i4,i2,i3) + 2.84756775095975*fij(i1,i4,i2,i4) + 6.29762641898865*fij(i1,i4,i3,i1) + 6.59517367149639*fij(i1,i4,i3,i2) + 1.07492260061919*fij(i1,i4,i3,i4) + 2.02039668066254*fij(i1,i4,i4,i1) + 2.87727214893705*fij(i1,i4,i4,i2) + 1.08425859168421*fij(i1,i4,i4,i3) + 5.81138018293086*fij(i2,i1,i1,i2) + 6.18236000961816*fij(i2,i1,i1,i3) + 1.92008142839009*fij(i2,i1,i1,i4) + 6.54190027849329*fij(i2,i1,i2,i3) + 2.84756775095975*fij(i2,i1,i2,i4) + 6.59517367149639*fij(i2,i1,i3,i2) + 1.07492260061919*fij(i2,i1,i3,i4) + 2.87727214893705*fij(i2,i1,i4,i2) + 1.08425859168421*fij(i2,i1,i4,i3) + 5.81138018293086*fij(i3,i1,i1,i2) + 6.18236000961816*fij(i3,i1,i1,i3) + 1.92008142839009*fij(i3,i1,i1,i4) + 6.54190027849329*fij(i3,i1,i2,i3) + 2.84756775095975*fij(i3,i1,i2,i4) + 6.59517367149639*fij(i3,i1,i3,i2) + 1.07492260061919*fij(i3,i1,i3,i4) + 2.87727214893705*fij(i3,i1,i4,i2) + 1.08425859168421*fij(i3,i1,i4,i3) + 5.81138018293086*fij(i4,i1,i1,i2) + 6.18236000961816*fij(i4,i1,i1,i3) + 1.92008142839009*fij(i4,i1,i1,i4) + 6.54190027849329*fij(i4,i1,i2,i3) + 2.84756775095975*fij(i4,i1,i2,i4) + 6.59517367149639*fij(i4,i1,i3,i2) + 1.07492260061919*fij(i4,i1,i3,i4) + 2.87727214893705*fij(i4,i1,i4,i2) + 1.08425859168421*fij(i4,i1,i4,i3) =L= 0 ; (LHS = 0)
+hub_connect_cap(i1)..  - sh(i1) + 5.81138018293086*zij(i1,i1,i1,i2) + 6.18236000961816*zij(i1,i1,i1,i3) + 1.92008142839009*zij(i1,i1,i1,i4) + 5.70862773372549*zij(i1,i1,i2,i1) + 13.0838005569866*zij(i1,i1,i2,i3) + 5.6951355019195*zij(i1,i1,i2,i4) + 6.29762641898865*zij(i1,i1,i3,i1) + 13.1903473429928*zij(i1,i1,i3,i2) + 2.14984520123839*zij(i1,i1,i3,i4) + 2.02039668066254*zij(i1,i1,i4,i1) + 5.7545442978741*zij(i1,i1,i4,i2) + 2.16851718336842*zij(i1,i1,i4,i3) + 5.70862773372549*zij(i1,i2,i2,i1) + 6.54190027849329*zij(i1,i2,i2,i3) + 2.84756775095975*zij(i1,i2,i2,i4) + 6.29762641898865*zij(i1,i2,i3,i1) + 6.59517367149639*zij(i1,i2,i3,i2) + 1.07492260061919*zij(i1,i2,i3,i4) + 2.02039668066254*zij(i1,i2,i4,i1) + 2.87727214893705*zij(i1,i2,i4,i2) + 1.08425859168421*zij(i1,i2,i4,i3) + 5.70862773372549*zij(i1,i3,i2,i1) + 6.54190027849329*zij(i1,i3,i2,i3) + 2.84756775095975*zij(i1,i3,i2,i4) + 6.29762641898865*zij(i1,i3,i3,i1) + 6.59517367149639*zij(i1,i3,i3,i2) + 1.07492260061919*zij(i1,i3,i3,i4) + 2.02039668066254*zij(i1,i3,i4,i1) + 2.87727214893705*zij(i1,i3,i4,i2) + 1.08425859168421*zij(i1,i3,i4,i3) + 5.70862773372549*zij(i1,i4,i2,i1) + 6.54190027849329*zij(i1,i4,i2,i3) + 2.84756775095975*zij(i1,i4,i2,i4) + 6.29762641898865*zij(i1,i4,i3,i1) + 6.59517367149639*zij(i1,i4,i3,i2) + 1.07492260061919*zij(i1,i4,i3,i4) + 2.02039668066254*zij(i1,i4,i4,i1) + 2.87727214893705*zij(i1,i4,i4,i2) + 1.08425859168421*zij(i1,i4,i4,i3) + 5.81138018293086*zij(i2,i1,i1,i2) + 6.18236000961816*zij(i2,i1,i1,i3) + 1.92008142839009*zij(i2,i1,i1,i4) + 6.54190027849329*zij(i2,i1,i2,i3) + 2.84756775095975*zij(i2,i1,i2,i4) + 6.59517367149639*zij(i2,i1,i3,i2) + 1.07492260061919*zij(i2,i1,i3,i4) + 2.87727214893705*zij(i2,i1,i4,i2) + 1.08425859168421*zij(i2,i1,i4,i3) + 5.81138018293086*zij(i3,i1,i1,i2) + 6.18236000961816*zij(i3,i1,i1,i3) + 1.92008142839009*zij(i3,i1,i1,i4) + 6.54190027849329*zij(i3,i1,i2,i3) + 2.84756775095975*zij(i3,i1,i2,i4) + 6.59517367149639*zij(i3,i1,i3,i2) + 1.07492260061919*zij(i3,i1,i3,i4) + 2.87727214893705*zij(i3,i1,i4,i2) + 1.08425859168421*zij(i3,i1,i4,i3) + 5.81138018293086*zij(i4,i1,i1,i2) + 6.18236000961816*zij(i4,i1,i1,i3) + 1.92008142839009*zij(i4,i1,i1,i4) + 6.54190027849329*zij(i4,i1,i2,i3) + 2.84756775095975*zij(i4,i1,i2,i4) + 6.59517367149639*zij(i4,i1,i3,i2) + 1.07492260061919*zij(i4,i1,i3,i4) + 2.87727214893705*zij(i4,i1,i4,i2) + 1.08425859168421*zij(i4,i1,i4,i3) =L= 0 ; (LHS = 0)
      
-hub_connect_cap(i2)..  - sh(i2) + 6.18236000961816*fij(i1,i2,i1,i3) + 1.92008142839009*fij(i1,i2,i1,i4) + 5.70862773372549*fij(i1,i2,i2,i1) + 6.54190027849329*fij(i1,i2,i2,i3) + 2.84756775095975*fij(i1,i2,i2,i4) + 6.29762641898865*fij(i1,i2,i3,i1) + 1.07492260061919*fij(i1,i2,i3,i4) + 2.02039668066254*fij(i1,i2,i4,i1) + 1.08425859168421*fij(i1,i2,i4,i3) + 5.81138018293086*fij(i2,i1,i1,i2) + 6.18236000961816*fij(i2,i1,i1,i3) + 1.92008142839009*fij(i2,i1,i1,i4) + 6.29762641898865*fij(i2,i1,i3,i1) + 6.59517367149639*fij(i2,i1,i3,i2) + 1.07492260061919*fij(i2,i1,i3,i4) + 2.02039668066254*fij(i2,i1,i4,i1) + 2.87727214893705*fij(i2,i1,i4,i2) + 1.08425859168421*fij(i2,i1,i4,i3) + 5.81138018293086*fij(i2,i2,i1,i2) + 12.3647200192363*fij(i2,i2,i1,i3) + 3.84016285678019*fij(i2,i2,i1,i4) + 5.70862773372549*fij(i2,i2,i2,i1) + 6.54190027849329*fij(i2,i2,i2,i3) + 2.84756775095975*fij(i2,i2,i2,i4) + 12.5952528379773*fij(i2,i2,i3,i1) + 6.59517367149639*fij(i2,i2,i3,i2) + 2.14984520123839*fij(i2,i2,i3,i4) + 4.04079336132508*fij(i2,i2,i4,i1) + 2.87727214893705*fij(i2,i2,i4,i2) + 2.16851718336842*fij(i2,i2,i4,i3) + 5.81138018293086*fij(i2,i3,i1,i2) + 6.18236000961816*fij(i2,i3,i1,i3) + 1.92008142839009*fij(i2,i3,i1,i4) + 6.29762641898865*fij(i2,i3,i3,i1) + 6.59517367149639*fij(i2,i3,i3,i2) + 1.07492260061919*fij(i2,i3,i3,i4) + 2.02039668066254*fij(i2,i3,i4,i1) + 2.87727214893705*fij(i2,i3,i4,i2) + 1.08425859168421*fij(i2,i3,i4,i3) + 5.81138018293086*fij(i2,i4,i1,i2) + 6.18236000961816*fij(i2,i4,i1,i3) + 1.92008142839009*fij(i2,i4,i1,i4) + 6.29762641898865*fij(i2,i4,i3,i1) + 6.59517367149639*fij(i2,i4,i3,i2) + 1.07492260061919*fij(i2,i4,i3,i4) + 2.02039668066254*fij(i2,i4,i4,i1) + 2.87727214893705*fij(i2,i4,i4,i2) + 1.08425859168421*fij(i2,i4,i4,i3) + 6.18236000961816*fij(i3,i2,i1,i3) + 1.92008142839009*fij(i3,i2,i1,i4) + 5.70862773372549*fij(i3,i2,i2,i1) + 6.54190027849329*fij(i3,i2,i2,i3) + 2.84756775095975*fij(i3,i2,i2,i4) + 6.29762641898865*fij(i3,i2,i3,i1) + 1.07492260061919*fij(i3,i2,i3,i4) + 2.02039668066254*fij(i3,i2,i4,i1) + 1.08425859168421*fij(i3,i2,i4,i3) + 6.18236000961816*fij(i4,i2,i1,i3) + 1.92008142839009*fij(i4,i2,i1,i4) + 5.70862773372549*fij(i4,i2,i2,i1) + 6.54190027849329*fij(i4,i2,i2,i3) + 2.84756775095975*fij(i4,i2,i2,i4) + 6.29762641898865*fij(i4,i2,i3,i1) + 1.07492260061919*fij(i4,i2,i3,i4) + 2.02039668066254*fij(i4,i2,i4,i1) + 1.08425859168421*fij(i4,i2,i4,i3) =L= 0 ; (LHS = 0)
+hub_connect_cap(i2)..  - sh(i2) + 6.18236000961816*zij(i1,i2,i1,i3) + 1.92008142839009*zij(i1,i2,i1,i4) + 5.70862773372549*zij(i1,i2,i2,i1) + 6.54190027849329*zij(i1,i2,i2,i3) + 2.84756775095975*zij(i1,i2,i2,i4) + 6.29762641898865*zij(i1,i2,i3,i1) + 1.07492260061919*zij(i1,i2,i3,i4) + 2.02039668066254*zij(i1,i2,i4,i1) + 1.08425859168421*zij(i1,i2,i4,i3) + 5.81138018293086*zij(i2,i1,i1,i2) + 6.18236000961816*zij(i2,i1,i1,i3) + 1.92008142839009*zij(i2,i1,i1,i4) + 6.29762641898865*zij(i2,i1,i3,i1) + 6.59517367149639*zij(i2,i1,i3,i2) + 1.07492260061919*zij(i2,i1,i3,i4) + 2.02039668066254*zij(i2,i1,i4,i1) + 2.87727214893705*zij(i2,i1,i4,i2) + 1.08425859168421*zij(i2,i1,i4,i3) + 5.81138018293086*zij(i2,i2,i1,i2) + 12.3647200192363*zij(i2,i2,i1,i3) + 3.84016285678019*zij(i2,i2,i1,i4) + 5.70862773372549*zij(i2,i2,i2,i1) + 6.54190027849329*zij(i2,i2,i2,i3) + 2.84756775095975*zij(i2,i2,i2,i4) + 12.5952528379773*zij(i2,i2,i3,i1) + 6.59517367149639*zij(i2,i2,i3,i2) + 2.14984520123839*zij(i2,i2,i3,i4) + 4.04079336132508*zij(i2,i2,i4,i1) + 2.87727214893705*zij(i2,i2,i4,i2) + 2.16851718336842*zij(i2,i2,i4,i3) + 5.81138018293086*zij(i2,i3,i1,i2) + 6.18236000961816*zij(i2,i3,i1,i3) + 1.92008142839009*zij(i2,i3,i1,i4) + 6.29762641898865*zij(i2,i3,i3,i1) + 6.59517367149639*zij(i2,i3,i3,i2) + 1.07492260061919*zij(i2,i3,i3,i4) + 2.02039668066254*zij(i2,i3,i4,i1) + 2.87727214893705*zij(i2,i3,i4,i2) + 1.08425859168421*zij(i2,i3,i4,i3) + 5.81138018293086*zij(i2,i4,i1,i2) + 6.18236000961816*zij(i2,i4,i1,i3) + 1.92008142839009*zij(i2,i4,i1,i4) + 6.29762641898865*zij(i2,i4,i3,i1) + 6.59517367149639*zij(i2,i4,i3,i2) + 1.07492260061919*zij(i2,i4,i3,i4) + 2.02039668066254*zij(i2,i4,i4,i1) + 2.87727214893705*zij(i2,i4,i4,i2) + 1.08425859168421*zij(i2,i4,i4,i3) + 6.18236000961816*zij(i3,i2,i1,i3) + 1.92008142839009*zij(i3,i2,i1,i4) + 5.70862773372549*zij(i3,i2,i2,i1) + 6.54190027849329*zij(i3,i2,i2,i3) + 2.84756775095975*zij(i3,i2,i2,i4) + 6.29762641898865*zij(i3,i2,i3,i1) + 1.07492260061919*zij(i3,i2,i3,i4) + 2.02039668066254*zij(i3,i2,i4,i1) + 1.08425859168421*zij(i3,i2,i4,i3) + 6.18236000961816*zij(i4,i2,i1,i3) + 1.92008142839009*zij(i4,i2,i1,i4) + 5.70862773372549*zij(i4,i2,i2,i1) + 6.54190027849329*zij(i4,i2,i2,i3) + 2.84756775095975*zij(i4,i2,i2,i4) + 6.29762641898865*zij(i4,i2,i3,i1) + 1.07492260061919*zij(i4,i2,i3,i4) + 2.02039668066254*zij(i4,i2,i4,i1) + 1.08425859168421*zij(i4,i2,i4,i3) =L= 0 ; (LHS = 0)
      
-hub_connect_cap(i3)..  - sh(i3) + 5.81138018293086*fij(i1,i3,i1,i2) + 1.92008142839009*fij(i1,i3,i1,i4) + 5.70862773372549*fij(i1,i3,i2,i1) + 2.84756775095975*fij(i1,i3,i2,i4) + 6.29762641898865*fij(i1,i3,i3,i1) + 6.59517367149639*fij(i1,i3,i3,i2) + 1.07492260061919*fij(i1,i3,i3,i4) + 2.02039668066254*fij(i1,i3,i4,i1) + 2.87727214893705*fij(i1,i3,i4,i2) + 5.81138018293086*fij(i2,i3,i1,i2) + 1.92008142839009*fij(i2,i3,i1,i4) + 5.70862773372549*fij(i2,i3,i2,i1) + 2.84756775095975*fij(i2,i3,i2,i4) + 6.29762641898865*fij(i2,i3,i3,i1) + 6.59517367149639*fij(i2,i3,i3,i2) + 1.07492260061919*fij(i2,i3,i3,i4) + 2.02039668066254*fij(i2,i3,i4,i1) + 2.87727214893705*fij(i2,i3,i4,i2) + 5.81138018293086*fij(i3,i1,i1,i2) + 6.18236000961816*fij(i3,i1,i1,i3) + 1.92008142839009*fij(i3,i1,i1,i4) + 5.70862773372549*fij(i3,i1,i2,i1) + 6.54190027849329*fij(i3,i1,i2,i3) + 2.84756775095975*fij(i3,i1,i2,i4) + 2.02039668066254*fij(i3,i1,i4,i1) + 2.87727214893705*fij(i3,i1,i4,i2) + 1.08425859168421*fij(i3,i1,i4,i3) + 5.81138018293086*fij(i3,i2,i1,i2) + 6.18236000961816*fij(i3,i2,i1,i3) + 1.92008142839009*fij(i3,i2,i1,i4) + 5.70862773372549*fij(i3,i2,i2,i1) + 6.54190027849329*fij(i3,i2,i2,i3) + 2.84756775095975*fij(i3,i2,i2,i4) + 2.02039668066254*fij(i3,i2,i4,i1) + 2.87727214893705*fij(i3,i2,i4,i2) + 1.08425859168421*fij(i3,i2,i4,i3) + 11.6227603658617*fij(i3,i3,i1,i2) + 6.18236000961816*fij(i3,i3,i1,i3) + 3.84016285678019*fij(i3,i3,i1,i4) + 11.417255467451*fij(i3,i3,i2,i1) + 6.54190027849329*fij(i3,i3,i2,i3) + 5.6951355019195*fij(i3,i3,i2,i4) + 6.29762641898865*fij(i3,i3,i3,i1) + 6.59517367149639*fij(i3,i3,i3,i2) + 1.07492260061919*fij(i3,i3,i3,i4) + 4.04079336132508*fij(i3,i3,i4,i1) + 5.7545442978741*fij(i3,i3,i4,i2) + 1.08425859168421*fij(i3,i3,i4,i3) + 5.81138018293086*fij(i3,i4,i1,i2) + 6.18236000961816*fij(i3,i4,i1,i3) + 1.92008142839009*fij(i3,i4,i1,i4) + 5.70862773372549*fij(i3,i4,i2,i1) + 6.54190027849329*fij(i3,i4,i2,i3) + 2.84756775095975*fij(i3,i4,i2,i4) + 2.02039668066254*fij(i3,i4,i4,i1) + 2.87727214893705*fij(i3,i4,i4,i2) + 1.08425859168421*fij(i3,i4,i4,i3) + 5.81138018293086*fij(i4,i3,i1,i2) + 1.92008142839009*fij(i4,i3,i1,i4) + 5.70862773372549*fij(i4,i3,i2,i1) + 2.84756775095975*fij(i4,i3,i2,i4) + 6.29762641898865*fij(i4,i3,i3,i1) + 6.59517367149639*fij(i4,i3,i3,i2) + 1.07492260061919*fij(i4,i3,i3,i4) + 2.02039668066254*fij(i4,i3,i4,i1) + 2.87727214893705*fij(i4,i3,i4,i2) =L= 0 ; (LHS = 0)
+hub_connect_cap(i3)..  - sh(i3) + 5.81138018293086*zij(i1,i3,i1,i2) + 1.92008142839009*zij(i1,i3,i1,i4) + 5.70862773372549*zij(i1,i3,i2,i1) + 2.84756775095975*zij(i1,i3,i2,i4) + 6.29762641898865*zij(i1,i3,i3,i1) + 6.59517367149639*zij(i1,i3,i3,i2) + 1.07492260061919*zij(i1,i3,i3,i4) + 2.02039668066254*zij(i1,i3,i4,i1) + 2.87727214893705*zij(i1,i3,i4,i2) + 5.81138018293086*zij(i2,i3,i1,i2) + 1.92008142839009*zij(i2,i3,i1,i4) + 5.70862773372549*zij(i2,i3,i2,i1) + 2.84756775095975*zij(i2,i3,i2,i4) + 6.29762641898865*zij(i2,i3,i3,i1) + 6.59517367149639*zij(i2,i3,i3,i2) + 1.07492260061919*zij(i2,i3,i3,i4) + 2.02039668066254*zij(i2,i3,i4,i1) + 2.87727214893705*zij(i2,i3,i4,i2) + 5.81138018293086*zij(i3,i1,i1,i2) + 6.18236000961816*zij(i3,i1,i1,i3) + 1.92008142839009*zij(i3,i1,i1,i4) + 5.70862773372549*zij(i3,i1,i2,i1) + 6.54190027849329*zij(i3,i1,i2,i3) + 2.84756775095975*zij(i3,i1,i2,i4) + 2.02039668066254*zij(i3,i1,i4,i1) + 2.87727214893705*zij(i3,i1,i4,i2) + 1.08425859168421*zij(i3,i1,i4,i3) + 5.81138018293086*zij(i3,i2,i1,i2) + 6.18236000961816*zij(i3,i2,i1,i3) + 1.92008142839009*zij(i3,i2,i1,i4) + 5.70862773372549*zij(i3,i2,i2,i1) + 6.54190027849329*zij(i3,i2,i2,i3) + 2.84756775095975*zij(i3,i2,i2,i4) + 2.02039668066254*zij(i3,i2,i4,i1) + 2.87727214893705*zij(i3,i2,i4,i2) + 1.08425859168421*zij(i3,i2,i4,i3) + 11.6227603658617*zij(i3,i3,i1,i2) + 6.18236000961816*zij(i3,i3,i1,i3) + 3.84016285678019*zij(i3,i3,i1,i4) + 11.417255467451*zij(i3,i3,i2,i1) + 6.54190027849329*zij(i3,i3,i2,i3) + 5.6951355019195*zij(i3,i3,i2,i4) + 6.29762641898865*zij(i3,i3,i3,i1) + 6.59517367149639*zij(i3,i3,i3,i2) + 1.07492260061919*zij(i3,i3,i3,i4) + 4.04079336132508*zij(i3,i3,i4,i1) + 5.7545442978741*zij(i3,i3,i4,i2) + 1.08425859168421*zij(i3,i3,i4,i3) + 5.81138018293086*zij(i3,i4,i1,i2) + 6.18236000961816*zij(i3,i4,i1,i3) + 1.92008142839009*zij(i3,i4,i1,i4) + 5.70862773372549*zij(i3,i4,i2,i1) + 6.54190027849329*zij(i3,i4,i2,i3) + 2.84756775095975*zij(i3,i4,i2,i4) + 2.02039668066254*zij(i3,i4,i4,i1) + 2.87727214893705*zij(i3,i4,i4,i2) + 1.08425859168421*zij(i3,i4,i4,i3) + 5.81138018293086*zij(i4,i3,i1,i2) + 1.92008142839009*zij(i4,i3,i1,i4) + 5.70862773372549*zij(i4,i3,i2,i1) + 2.84756775095975*zij(i4,i3,i2,i4) + 6.29762641898865*zij(i4,i3,i3,i1) + 6.59517367149639*zij(i4,i3,i3,i2) + 1.07492260061919*zij(i4,i3,i3,i4) + 2.02039668066254*zij(i4,i3,i4,i1) + 2.87727214893705*zij(i4,i3,i4,i2) =L= 0 ; (LHS = 0)
      
 REMAINING ENTRY SKIPPED
 
@@ -1323,9 +1323,9 @@ REMAINING ENTRY SKIPPED
 
 hub_direct_cap(i1,i1)..  - 2*sh(i1) =L= 0 ; (LHS = 0)
      
-hub_direct_cap(i1,i2)..  - sh(i1) - sh(i2) + 5.81138018293086*fij(i1,i2,i1,i2) =L= 0 ; (LHS = 0)
+hub_direct_cap(i1,i2)..  - sh(i1) - sh(i2) + 5.81138018293086*zij(i1,i2,i1,i2) =L= 0 ; (LHS = 0)
      
-hub_direct_cap(i1,i3)..  - sh(i1) - sh(i3) + 6.18236000961816*fij(i1,i3,i1,i3) =L= 0 ; (LHS = 0)
+hub_direct_cap(i1,i3)..  - sh(i1) - sh(i3) + 6.18236000961816*zij(i1,i3,i1,i3) =L= 0 ; (LHS = 0)
      
 REMAINING 13 ENTRIES SKIPPED
 
@@ -1576,7 +1576,7 @@ f_leq_ghat(i1,i4)..  f(i1,i4) - ghat(i1,i4) =L= 0 ; (LHS = 0)
      
 REMAINING 9 ENTRIES SKIPPED
 
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 5
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 5
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Column Listing      SOLVE netdesign Using MIP From line 998
 
@@ -1884,6 +1884,7 @@ zij(i1,i1,i1,i1)
 zij(i1,i1,i1,i2)
                 (.LO, .L, .UP, .M = 0, 0, 1, 0)
      2815.6137  link_cap(i1,i1)
+        5.8114  hub_connect_cap(i1)
         1       zij_bigM_lb(i1,i1,i1,i2)
         1       zij_leq_f(i1,i1,i1,i2)
         1       zij_leq_Mfij(i1,i1,i1,i2)
@@ -1891,6 +1892,7 @@ zij(i1,i1,i1,i2)
 zij(i1,i1,i1,i3)
                 (.LO, .L, .UP, .M = 0, 0, 1, 0)
      2995.3534  link_cap(i1,i1)
+        6.1824  hub_connect_cap(i1)
         1       zij_bigM_lb(i1,i1,i1,i3)
         1       zij_leq_f(i1,i1,i1,i3)
         1       zij_leq_Mfij(i1,i1,i1,i3)
@@ -2044,7 +2046,6 @@ fij(i1,i1,i1,i1)
 
 fij(i1,i1,i1,i2)
                 (.LO, .L, .UP, .M = 0, 0, 1, 0)
-        5.8114  hub_connect_cap(i1)
         1       fij_zero_diag(i1,i1,i2)
         1       fij_zero_oo(i1,i1,i2)
        -1       zij_bigM_lb(i1,i1,i1,i2)
@@ -2052,7 +2053,6 @@ fij(i1,i1,i1,i2)
 
 fij(i1,i1,i1,i3)
                 (.LO, .L, .UP, .M = 0, 0, 1, 0)
-        6.1824  hub_connect_cap(i1)
         1       fij_zero_diag(i1,i1,i3)
         1       fij_zero_oo(i1,i1,i3)
        -1       zij_bigM_lb(i1,i1,i1,i3)
@@ -2081,7 +2081,7 @@ alfaseg(seg1,i1,i4)
        30       xlen_interp(i1,i4)
 
 REMAINING 117 ENTRIES SKIPPED
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 6
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 6
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Range Statistics    SOLVE netdesign Using MIP From line 998
 
@@ -2092,7 +2092,7 @@ RHS       [min, max] : [ 5.651E-02, 1.000E+07] - Zero values observed as well
 Bound     [min, max] : [ 1.000E+00, 1.000E+00] - Zero values observed as well
 Matrix    [min, max] : [ 1.000E-04, 2.093E+05]
 
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 7
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 7
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE netdesign Using MIP From line 998
 
@@ -2105,7 +2105,7 @@ NON ZERO ELEMENTS         4,235     DISCRETE VARIABLES        412
 
 
 GENERATION TIME      =        0.000 SECONDS      4 MB  50.4.1 84b10359 WEX-WEI
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 8
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 8
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE netdesign Using MIP From line 998
 
@@ -2117,11 +2117,11 @@ Solution Report     SOLVE netdesign Using MIP From line 998
      SOLVER  CPLEX               FROM LINE  998
 
 **** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE            -5866.3056
+**** MODEL STATUS      8 Integer Solution
+**** OBJECTIVE VALUE            -5866.3055
 
- RESOURCE USAGE, LIMIT          0.953       600.000
- ITERATION COUNT, LIMIT    124233    2147483647
+ RESOURCE USAGE, LIMIT          0.984       600.000
+ ITERATION COUNT, LIMIT    120781    2147483647
 --- GAMS/CPLEX licensed for continuous and discrete problems.
 --- GMO setup time: 0.00s
 --- Space for names approximately 0.06 Mb
@@ -2132,24 +2132,18 @@ Solution Report     SOLVE netdesign Using MIP From line 998
 --- Starting Cplex
 
 
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.95sec (det. 648.55 ticks)
+--- MIP status (102): integer optimal, tolerance.
+--- Cplex Time: 0.98sec (det. 654.97 ticks)
 
 --- Returning a primal only solution to GAMS (marginals all set to NA).
 --- Fixing integer variables and solving final LP...
 
 
 --- Fixed MIP status (1): optimal.
---- Cplex Time: 0.00sec (det. 1.15 ticks)
+--- Cplex Time: 0.00sec (det. 1.18 ticks)
 
 
-Proven optimal solution
-MIP Solution:        -5866.305449    (124233 iterations, 9773 nodes)
-Final Solve:         -5866.305564    (7 iterations)
-
-Best possible:       -5866.305449
-Absolute gap:           -0.000115
-Relative gap:           -0.000000
+Solution satisfies tolerances
 
 
                            LOWER          LEVEL          UPPER         MARGINAL
@@ -2173,9 +2167,9 @@ i4        -INF      -100000.0000          .              .
           LOWER          LEVEL          UPPER         MARGINAL
 
 i1        -INF             .              .              .          
-i2        -INF             .              .            -0.0001      
+i2        -INF             .              .              .          
 i3        -INF             .              .              .          
-i4        -INF       -99997.1227          .              .          
+i4        -INF       -99998.1058          .              .          
 
 ---- EQU bigM_a  
 
@@ -2209,21 +2203,21 @@ i4        -INF             .              .              .
 
                            LOWER          LEVEL          UPPER         MARGINAL
 
----- EQU bud_avail         -INF        50563.0091    200000.0000          .          
+---- EQU bud_avail         -INF        46532.3867    200000.0000          .          
 
 ---- EQU link_cap  
 
              LOWER          LEVEL          UPPER         MARGINAL
 
 i1.i1        -INF             .              .              .          
-i1.i2        -INF             .              .              .          
+i1.i2        -INF             .              .           -59.3369      
 i1.i3        -INF             .              .              .          
-i1.i4        -INF             .              .              .          
-i2.i1        -INF             .              .              .          
+i1.i4        -INF             .              .             EPS         
+i2.i1        -INF             .              .             EPS         
 i2.i2        -INF             .              .              .          
 i2.i3        -INF             .              .              .          
 i2.i4        -INF             .              .           -86.1799      
-i3.i1        -INF             .              .              .          
+i3.i1        -INF             .              .             EPS         
 i3.i2        -INF             .              .              .          
 i3.i3        -INF             .              .              .          
 i3.i4        -INF             .              .           -86.2520      
@@ -2239,16 +2233,16 @@ i4.i4        -INF             .              .              .
 i1        -INF             .              .              .          
 i2        -INF             .              .            -0.0001      
 i3        -INF             .              .            -0.0001      
-i4        -INF           -0.9831          .              .          
+i4        -INF             .              .            -0.0001      
 
 ---- EQU hub_connect_cap  
 
           LOWER          LEVEL          UPPER         MARGINAL
 
-i1        -INF      3.0607089E-9          .              .          
+i1        -INF             .              .              .          
 i2        -INF             .              .              .          
-i3        -INF      4.783779E-10          .              .          
-i4        -INF           -2.8773          .              .          
+i3        -INF             .              .              .          
+i4        -INF           -1.8942          .              .          
 
 ---- EQU hub_direct_cap  
 
@@ -2257,19 +2251,19 @@ i4        -INF           -2.8773          .              .
 i1.i1        -INF             .              .              .          
 i1.i2        -INF             .              .              .          
 i1.i3        -INF             .              .              .          
-i1.i4        -INF           -2.8773          .              .          
+i1.i4        -INF           -1.8942          .              .          
 i2.i1        -INF             .              .              .          
 i2.i2        -INF             .              .              .          
 i2.i3        -INF             .              .              .          
-i2.i4        -INF           -0.0297          .              .          
+i2.i4        -INF           -1.2171          .              .          
 i3.i1        -INF             .              .              .          
 i3.i2        -INF             .              .              .          
 i3.i3        -INF             .              .              .          
-i3.i4        -INF           -1.8023          .              .          
-i4.i1        -INF           -2.8773          .              .          
-i4.i2        -INF             .              .            -0.0001      
-i4.i3        -INF           -1.7930          .              .          
-i4.i4        -INF           -5.7545          .              .          
+i3.i4        -INF           -1.6242          .              .          
+i4.i1        -INF           -1.8942          .              .          
+i4.i2        -INF           -1.2171          .              .          
+i4.i3        -INF           -1.6242          .              .          
+i4.i4        -INF           -3.7884          .              .          
 
                            LOWER          LEVEL          UPPER         MARGINAL
 
@@ -2287,7 +2281,7 @@ i2.i3          .              .              .          8251.2487
 i2.i4          .              .              .          1086.9033      
 i3.i1          .              .              .              .          
 i3.i2          .              .              .              .          
-i3.i4          .              .              .           533.2801      
+i3.i4          .              .              .           533.2800      
 i4.i1          .              .              .              .          
 i4.i2          .              .              .              .          
 i4.i3          .              .              .              .          
@@ -2304,8 +2298,8 @@ i2.i3          .              .              .              .
 i2.i4          .              .              .              .          
 i3.i1          .              .              .              .          
 i3.i2          .              .              .              .          
-i3.i4          .       -8.54558E-11          .              .          
-i4.i1          .       4.546549E-11          .              .          
+i3.i4          .              .              .              .          
+i4.i1          .              .              .              .          
 i4.i2          .              .              .              .          
 i4.i3          .              .              .              .          
 
@@ -2321,8 +2315,8 @@ i2.i3          .              .              .              .
 i2.i4          .              .              .              .          
 i3.i1          .              .              .              .          
 i3.i2          .              .              .              .          
-i3.i4          .       8.545575E-11          .              .          
-i4.i1          .       -4.54655E-11          .              .          
+i3.i4          .              .              .              .          
+i4.i1          .              .              .              .          
 i4.i2          .              .              .              .          
 i4.i3          .              .              .              .          
 
@@ -2587,16 +2581,16 @@ i4.i4.i4          .              .              .              .
 
              LOWER          LEVEL          UPPER         MARGINAL
 
-i1.i2         1.0000         1.0000         1.0000          .          
-i1.i3         1.0000         1.0000         1.0000          .          
+i1.i2         1.0000         1.0000         1.0000         EPS         
+i1.i3         1.0000         1.0000         1.0000         EPS         
 i1.i4         1.0000         1.0000         1.0000         EPS         
 i2.i1         1.0000         1.0000         1.0000          .          
-i2.i3         1.0000         1.0000         1.0000          .          
+i2.i3         1.0000         1.0000         1.0000         EPS         
 i2.i4         1.0000         1.0000         1.0000         EPS         
 i3.i1         1.0000         1.0000         1.0000          .          
 i3.i2         1.0000         1.0000         1.0000          .          
 i3.i4         1.0000         1.0000         1.0000         EPS         
-i4.i1         1.0000         1.0000         1.0000          .          
+i4.i1         1.0000         1.0000         1.0000         EPS         
 i4.i2         1.0000         1.0000         1.0000         EPS         
 i4.i3         1.0000         1.0000         1.0000         EPS         
 
@@ -2604,16 +2598,16 @@ i4.i3         1.0000         1.0000         1.0000         EPS
 
              LOWER          LEVEL          UPPER         MARGINAL
 
-i1.i2        -INF             .              .       -209283.6802      
-i1.i3        -INF             .              .       -177734.8815      
-i1.i4        -INF             .              .        -53669.5422      
+i1.i2        -INF           -1.0000          .              .          
+i1.i3        -INF           -1.0000          .              .          
+i1.i4        -INF           -1.0000          .              .          
 i2.i1        -INF             .              .       -205583.2838      
-i2.i3        -INF             .              .        -84452.0927      
+i2.i3        -INF           -1.0000          .              .          
 i2.i4        -INF           -0.7622          .              .          
 i3.i1        -INF             .              .       -181048.6421      
 i3.i2        -INF             .              .        -85139.8209      
 i3.i4        -INF           -0.7489          .              .          
-i4.i1        -INF             .              .        -56473.5241      
+i4.i1        -INF           -1.0000          .              .          
 i4.i2        -INF           -0.7647          .              .          
 i4.i3        -INF           -0.7510          .              .          
 
@@ -2633,7 +2627,7 @@ i4.i4          .              .              .              .
 i1.i1.i1.i1        -1.0000          .            +INF             .          
 i1.i1.i1.i2        -1.0000          .            +INF             .          
 i1.i1.i1.i3        -1.0000          .            +INF             .          
-i1.i1.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i1.i1.i1.i4        -1.0000          .            +INF             .          
 i1.i1.i2.i1        -1.0000          .            +INF             .          
 i1.i1.i2.i2        -1.0000          .            +INF             .          
 i1.i1.i2.i3        -1.0000          .            +INF             .          
@@ -2648,8 +2642,8 @@ i1.i1.i4.i3        -1.0000        -0.2490        +INF             .
 i1.i1.i4.i4        -1.0000          .            +INF             .          
 i1.i2.i1.i1        -1.0000          .            +INF             .          
 i1.i2.i1.i2        -1.0000          .            +INF             .          
-i1.i2.i1.i3        -1.0000          .            +INF             .          
-i1.i2.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i1.i2.i1.i3        -1.0000        -1.0000        +INF       177734.8815      
+i1.i2.i1.i4        -1.0000        -1.0000        +INF        55199.8662      
 i1.i2.i2.i1        -1.0000          .            +INF             .          
 i1.i2.i2.i2        -1.0000          .            +INF             .          
 i1.i2.i2.i3        -1.0000          .            +INF             .          
@@ -2665,7 +2659,7 @@ i1.i2.i4.i4        -1.0000          .            +INF             .
 i1.i3.i1.i1        -1.0000          .            +INF             .          
 i1.i3.i1.i2        -1.0000          .            +INF             .          
 i1.i3.i1.i3        -1.0000          .            +INF             .          
-i1.i3.i1.i4        -1.0000   -1.219213E-9        +INF             .          
+i1.i3.i1.i4        -1.0000          .            +INF             .          
 i1.i3.i2.i1        -1.0000          .            +INF             .          
 i1.i3.i2.i2        -1.0000          .            +INF             .          
 i1.i3.i2.i3        -1.0000          .            +INF             .          
@@ -2679,15 +2673,15 @@ i1.i3.i4.i2        -1.0000        -0.2353        +INF             .
 i1.i3.i4.i3        -1.0000        -0.2490        +INF             .          
 i1.i3.i4.i4        -1.0000          .            +INF             .          
 i1.i4.i1.i1        -1.0000          .            +INF             .          
-i1.i4.i1.i2        -1.0000          .            +INF             .          
+i1.i4.i1.i2        -1.0000        -1.0000        +INF             .          
 i1.i4.i1.i3        -1.0000          .            +INF             .          
-i1.i4.i1.i4        -1.0000   -1.219213E-9        +INF             .          
+i1.i4.i1.i4        -1.0000          .            +INF             .          
 i1.i4.i2.i1        -1.0000          .            +INF             .          
 i1.i4.i2.i2        -1.0000          .            +INF             .          
-i1.i4.i2.i3        -1.0000          .            +INF             .          
+i1.i4.i2.i3        -1.0000        -1.0000        +INF            EPS         
 i1.i4.i2.i4        -1.0000        -0.2378        +INF             .          
 i1.i4.i3.i1        -1.0000          .            +INF             .          
-i1.i4.i3.i2        -1.0000          .            +INF             .          
+i1.i4.i3.i2        -1.0000        -1.0000        +INF             .          
 i1.i4.i3.i3        -1.0000          .            +INF             .          
 i1.i4.i3.i4        -1.0000        -0.2511        +INF             .          
 i1.i4.i4.i1        -1.0000          .            +INF             .          
@@ -2697,10 +2691,10 @@ i1.i4.i4.i4        -1.0000          .            +INF             .
 i2.i1.i1.i1        -1.0000          .            +INF             .          
 i2.i1.i1.i2        -1.0000          .            +INF             .          
 i2.i1.i1.i3        -1.0000          .            +INF             .          
-i2.i1.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i2.i1.i1.i4        -1.0000          .            +INF             .          
 i2.i1.i2.i1        -1.0000          .            +INF             .          
 i2.i1.i2.i2        -1.0000          .            +INF             .          
-i2.i1.i2.i3        -1.0000          .            +INF             .          
+i2.i1.i2.i3        -1.0000        -1.0000        +INF             .          
 i2.i1.i2.i4        -1.0000        -0.2378        +INF             .          
 i2.i1.i3.i1        -1.0000          .            +INF             .          
 i2.i1.i3.i2        -1.0000          .            +INF             .          
@@ -2713,7 +2707,7 @@ i2.i1.i4.i4        -1.0000          .            +INF             .
 i2.i2.i1.i1        -1.0000          .            +INF             .          
 i2.i2.i1.i2        -1.0000          .            +INF             .          
 i2.i2.i1.i3        -1.0000          .            +INF             .          
-i2.i2.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i2.i2.i1.i4        -1.0000          .            +INF             .          
 i2.i2.i2.i1        -1.0000          .            +INF             .          
 i2.i2.i2.i2        -1.0000          .            +INF             .          
 i2.i2.i2.i3        -1.0000          .            +INF             .          
@@ -2728,8 +2722,8 @@ i2.i2.i4.i3        -1.0000        -0.2490        +INF             .
 i2.i2.i4.i4        -1.0000          .            +INF             .          
 i2.i3.i1.i1        -1.0000          .            +INF             .          
 i2.i3.i1.i2        -1.0000          .            +INF             .          
-i2.i3.i1.i3        -1.0000          .            +INF             .          
-i2.i3.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i2.i3.i1.i3        -1.0000        -1.0000        +INF            EPS         
+i2.i3.i1.i4        -1.0000        -1.0000        +INF            EPS         
 i2.i3.i2.i1        -1.0000          .            +INF             .          
 i2.i3.i2.i2        -1.0000          .            +INF             .          
 i2.i3.i2.i3        -1.0000          .            +INF             .          
@@ -2745,12 +2739,12 @@ i2.i3.i4.i4        -1.0000          .            +INF             .
 i2.i4.i1.i1        -1.0000          .            +INF             .          
 i2.i4.i1.i2        -1.0000          .            +INF             .          
 i2.i4.i1.i3        -1.0000          .            +INF             .          
-i2.i4.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i2.i4.i1.i4        -1.0000        -1.0000        +INF        80171.4075      
 i2.i4.i2.i1        -1.0000          .            +INF             .          
 i2.i4.i2.i2        -1.0000          .            +INF             .          
 i2.i4.i2.i3        -1.0000          .            +INF             .          
-i2.i4.i2.i4        -1.0000        -1.0000        +INF       118897.8290      
-i2.i4.i3.i1        -1.0000          .            +INF             .          
+i2.i4.i2.i4        -1.0000        -1.0000        +INF       118897.8296      
+i2.i4.i3.i1        -1.0000        -1.0000        +INF             .          
 i2.i4.i3.i2        -1.0000          .            +INF             .          
 i2.i4.i3.i3        -1.0000          .            +INF             .          
 i2.i4.i3.i4        -1.0000        -0.2511        +INF             .          
@@ -2761,7 +2755,7 @@ i2.i4.i4.i4        -1.0000          .            +INF             .
 i3.i1.i1.i1        -1.0000          .            +INF             .          
 i3.i1.i1.i2        -1.0000          .            +INF             .          
 i3.i1.i1.i3        -1.0000          .            +INF             .          
-i3.i1.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i3.i1.i1.i4        -1.0000          .            +INF             .          
 i3.i1.i2.i1        -1.0000          .            +INF             .          
 i3.i1.i2.i2        -1.0000          .            +INF             .          
 i3.i1.i2.i3        -1.0000          .            +INF             .          
@@ -2770,14 +2764,14 @@ i3.i1.i3.i1        -1.0000          .            +INF             .
 i3.i1.i3.i2        -1.0000          .            +INF             .          
 i3.i1.i3.i3        -1.0000          .            +INF             .          
 i3.i1.i3.i4        -1.0000        -0.2511        +INF             .          
-i3.i1.i4.i1        -1.0000   2.678386E-10        +INF             .          
+i3.i1.i4.i1        -1.0000        -1.0000        +INF             .          
 i3.i1.i4.i2        -1.0000        -0.2353        +INF             .          
 i3.i1.i4.i3        -1.0000        -0.2490        +INF             .          
 i3.i1.i4.i4        -1.0000          .            +INF             .          
 i3.i2.i1.i1        -1.0000          .            +INF             .          
-i3.i2.i1.i2        -1.0000          .            +INF             .          
+i3.i2.i1.i2        -1.0000        -1.0000        +INF            EPS         
 i3.i2.i1.i3        -1.0000          .            +INF             .          
-i3.i2.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i3.i2.i1.i4        -1.0000        -1.0000        +INF            EPS         
 i3.i2.i2.i1        -1.0000          .            +INF             .          
 i3.i2.i2.i2        -1.0000          .            +INF             .          
 i3.i2.i2.i3        -1.0000          .            +INF             .          
@@ -2793,7 +2787,7 @@ i3.i2.i4.i4        -1.0000          .            +INF             .
 i3.i3.i1.i1        -1.0000          .            +INF             .          
 i3.i3.i1.i2        -1.0000          .            +INF             .          
 i3.i3.i1.i3        -1.0000          .            +INF             .          
-i3.i3.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i3.i3.i1.i4        -1.0000          .            +INF             .          
 i3.i3.i2.i1        -1.0000          .            +INF             .          
 i3.i3.i2.i2        -1.0000          .            +INF             .          
 i3.i3.i2.i3        -1.0000          .            +INF             .          
@@ -2809,15 +2803,15 @@ i3.i3.i4.i4        -1.0000          .            +INF             .
 i3.i4.i1.i1        -1.0000          .            +INF             .          
 i3.i4.i1.i2        -1.0000          .            +INF             .          
 i3.i4.i1.i3        -1.0000          .            +INF             .          
-i3.i4.i1.i4        -1.0000   -1.219213E-9        +INF             .          
-i3.i4.i2.i1        -1.0000          .            +INF             .          
+i3.i4.i1.i4        -1.0000          .            +INF             .          
+i3.i4.i2.i1        -1.0000        -1.0000        +INF             .          
 i3.i4.i2.i2        -1.0000          .            +INF             .          
 i3.i4.i2.i3        -1.0000          .            +INF             .          
 i3.i4.i2.i4        -1.0000        -0.2378        +INF             .          
 i3.i4.i3.i1        -1.0000          .            +INF             .          
 i3.i4.i3.i2        -1.0000          .            +INF             .          
 i3.i4.i3.i3        -1.0000          .            +INF             .          
-i3.i4.i3.i4        -1.0000        -1.0000        +INF        44920.0391      
+i3.i4.i3.i4        -1.0000        -1.0000        +INF        44920.0393      
 i3.i4.i4.i1        -1.0000          .            +INF             .          
 i3.i4.i4.i2        -1.0000        -0.2353        +INF             .          
 i3.i4.i4.i3        -1.0000        -0.2490        +INF             .          
@@ -2825,28 +2819,28 @@ i3.i4.i4.i4        -1.0000          .            +INF             .
 i4.i1.i1.i1        -1.0000          .            +INF             .          
 i4.i1.i1.i2        -1.0000          .            +INF             .          
 i4.i1.i1.i3        -1.0000          .            +INF             .          
-i4.i1.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i4.i1.i1.i4        -1.0000          .            +INF             .          
 i4.i1.i2.i1        -1.0000          .            +INF             .          
 i4.i1.i2.i2        -1.0000          .            +INF             .          
 i4.i1.i2.i3        -1.0000          .            +INF             .          
 i4.i1.i2.i4        -1.0000        -0.2378        +INF             .          
 i4.i1.i3.i1        -1.0000          .            +INF             .          
-i4.i1.i3.i2        -1.0000          .            +INF             .          
+i4.i1.i3.i2        -1.0000        -1.0000        +INF             .          
 i4.i1.i3.i3        -1.0000          .            +INF             .          
 i4.i1.i3.i4        -1.0000        -0.2511        +INF             .          
-i4.i1.i4.i1        -1.0000   -3.13304E-10        +INF             .          
+i4.i1.i4.i1        -1.0000          .            +INF             .          
 i4.i1.i4.i2        -1.0000        -0.2353        +INF             .          
 i4.i1.i4.i3        -1.0000        -0.2490        +INF             .          
 i4.i1.i4.i4        -1.0000          .            +INF             .          
 i4.i2.i1.i1        -1.0000          .            +INF             .          
 i4.i2.i1.i2        -1.0000          .            +INF             .          
 i4.i2.i1.i3        -1.0000          .            +INF             .          
-i4.i2.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i4.i2.i1.i4        -1.0000          .            +INF             .          
 i4.i2.i2.i1        -1.0000          .            +INF             .          
 i4.i2.i2.i2        -1.0000          .            +INF             .          
 i4.i2.i2.i3        -1.0000          .            +INF             .          
 i4.i2.i2.i4        -1.0000        -0.2378        +INF             .          
-i4.i2.i3.i1        -1.0000          .            +INF             .          
+i4.i2.i3.i1        -1.0000        -1.0000        +INF             .          
 i4.i2.i3.i2        -1.0000          .            +INF             .          
 i4.i2.i3.i3        -1.0000          .            +INF             .          
 i4.i2.i3.i4        -1.0000        -0.2511        +INF             .          
@@ -2855,25 +2849,25 @@ i4.i2.i4.i2        -1.0000        -1.0000        +INF       140986.8894
 i4.i2.i4.i3        -1.0000        -0.2490        +INF             .          
 i4.i2.i4.i4        -1.0000          .            +INF             .          
 i4.i3.i1.i1        -1.0000          .            +INF             .          
-i4.i3.i1.i2        -1.0000          .            +INF             .          
+i4.i3.i1.i2        -1.0000        -1.0000        +INF       263512.9209      
 i4.i3.i1.i3        -1.0000          .            +INF             .          
-i4.i3.i1.i4        -1.0000   -8.12808E-10        +INF             .          
-i4.i3.i2.i1        -1.0000          .            +INF             .          
+i4.i3.i1.i4        -1.0000          .            +INF             .          
+i4.i3.i2.i1        -1.0000        -1.0000        +INF             .          
 i4.i3.i2.i2        -1.0000          .            +INF             .          
-i4.i3.i2.i3        -1.0000          .            +INF             .          
+i4.i3.i2.i3        -1.0000        -1.0000        +INF       296637.8375      
 i4.i3.i2.i4        -1.0000        -0.2378        +INF             .          
 i4.i3.i3.i1        -1.0000          .            +INF             .          
 i4.i3.i3.i2        -1.0000          .            +INF             .          
 i4.i3.i3.i3        -1.0000          .            +INF             .          
 i4.i3.i3.i4        -1.0000        -0.2511        +INF             .          
-i4.i3.i4.i1        -1.0000   2.678386E-10        +INF             .          
+i4.i3.i4.i1        -1.0000        -1.0000        +INF        91613.4574      
 i4.i3.i4.i2        -1.0000        -0.2353        +INF             .          
 i4.i3.i4.i3        -1.0000        -1.0000        +INF        49164.9384      
 i4.i3.i4.i4        -1.0000          .            +INF             .          
 i4.i4.i1.i1        -1.0000          .            +INF             .          
 i4.i4.i1.i2        -1.0000          .            +INF             .          
 i4.i4.i1.i3        -1.0000          .            +INF             .          
-i4.i4.i1.i4        -1.0000   -8.12808E-10        +INF             .          
+i4.i4.i1.i4        -1.0000          .            +INF             .          
 i4.i4.i2.i1        -1.0000          .            +INF             .          
 i4.i4.i2.i2        -1.0000          .            +INF             .          
 i4.i4.i2.i3        -1.0000          .            +INF             .          
@@ -2894,7 +2888,7 @@ i4.i4.i4.i4        -1.0000          .            +INF             .
 i1.i1.i1.i1        -INF             .              .              .          
 i1.i1.i1.i2        -INF             .              .              .          
 i1.i1.i1.i3        -INF             .              .              .          
-i1.i1.i1.i4        -INF      -8.12809E-10          .              .          
+i1.i1.i1.i4        -INF             .              .              .          
 i1.i1.i2.i1        -INF             .              .              .          
 i1.i1.i2.i2        -INF             .              .              .          
 i1.i1.i2.i3        -INF             .              .              .          
@@ -2910,7 +2904,7 @@ i1.i1.i4.i4        -INF             .              .              .
 i1.i2.i1.i1        -INF             .              .              .          
 i1.i2.i1.i2        -INF             .              .              .          
 i1.i2.i1.i3        -INF             .              .              .          
-i1.i2.i1.i4        -INF      -8.12809E-10          .              .          
+i1.i2.i1.i4        -INF             .              .              .          
 i1.i2.i2.i1        -INF             .              .              .          
 i1.i2.i2.i2        -INF             .              .              .          
 i1.i2.i2.i3        -INF             .              .              .          
@@ -2926,7 +2920,7 @@ i1.i2.i4.i4        -INF             .              .              .
 i1.i3.i1.i1        -INF             .              .              .          
 i1.i3.i1.i2        -INF             .              .              .          
 i1.i3.i1.i3        -INF             .              .              .          
-i1.i3.i1.i4        -INF      -8.12809E-10          .              .          
+i1.i3.i1.i4        -INF             .              .              .          
 i1.i3.i2.i1        -INF             .              .              .          
 i1.i3.i2.i2        -INF             .              .              .          
 i1.i3.i2.i3        -INF             .              .              .          
@@ -2942,7 +2936,7 @@ i1.i3.i4.i4        -INF             .              .              .
 i1.i4.i1.i1        -INF             .              .              .          
 i1.i4.i1.i2        -INF             .              .              .          
 i1.i4.i1.i3        -INF             .              .              .          
-i1.i4.i1.i4        -INF      -8.12809E-10          .              .          
+i1.i4.i1.i4        -INF             .              .              .          
 i1.i4.i2.i1        -INF             .              .              .          
 i1.i4.i2.i2        -INF             .              .              .          
 i1.i4.i2.i3        -INF             .              .              .          
@@ -2958,7 +2952,7 @@ i1.i4.i4.i4        -INF             .              .              .
 i2.i1.i1.i1        -INF             .              .              .          
 i2.i1.i1.i2        -INF             .              .              .          
 i2.i1.i1.i3        -INF             .              .              .          
-i2.i1.i1.i4        -INF      -8.12809E-10          .              .          
+i2.i1.i1.i4        -INF             .              .              .          
 i2.i1.i2.i1        -INF             .              .              .          
 i2.i1.i2.i2        -INF             .              .              .          
 i2.i1.i2.i3        -INF             .              .              .          
@@ -2974,7 +2968,7 @@ i2.i1.i4.i4        -INF             .              .              .
 i2.i2.i1.i1        -INF             .              .              .          
 i2.i2.i1.i2        -INF             .              .              .          
 i2.i2.i1.i3        -INF             .              .              .          
-i2.i2.i1.i4        -INF      -8.12809E-10          .              .          
+i2.i2.i1.i4        -INF             .              .              .          
 i2.i2.i2.i1        -INF             .              .              .          
 i2.i2.i2.i2        -INF             .              .              .          
 i2.i2.i2.i3        -INF             .              .              .          
@@ -2990,7 +2984,7 @@ i2.i2.i4.i4        -INF             .              .              .
 i2.i3.i1.i1        -INF             .              .              .          
 i2.i3.i1.i2        -INF             .              .              .          
 i2.i3.i1.i3        -INF             .              .              .          
-i2.i3.i1.i4        -INF      -8.12809E-10          .              .          
+i2.i3.i1.i4        -INF             .              .              .          
 i2.i3.i2.i1        -INF             .              .              .          
 i2.i3.i2.i2        -INF             .              .              .          
 i2.i3.i2.i3        -INF             .              .              .          
@@ -3006,7 +3000,7 @@ i2.i3.i4.i4        -INF             .              .              .
 i2.i4.i1.i1        -INF             .              .              .          
 i2.i4.i1.i2        -INF             .              .              .          
 i2.i4.i1.i3        -INF             .              .              .          
-i2.i4.i1.i4        -INF      -8.12809E-10          .              .          
+i2.i4.i1.i4        -INF             .              .              .          
 i2.i4.i2.i1        -INF             .              .              .          
 i2.i4.i2.i2        -INF             .              .              .          
 i2.i4.i2.i3        -INF             .              .              .          
@@ -3022,7 +3016,7 @@ i2.i4.i4.i4        -INF             .              .              .
 i3.i1.i1.i1        -INF             .              .              .          
 i3.i1.i1.i2        -INF             .              .              .          
 i3.i1.i1.i3        -INF             .              .              .          
-i3.i1.i1.i4        -INF      -8.12809E-10          .              .          
+i3.i1.i1.i4        -INF             .              .              .          
 i3.i1.i2.i1        -INF             .              .              .          
 i3.i1.i2.i2        -INF             .              .              .          
 i3.i1.i2.i3        -INF             .              .              .          
@@ -3038,7 +3032,7 @@ i3.i1.i4.i4        -INF             .              .              .
 i3.i2.i1.i1        -INF             .              .              .          
 i3.i2.i1.i2        -INF             .              .              .          
 i3.i2.i1.i3        -INF             .              .              .          
-i3.i2.i1.i4        -INF      -8.12809E-10          .              .          
+i3.i2.i1.i4        -INF             .              .              .          
 i3.i2.i2.i1        -INF             .              .              .          
 i3.i2.i2.i2        -INF             .              .              .          
 i3.i2.i2.i3        -INF             .              .              .          
@@ -3054,7 +3048,7 @@ i3.i2.i4.i4        -INF             .              .              .
 i3.i3.i1.i1        -INF             .              .              .          
 i3.i3.i1.i2        -INF             .              .              .          
 i3.i3.i1.i3        -INF             .              .              .          
-i3.i3.i1.i4        -INF      -8.12809E-10          .              .          
+i3.i3.i1.i4        -INF             .              .              .          
 i3.i3.i2.i1        -INF             .              .              .          
 i3.i3.i2.i2        -INF             .              .              .          
 i3.i3.i2.i3        -INF             .              .              .          
@@ -3070,7 +3064,7 @@ i3.i3.i4.i4        -INF             .              .              .
 i3.i4.i1.i1        -INF             .              .              .          
 i3.i4.i1.i2        -INF             .              .              .          
 i3.i4.i1.i3        -INF             .              .              .          
-i3.i4.i1.i4        -INF      -8.12809E-10          .              .          
+i3.i4.i1.i4        -INF             .              .              .          
 i3.i4.i2.i1        -INF             .              .              .          
 i3.i4.i2.i2        -INF             .              .              .          
 i3.i4.i2.i3        -INF             .              .              .          
@@ -3078,7 +3072,7 @@ i3.i4.i2.i4        -INF           -0.2378          .              .
 i3.i4.i3.i1        -INF             .              .              .          
 i3.i4.i3.i2        -INF             .              .              .          
 i3.i4.i3.i3        -INF             .              .              .          
-i3.i4.i3.i4        -INF      -1.678875E-9          .              .          
+i3.i4.i3.i4        -INF             .              .              .          
 i3.i4.i4.i1        -INF             .              .              .          
 i3.i4.i4.i2        -INF           -0.2353          .              .          
 i3.i4.i4.i3        -INF           -0.2490          .              .          
@@ -3086,7 +3080,7 @@ i3.i4.i4.i4        -INF             .              .              .
 i4.i1.i1.i1        -INF             .              .              .          
 i4.i1.i1.i2        -INF             .              .              .          
 i4.i1.i1.i3        -INF             .              .              .          
-i4.i1.i1.i4        -INF      -8.12809E-10          .              .          
+i4.i1.i1.i4        -INF             .              .              .          
 i4.i1.i2.i1        -INF             .              .              .          
 i4.i1.i2.i2        -INF             .              .              .          
 i4.i1.i2.i3        -INF             .              .              .          
@@ -3102,7 +3096,7 @@ i4.i1.i4.i4        -INF             .              .              .
 i4.i2.i1.i1        -INF             .              .              .          
 i4.i2.i1.i2        -INF             .              .              .          
 i4.i2.i1.i3        -INF             .              .              .          
-i4.i2.i1.i4        -INF      -8.12809E-10          .              .          
+i4.i2.i1.i4        -INF             .              .              .          
 i4.i2.i2.i1        -INF             .              .              .          
 i4.i2.i2.i2        -INF             .              .              .          
 i4.i2.i2.i3        -INF             .              .              .          
@@ -3118,7 +3112,7 @@ i4.i2.i4.i4        -INF             .              .              .
 i4.i3.i1.i1        -INF             .              .              .          
 i4.i3.i1.i2        -INF             .              .              .          
 i4.i3.i1.i3        -INF             .              .              .          
-i4.i3.i1.i4        -INF      -8.12809E-10          .              .          
+i4.i3.i1.i4        -INF             .              .              .          
 i4.i3.i2.i1        -INF             .              .              .          
 i4.i3.i2.i2        -INF             .              .              .          
 i4.i3.i2.i3        -INF             .              .              .          
@@ -3134,7 +3128,7 @@ i4.i3.i4.i4        -INF             .              .              .
 i4.i4.i1.i1        -INF             .              .              .          
 i4.i4.i1.i2        -INF             .              .              .          
 i4.i4.i1.i3        -INF             .              .              .          
-i4.i4.i1.i4        -INF      -8.12809E-10          .              .          
+i4.i4.i1.i4        -INF             .              .              .          
 i4.i4.i2.i1        -INF             .              .              .          
 i4.i4.i2.i2        -INF             .              .              .          
 i4.i4.i2.i3        -INF             .              .              .          
@@ -3170,8 +3164,8 @@ i1.i1.i4.i3        -INF             .              .              .
 i1.i1.i4.i4        -INF             .              .              .          
 i1.i2.i1.i1        -INF             .              .              .          
 i1.i2.i1.i2        -INF             .              .              .          
-i1.i2.i1.i3        -INF             .              .              .          
-i1.i2.i1.i4        -INF             .              .              .          
+i1.i2.i1.i3        -INF           -1.0000          .              .          
+i1.i2.i1.i4        -INF           -1.0000          .              .          
 i1.i2.i2.i1        -INF             .              .              .          
 i1.i2.i2.i2        -INF             .              .              .          
 i1.i2.i2.i3        -INF             .              .              .          
@@ -3187,7 +3181,7 @@ i1.i2.i4.i4        -INF             .              .              .
 i1.i3.i1.i1        -INF             .              .              .          
 i1.i3.i1.i2        -INF             .              .              .          
 i1.i3.i1.i3        -INF             .              .              .          
-i1.i3.i1.i4        -INF      -4.06404E-10          .              .          
+i1.i3.i1.i4        -INF             .              .              .          
 i1.i3.i2.i1        -INF             .              .              .          
 i1.i3.i2.i2        -INF             .              .              .          
 i1.i3.i2.i3        -INF             .              .              .          
@@ -3201,17 +3195,17 @@ i1.i3.i4.i2        -INF             .              .              .
 i1.i3.i4.i3        -INF             .              .              .          
 i1.i3.i4.i4        -INF             .              .              .          
 i1.i4.i1.i1        -INF             .              .              .          
-i1.i4.i1.i2        -INF             .              .              .          
+i1.i4.i1.i2        -INF           -1.0000          .              .          
 i1.i4.i1.i3        -INF             .              .              .          
-i1.i4.i1.i4        -INF      -4.06404E-10          .              .          
+i1.i4.i1.i4        -INF             .              .              .          
 i1.i4.i2.i1        -INF             .              .              .          
 i1.i4.i2.i2        -INF             .              .              .          
-i1.i4.i2.i3        -INF             .              .              .          
+i1.i4.i2.i3        -INF           -1.0000          .              .          
 i1.i4.i2.i4        -INF             .              .              .          
 i1.i4.i3.i1        -INF             .              .              .          
-i1.i4.i3.i2        -INF             .              .              .          
+i1.i4.i3.i2        -INF           -1.0000          .              .          
 i1.i4.i3.i3        -INF             .              .              .          
-i1.i4.i3.i4        -INF      -1.423688E-9          .              .          
+i1.i4.i3.i4        -INF             .              .              .          
 i1.i4.i4.i1        -INF             .              .              .          
 i1.i4.i4.i2        -INF             .              .              .          
 i1.i4.i4.i3        -INF             .              .              .          
@@ -3222,7 +3216,7 @@ i2.i1.i1.i3        -INF             .              .              .
 i2.i1.i1.i4        -INF             .              .              .          
 i2.i1.i2.i1        -INF             .              .              .          
 i2.i1.i2.i2        -INF             .              .              .          
-i2.i1.i2.i3        -INF             .              .              .          
+i2.i1.i2.i3        -INF           -1.0000          .              .          
 i2.i1.i2.i4        -INF             .              .              .          
 i2.i1.i3.i1        -INF             .              .              .          
 i2.i1.i3.i2        -INF             .              .              .          
@@ -3250,8 +3244,8 @@ i2.i2.i4.i3        -INF             .              .              .
 i2.i2.i4.i4        -INF             .              .              .          
 i2.i3.i1.i1        -INF             .              .              .          
 i2.i3.i1.i2        -INF             .              .              .          
-i2.i3.i1.i3        -INF             .              .              .          
-i2.i3.i1.i4        -INF             .              .              .          
+i2.i3.i1.i3        -INF           -1.0000          .              .          
+i2.i3.i1.i4        -INF           -1.0000          .              .          
 i2.i3.i2.i1        -INF             .              .              .          
 i2.i3.i2.i2        -INF             .              .              .          
 i2.i3.i2.i3        -INF             .              .              .          
@@ -3267,12 +3261,12 @@ i2.i3.i4.i4        -INF             .              .              .
 i2.i4.i1.i1        -INF             .              .              .          
 i2.i4.i1.i2        -INF             .              .              .          
 i2.i4.i1.i3        -INF             .              .              .          
-i2.i4.i1.i4        -INF             .              .              .          
+i2.i4.i1.i4        -INF           -1.0000          .              .          
 i2.i4.i2.i1        -INF             .              .              .          
 i2.i4.i2.i2        -INF             .              .              .          
 i2.i4.i2.i3        -INF             .              .              .          
 i2.i4.i2.i4        -INF           -0.7622          .              .          
-i2.i4.i3.i1        -INF             .              .              .          
+i2.i4.i3.i1        -INF           -1.0000          .              .          
 i2.i4.i3.i2        -INF             .              .              .          
 i2.i4.i3.i3        -INF             .              .              .          
 i2.i4.i3.i4        -INF             .              .              .          
@@ -3291,15 +3285,15 @@ i3.i1.i2.i4        -INF             .              .              .
 i3.i1.i3.i1        -INF             .              .              .          
 i3.i1.i3.i2        -INF             .              .              .          
 i3.i1.i3.i3        -INF             .              .              .          
-i3.i1.i3.i4        -INF      -1.423688E-9          .              .          
-i3.i1.i4.i1        -INF      2.678386E-10          .              .          
+i3.i1.i3.i4        -INF             .              .              .          
+i3.i1.i4.i1        -INF           -1.0000          .              .          
 i3.i1.i4.i2        -INF             .              .              .          
 i3.i1.i4.i3        -INF             .              .              .          
 i3.i1.i4.i4        -INF             .              .              .          
 i3.i2.i1.i1        -INF             .              .              .          
-i3.i2.i1.i2        -INF             .              .              .          
+i3.i2.i1.i2        -INF           -1.0000          .              .          
 i3.i2.i1.i3        -INF             .              .              .          
-i3.i2.i1.i4        -INF             .              .              .          
+i3.i2.i1.i4        -INF           -1.0000          .              .          
 i3.i2.i2.i1        -INF             .              .              .          
 i3.i2.i2.i2        -INF             .              .              .          
 i3.i2.i2.i3        -INF             .              .              .          
@@ -3331,8 +3325,8 @@ i3.i3.i4.i4        -INF             .              .              .
 i3.i4.i1.i1        -INF             .              .              .          
 i3.i4.i1.i2        -INF             .              .              .          
 i3.i4.i1.i3        -INF             .              .              .          
-i3.i4.i1.i4        -INF      -4.06404E-10          .              .          
-i3.i4.i2.i1        -INF             .              .              .          
+i3.i4.i1.i4        -INF             .              .              .          
+i3.i4.i2.i1        -INF           -1.0000          .              .          
 i3.i4.i2.i2        -INF             .              .              .          
 i3.i4.i2.i3        -INF             .              .              .          
 i3.i4.i2.i4        -INF             .              .              .          
@@ -3353,10 +3347,10 @@ i4.i1.i2.i2        -INF             .              .              .
 i4.i1.i2.i3        -INF             .              .              .          
 i4.i1.i2.i4        -INF             .              .              .          
 i4.i1.i3.i1        -INF             .              .              .          
-i4.i1.i3.i2        -INF             .              .              .          
+i4.i1.i3.i2        -INF           -1.0000          .              .          
 i4.i1.i3.i3        -INF             .              .              .          
 i4.i1.i3.i4        -INF             .              .              .          
-i4.i1.i4.i1        -INF      -3.13304E-10          .              .          
+i4.i1.i4.i1        -INF             .              .              .          
 i4.i1.i4.i2        -INF             .              .              .          
 i4.i1.i4.i3        -INF             .              .              .          
 i4.i1.i4.i4        -INF             .              .              .          
@@ -3368,7 +3362,7 @@ i4.i2.i2.i1        -INF             .              .              .
 i4.i2.i2.i2        -INF             .              .              .          
 i4.i2.i2.i3        -INF             .              .              .          
 i4.i2.i2.i4        -INF             .              .              .          
-i4.i2.i3.i1        -INF             .              .              .          
+i4.i2.i3.i1        -INF           -1.0000          .              .          
 i4.i2.i3.i2        -INF             .              .              .          
 i4.i2.i3.i3        -INF             .              .              .          
 i4.i2.i3.i4        -INF             .              .              .          
@@ -3377,18 +3371,18 @@ i4.i2.i4.i2        -INF           -0.7647          .              .
 i4.i2.i4.i3        -INF             .              .              .          
 i4.i2.i4.i4        -INF             .              .              .          
 i4.i3.i1.i1        -INF             .              .              .          
-i4.i3.i1.i2        -INF             .              .              .          
+i4.i3.i1.i2        -INF           -1.0000          .              .          
 i4.i3.i1.i3        -INF             .              .              .          
 i4.i3.i1.i4        -INF             .              .              .          
-i4.i3.i2.i1        -INF             .              .              .          
+i4.i3.i2.i1        -INF           -1.0000          .              .          
 i4.i3.i2.i2        -INF             .              .              .          
-i4.i3.i2.i3        -INF             .              .              .          
+i4.i3.i2.i3        -INF           -1.0000          .              .          
 i4.i3.i2.i4        -INF             .              .              .          
 i4.i3.i3.i1        -INF             .              .              .          
 i4.i3.i3.i2        -INF             .              .              .          
 i4.i3.i3.i3        -INF             .              .              .          
 i4.i3.i3.i4        -INF             .              .              .          
-i4.i3.i4.i1        -INF      2.678386E-10          .              .          
+i4.i3.i4.i1        -INF           -1.0000          .              .          
 i4.i3.i4.i2        -INF             .              .              .          
 i4.i3.i4.i3        -INF           -0.7510          .              .          
 i4.i3.i4.i4        -INF             .              .              .          
@@ -3418,7 +3412,7 @@ i1.i3          .              .              .             EPS
 i1.i4          .              .              .             EPS         
 i2.i1          .              .              .             EPS         
 i2.i3          .              .              .             EPS         
-i2.i4          .              .              .         -3088.5417      
+i2.i4          .              .              .         -3088.5416      
 i3.i1          .              .              .             EPS         
 i3.i2          .              .              .             EPS         
 i3.i4          .              .              .          -572.0329      
@@ -3449,9 +3443,9 @@ i4.i3         1.0000         1.0000         1.0000          .
 
 seg1.i1.i2        -INF             .              .              .          
 seg1.i1.i3        -INF             .              .              .          
-seg1.i1.i4        -INF             .              .              .          
+seg1.i1.i4        -INF           -1.2014          .              .          
 seg1.i2.i1        -INF             .              .              .          
-seg1.i2.i3        -INF             .              .              .          
+seg1.i2.i3        -INF           -0.2367          .              .          
 seg1.i2.i4        -INF             .              .              .          
 seg1.i3.i1        -INF             .              .              .          
 seg1.i3.i2        -INF             .              .              .          
@@ -3459,28 +3453,28 @@ seg1.i3.i4        -INF             .              .              .
 seg1.i4.i1        -INF             .              .              .          
 seg1.i4.i2        -INF             .              .              .          
 seg1.i4.i3        -INF             .              .              .          
-seg2.i1.i2        -INF             .              .              .          
-seg2.i1.i3        -INF             .              .              .          
+seg2.i1.i2        -INF           -2.5689          .              .          
+seg2.i1.i3        -INF           -0.2502          .              .          
 seg2.i1.i4        -INF             .              .              .          
-seg2.i2.i1        -INF             .              .              .          
+seg2.i2.i1        -INF           -0.1987          .              .          
 seg2.i2.i3        -INF             .              .              .          
 seg2.i2.i4        -INF             .              .              .          
-seg2.i3.i1        -INF             .              .              .          
-seg2.i3.i2        -INF             .              .              .          
-seg2.i3.i4        -INF      -1.164712E-9          .              .          
-seg2.i4.i1        -INF      5.637159E-10          .              .          
+seg2.i3.i1        -INF           -0.3319          .              .          
+seg2.i3.i2        -INF           -0.9382          .              .          
+seg2.i3.i4        -INF             .              .              .          
+seg2.i4.i1        -INF           -1.9847          .              .          
 seg2.i4.i2        -INF             .              .              .          
 seg2.i4.i3        -INF             .              .              .          
 seg3.i1.i2        -INF             .              .              .          
 seg3.i1.i3        -INF             .              .              .          
-seg3.i1.i4        -INF      -6.12780E-10          .              .          
+seg3.i1.i4        -INF             .              .              .          
 seg3.i2.i1        -INF             .              .              .          
 seg3.i2.i3        -INF             .              .              .          
 seg3.i2.i4        -INF           -0.0982          .              .          
 seg3.i3.i1        -INF             .              .              .          
 seg3.i3.i2        -INF             .              .              .          
 seg3.i3.i4        -INF           -0.0091          .              .          
-seg3.i4.i1        -INF      -1.37832E-10          .              .          
+seg3.i4.i1        -INF             .              .              .          
 seg3.i4.i2        -INF           -0.0982          .              .          
 seg3.i4.i3        -INF           -0.0091          .              .          
 seg4.i1.i2        -INF             .              .              .          
@@ -3500,7 +3494,7 @@ seg5.i1.i3        -INF             .              .              .
 seg5.i1.i4        -INF             .              .              .          
 seg5.i2.i1        -INF             .              .              .          
 seg5.i2.i3        -INF             .              .              .          
-seg5.i2.i4        -INF             .              .         -1962.7373      
+seg5.i2.i4        -INF             .              .         -1962.7372      
 seg5.i3.i1        -INF             .              .              .          
 seg5.i3.i2        -INF             .              .              .          
 seg5.i3.i4        -INF             .              .          -363.5212      
@@ -3512,7 +3506,7 @@ seg6.i1.i3        -INF             .              .              .
 seg6.i1.i4        -INF             .              .              .          
 seg6.i2.i1        -INF             .              .              .          
 seg6.i2.i3        -INF             .              .              .          
-seg6.i2.i4        -INF             .              .         -1962.7373      
+seg6.i2.i4        -INF             .              .         -1962.7372      
 seg6.i3.i1        -INF             .              .              .          
 seg6.i3.i2        -INF             .              .              .          
 seg6.i3.i4        -INF             .              .          -363.5212      
@@ -3583,9 +3577,9 @@ seg10.i4.i4        -INF             .              .              .
 
 seg1.i1.i2        -INF             .            22.6901          .          
 seg1.i1.i3        -INF             .            22.6518          .          
-seg1.i1.i4        -INF             .            23.5649          .          
+seg1.i1.i4        -INF           22.3635        23.5649          .          
 seg1.i2.i1        -INF             .            22.6901          .          
-seg1.i2.i3        -INF             .            24.2682          .          
+seg1.i2.i3        -INF           24.0314        24.2682          .          
 seg1.i2.i4        -INF             .            21.7181          .          
 seg1.i3.i1        -INF             .            22.6518          .          
 seg1.i3.i2        -INF             .            24.2682          .          
@@ -3593,16 +3587,16 @@ seg1.i3.i4        -INF             .            21.8656          .
 seg1.i4.i1        -INF             .            23.5649          .          
 seg1.i4.i2        -INF             .            21.7181          .          
 seg1.i4.i3        -INF             .            21.8656          .          
-seg2.i1.i2        -INF             .             3.3812          .          
-seg2.i1.i3        -INF             .             3.3812          .          
+seg2.i1.i2        -INF            0.8123         3.3812          .          
+seg2.i1.i3        -INF            3.1311         3.3812          .          
 seg2.i1.i4        -INF             .             3.3812          .          
-seg2.i2.i1        -INF             .             3.3812          .          
+seg2.i2.i1        -INF            3.1825         3.3812          .          
 seg2.i2.i3        -INF             .             3.3812          .          
 seg2.i2.i4        -INF             .             3.3812          .          
-seg2.i3.i1        -INF             .             3.3812          .          
-seg2.i3.i2        -INF             .             3.3812          .          
+seg2.i3.i1        -INF            3.0493         3.3812          .          
+seg2.i3.i2        -INF            2.4430         3.3812          .          
 seg2.i3.i4        -INF             .             3.3812          .          
-seg2.i4.i1        -INF             .             3.3812          .          
+seg2.i4.i1        -INF            1.3966         3.3812          .          
 seg2.i4.i2        -INF             .             3.3812          .          
 seg2.i4.i3        -INF             .             3.3812          .          
 seg3.i1.i2        -INF             .             0.8267          .          
@@ -3678,12 +3672,12 @@ seg8.i4.i1        -INF             .             0.0565          .
 seg8.i4.i2        -INF             .             0.8267          .          
 seg8.i4.i3        -INF             .             0.8267          .          
 seg9.i1.i2        -INF             .             0.1045          .          
-seg9.i1.i3        -INF            0.1429         0.1429          .          
+seg9.i1.i3        -INF             .             0.1429          .          
 seg9.i1.i4        -INF             .              .              .          
 seg9.i2.i1        -INF             .             0.1045          .          
 seg9.i2.i3        -INF             .              .              .          
 seg9.i2.i4        -INF             .             1.0765          .          
-seg9.i3.i1        -INF            0.1429         0.1429          .          
+seg9.i3.i1        -INF             .             0.1429          .          
 seg9.i3.i2        -INF             .              .              .          
 seg9.i3.i4        -INF             .             0.9290          .          
 seg9.i4.i1        -INF             .              .              .          
@@ -3694,16 +3688,16 @@ seg9.i4.i3        -INF             .             0.9290          .
 
              LOWER          LEVEL          UPPER         MARGINAL
 
-i1.i2          .              .              .              .          
+i1.i2          .              .              .             EPS         
 i1.i3          .              .              .             EPS         
-i1.i4          .       -9.21355E-10          .              .          
-i2.i1          .              .              .              .          
-i2.i3          .              .              .              .          
-i2.i4          .              .              .          3088.5417      
+i1.i4          .              .              .             EPS         
+i2.i1          .              .              .             EPS         
+i2.i3          .              .              .             EPS         
+i2.i4          .              .              .          3088.5416      
 i3.i1          .              .              .             EPS         
-i3.i2          .              .              .              .          
+i3.i2          .              .              .             EPS         
 i3.i4          .              .              .           572.0329      
-i4.i1          .       -3.84384E-11          .              .          
+i4.i1          .              .              .             EPS         
 i4.i2          .              .              .             EPS         
 i4.i3          .              .              .             EPS         
 
@@ -3716,10 +3710,10 @@ i1.i3          .              .              .             EPS
 i1.i4          .              .              .             EPS         
 i2.i1          .              .              .             EPS         
 i2.i3          .              .              .             EPS         
-i2.i4          .              .              .        -20633.5392      
+i2.i4          .              .              .        -20633.5386      
 i3.i1          .              .              .             EPS         
 i3.i2          .              .              .             EPS         
-i3.i4          .              .              .         -3821.5653      
+i3.i4          .              .              .         -3821.5651      
 i4.i1          .              .              .             EPS         
 i4.i2          .              .              .             EPS         
 i4.i3          .              .              .             EPS         
@@ -3728,45 +3722,45 @@ i4.i3          .              .              .             EPS
 
              LOWER          LEVEL          UPPER         MARGINAL
 
-i1.i2        -INF           -0.9950          .              .          
-i1.i3        -INF           -0.9950          .              .          
-i1.i4        -INF           -0.9950          .              .          
-i2.i1        -INF           -0.9950          .              .          
-i2.i3        -INF           -0.9950          .              .          
-i2.i4        -INF             .              .        -20633.5392      
-i3.i1        -INF           -0.9950          .              .          
-i3.i2        -INF           -0.9950          .              .          
-i3.i4        -INF             .              .         -3821.5653      
-i4.i1        -INF           -0.9950          .              .          
+i1.i2        -INF           -0.0347          .              .          
+i1.i3        -INF           -0.1196          .              .          
+i1.i4        -INF           -0.0047          .              .          
+i2.i1        -INF           -0.1215          .              .          
+i2.i3        -INF           -0.0050          .              .          
+i2.i4        -INF             .              .        -20633.5386      
+i3.i1        -INF           -0.1166          .              .          
+i3.i2        -INF           -0.0944          .              .          
+i3.i4        -INF             .              .         -3821.5651      
+i4.i1        -INF           -0.0561          .              .          
 i4.i2        -INF           -0.0025          .              .          
 i4.i3        -INF           -0.0022          .              .          
 
                            LOWER          LEVEL          UPPER         MARGINAL
 
----- VAR obj               -INF        -5866.3056        +INF             .          
----- VAR op_obj            -INF        84975.6387        +INF             .          
----- VAR pax_obj           -INF       -90841.9451        +INF             .          
+---- VAR obj               -INF        -5866.3055        +INF             .          
+---- VAR op_obj            -INF        84975.6389        +INF             .          
+---- VAR pax_obj           -INF       -90841.9452        +INF             .          
 
 ---- VAR xlen  
 
              LOWER          LEVEL          UPPER         MARGINAL
 
-i1.i2        -INF             .            +INF             .          
-i1.i3        -INF             .            +INF             .          
-i1.i4        -INF      -3.184915E-9        +INF             .          
-i2.i1        -INF             .            +INF             .          
-i2.i3        -INF             .            +INF             .          
+i1.i2        -INF           -6.4975        +INF             .          
+i1.i3        -INF           -4.2171        +INF             .          
+i1.i4        -INF           -7.6365        +INF             .          
+i2.i1        -INF           -4.1274        +INF             .          
+i2.i3        -INF           -5.9686        +INF             .          
 i2.i4        -INF           -4.1722        +INF             .          
-i3.i1        -INF             .            +INF             .          
-i3.i2        -INF             .            +INF             .          
+i3.i1        -INF           -4.2989        +INF             .          
+i3.i2        -INF           -3.2888        +INF             .          
 i3.i4        -INF           -3.9355        +INF             .          
-i4.i1        -INF      5.252776E-10        +INF             .          
+i4.i1        -INF           -5.0386        +INF             .          
 i4.i2        -INF           -4.1722        +INF             .          
 i4.i3        -INF           -3.9355        +INF             .          
 
                            LOWER          LEVEL          UPPER         MARGINAL
 
----- VAR budvar            -INF        50563.0091        +INF             .          
+---- VAR budvar            -INF        46532.3867        +INF             .          
 
 ---- VAR s  
 
@@ -3775,25 +3769,25 @@ i4.i3        -INF           -3.9355        +INF             .
 i1          .              .            +INF            0.0001      
 i2          .             1.3543        +INF             .          
 i3          .             0.5399        +INF             .          
-i4          .              .            +INF            0.0001      
+i4          .              .            +INF      1.0000000E-8      
 
 ---- VAR sh  
 
           LOWER          LEVEL          UPPER         MARGINAL
 
 i1          .              .            +INF            0.0001      
-i2          .              .            +INF             .          
+i2          .              .            +INF      -1.000000E-8      
 i3          .              .            +INF      -1.000000E-8      
-i4          .             2.8773        +INF             .          
+i4          .             1.8942        +INF             .          
 
 ---- VAR a  
 
              LOWER          LEVEL          UPPER         MARGINAL
 
 i1.i1          .              .            +INF            EPS         
-i1.i2          .              .            +INF        10941.2134      
+i1.i2          .              .            +INF         2316.6001      
 i1.i3          .              .            +INF        11533.2534      
-i1.i4          .              .            +INF        10414.6283      
+i1.i4          .              .            +INF        10414.6284      
 i2.i1          .              .            +INF        10941.2134      
 i2.i2          .              .            +INF            0.0001      
 i2.i3          .              .            +INF             .          
@@ -3802,28 +3796,28 @@ i3.i1          .              .            +INF        11533.2534
 i3.i2          .              .            +INF        16502.4973      
 i3.i3          .              .            +INF            0.0001      
 i3.i4          .             0.8999        +INF             .          
-i4.i1          .              .            +INF        10414.6283      
+i4.i1          .              .            +INF        10414.6284      
 i4.i2          .             2.2571        +INF             .          
 i4.i3          .             0.8999        +INF             .          
-i4.i4          .              .            +INF            EPS         
+i4.i4          .              .            +INF            0.0001      
 
 ---- VAR f  
 
              LOWER          LEVEL          UPPER         MARGINAL
 
 i1.i1          .              .             1.0000         EPS         
-i1.i2          .              .             1.0000          .          
+i1.i2          .              .             1.0000     54229.2406      
 i1.i3          .              .             1.0000          .          
-i1.i4          .       8.128085E-10         1.0000          .          
+i1.i4          .              .             1.0000     81701.7314      
 i2.i1          .              .             1.0000          .          
 i2.i2          .              .             1.0000         EPS         
-i2.i3          .              .             1.0000          .          
+i2.i3          .              .             1.0000    212185.7448      
 i2.i4          .             0.2378         1.0000          .          
 i3.i1          .              .             1.0000          .          
 i3.i2          .              .             1.0000          .          
 i3.i3          .              .             1.0000         EPS         
 i3.i4          .             0.2511         1.0000          .          
-i4.i1          .              .             1.0000          .          
+i4.i1          .              .             1.0000     35139.9332      
 i4.i2          .             0.2353         1.0000          .          
 i4.i3          .             0.2490         1.0000          .          
 i4.i4          .              .             1.0000         EPS         
@@ -3833,18 +3827,18 @@ i4.i4          .              .             1.0000         EPS
              LOWER          LEVEL          UPPER         MARGINAL
 
 i1.i1          .              .             1.0000         EPS         
-i1.i2          .             1.0000         1.0000         EPS         
-i1.i3          .             1.0000         1.0000         EPS         
+i1.i2          .             1.0000         1.0000          .          
+i1.i3          .             1.0000         1.0000          .          
 i1.i4          .             1.0000         1.0000          .          
 i2.i1          .             1.0000         1.0000         EPS         
 i2.i2          .              .             1.0000         EPS         
-i2.i3          .             1.0000         1.0000         EPS         
+i2.i3          .             1.0000         1.0000          .          
 i2.i4          .             0.7622         1.0000          .          
 i3.i1          .             1.0000         1.0000         EPS         
 i3.i2          .             1.0000         1.0000         EPS         
 i3.i3          .              .             1.0000         EPS         
 i3.i4          .             0.7489         1.0000          .          
-i4.i1          .             1.0000         1.0000         EPS         
+i4.i1          .             1.0000         1.0000          .          
 i4.i2          .             0.7647         1.0000          .          
 i4.i3          .             0.7510         1.0000          .          
 i4.i4          .              .             1.0000         EPS         
@@ -3870,20 +3864,20 @@ i1.i1.i4.i2          .              .             1.0000         EPS
 i1.i1.i4.i3          .              .             1.0000         EPS         
 i1.i1.i4.i4          .              .             1.0000         EPS         
 i1.i2.i1.i1          .              .             1.0000         EPS         
-i1.i2.i1.i2          .              .             1.0000         EPS         
-i1.i2.i1.i3          .              .             1.0000         EPS         
-i1.i2.i1.i4          .              .             1.0000         EPS         
-i1.i2.i2.i1          .              .             1.0000         EPS         
+i1.i2.i1.i2          .              .             1.0000    167069.6896      
+i1.i2.i1.i3          .              .             1.0000          .          
+i1.i2.i1.i4          .              .             1.0000          .          
+i1.i2.i2.i1          .              .             1.0000    164115.6891      
 i1.i2.i2.i2          .              .             1.0000         EPS         
-i1.i2.i2.i3          .              .             1.0000         EPS         
-i1.i2.i2.i4          .              .             1.0000         EPS         
-i1.i2.i3.i1          .              .             1.0000         EPS         
-i1.i2.i3.i2          .              .             1.0000         EPS         
+i1.i2.i2.i3          .              .             1.0000    188071.2008      
+i1.i2.i2.i4          .              .             1.0000     81863.9024      
+i1.i2.i3.i1          .              .             1.0000    181048.6421      
+i1.i2.i3.i2          .              .             1.0000    189602.7421      
 i1.i2.i3.i3          .              .             1.0000         EPS         
-i1.i2.i3.i4          .              .             1.0000         EPS         
-i1.i2.i4.i1          .              .             1.0000         EPS         
-i1.i2.i4.i2          .              .             1.0000         EPS         
-i1.i2.i4.i3          .              .             1.0000         EPS         
+i1.i2.i3.i4          .              .             1.0000     30902.6392      
+i1.i2.i4.i1          .              .             1.0000     58083.8004      
+i1.i2.i4.i2          .              .             1.0000     82717.8656      
+i1.i2.i4.i3          .              .             1.0000     31171.0369      
 i1.i2.i4.i4          .              .             1.0000         EPS         
 i1.i3.i1.i1          .              .             1.0000         EPS         
 i1.i3.i1.i2          .              .             1.0000         EPS         
@@ -3902,12 +3896,12 @@ i1.i3.i4.i2          .              .             1.0000         EPS
 i1.i3.i4.i3          .              .             1.0000         EPS         
 i1.i3.i4.i4          .              .             1.0000         EPS         
 i1.i4.i1.i1          .              .             1.0000         EPS         
-i1.i4.i1.i2          .              .             1.0000         EPS         
+i1.i4.i1.i2          .              .             1.0000          .          
 i1.i4.i1.i3          .              .             1.0000         EPS         
 i1.i4.i1.i4          .              .             1.0000         EPS         
 i1.i4.i2.i1          .              .             1.0000         EPS         
 i1.i4.i2.i2          .              .             1.0000         EPS         
-i1.i4.i2.i3          .              .             1.0000         EPS         
+i1.i4.i2.i3          .              .             1.0000          .          
 i1.i4.i2.i4          .              .             1.0000         EPS         
 i1.i4.i3.i1          .              .             1.0000         EPS         
 i1.i4.i3.i2          .              .             1.0000         EPS         
@@ -3923,7 +3917,7 @@ i2.i1.i1.i3          .              .             1.0000         EPS
 i2.i1.i1.i4          .              .             1.0000         EPS         
 i2.i1.i2.i1          .              .             1.0000         EPS         
 i2.i1.i2.i2          .              .             1.0000         EPS         
-i2.i1.i2.i3          .              .             1.0000         EPS         
+i2.i1.i2.i3          .              .             1.0000          .          
 i2.i1.i2.i4          .              .             1.0000         EPS         
 i2.i1.i3.i1          .              .             1.0000         EPS         
 i2.i1.i3.i2          .              .             1.0000         EPS         
@@ -3951,8 +3945,8 @@ i2.i2.i4.i3          .              .             1.0000         EPS
 i2.i2.i4.i4          .              .             1.0000         EPS         
 i2.i3.i1.i1          .              .             1.0000         EPS         
 i2.i3.i1.i2          .              .             1.0000         EPS         
-i2.i3.i1.i3          .              .             1.0000         EPS         
-i2.i3.i1.i4          .              .             1.0000         EPS         
+i2.i3.i1.i3          .              .             1.0000          .          
+i2.i3.i1.i4          .              .             1.0000          .          
 i2.i3.i2.i1          .              .             1.0000         EPS         
 i2.i3.i2.i2          .              .             1.0000         EPS         
 i2.i3.i2.i3          .              .             1.0000         EPS         
@@ -3966,20 +3960,20 @@ i2.i3.i4.i2          .              .             1.0000         EPS
 i2.i3.i4.i3          .              .             1.0000         EPS         
 i2.i3.i4.i4          .              .             1.0000         EPS         
 i2.i4.i1.i1          .              .             1.0000         EPS         
-i2.i4.i1.i2          .              .             1.0000    242649.3582      
-i2.i4.i1.i3          .              .             1.0000    258139.3131      
-i2.i4.i1.i4          .              .             1.0000     80171.4071      
-i2.i4.i2.i1          .              .             1.0000    238359.0150      
+i2.i4.i1.i2          .              .             1.0000    242649.3594      
+i2.i4.i1.i3          .              .             1.0000    258139.3144      
+i2.i4.i1.i4          .              .             1.0000          .          
+i2.i4.i2.i1          .              .             1.0000    238359.0161      
 i2.i4.i2.i2          .              .             1.0000         EPS         
-i2.i4.i2.i3          .              .             1.0000    273151.6188      
+i2.i4.i2.i3          .              .             1.0000    273151.6201      
 i2.i4.i2.i4          .             0.2378         1.0000          .          
-i2.i4.i3.i1          .              .             1.0000    262952.1664      
-i2.i4.i3.i2          .              .             1.0000    275376.0051      
+i2.i4.i3.i1          .              .             1.0000    262952.1677      
+i2.i4.i3.i2          .              .             1.0000    275376.0064      
 i2.i4.i3.i3          .              .             1.0000         EPS         
-i2.i4.i3.i4          .              .             1.0000     44882.5014      
-i2.i4.i4.i1          .              .             1.0000     84359.9872      
-i2.i4.i4.i2          .              .             1.0000    120138.1115      
-i2.i4.i4.i3          .              .             1.0000     45272.3180      
+i2.i4.i3.i4          .              .             1.0000     44882.5016      
+i2.i4.i4.i1          .              .             1.0000     84359.9876      
+i2.i4.i4.i2          .              .             1.0000    120138.1121      
+i2.i4.i4.i3          .              .             1.0000     45272.3182      
 i2.i4.i4.i4          .              .             1.0000         EPS         
 i3.i1.i1.i1          .              .             1.0000         EPS         
 i3.i1.i1.i2          .              .             1.0000         EPS         
@@ -3993,14 +3987,14 @@ i3.i1.i3.i1          .              .             1.0000         EPS
 i3.i1.i3.i2          .              .             1.0000         EPS         
 i3.i1.i3.i3          .              .             1.0000         EPS         
 i3.i1.i3.i4          .              .             1.0000         EPS         
-i3.i1.i4.i1          .              .             1.0000         EPS         
+i3.i1.i4.i1          .              .             1.0000          .          
 i3.i1.i4.i2          .              .             1.0000         EPS         
 i3.i1.i4.i3          .              .             1.0000         EPS         
 i3.i1.i4.i4          .              .             1.0000         EPS         
 i3.i2.i1.i1          .              .             1.0000         EPS         
-i3.i2.i1.i2          .              .             1.0000         EPS         
+i3.i2.i1.i2          .              .             1.0000          .          
 i3.i2.i1.i3          .              .             1.0000         EPS         
-i3.i2.i1.i4          .              .             1.0000         EPS         
+i3.i2.i1.i4          .              .             1.0000          .          
 i3.i2.i2.i1          .              .             1.0000         EPS         
 i3.i2.i2.i2          .              .             1.0000         EPS         
 i3.i2.i2.i3          .              .             1.0000         EPS         
@@ -4030,20 +4024,20 @@ i3.i3.i4.i2          .              .             1.0000         EPS
 i3.i3.i4.i3          .              .             1.0000         EPS         
 i3.i3.i4.i4          .              .             1.0000         EPS         
 i3.i4.i1.i1          .              .             1.0000         EPS         
-i3.i4.i1.i2          .              .             1.0000    242852.2993      
-i3.i4.i1.i3          .              .             1.0000    258355.2093      
-i3.i4.i1.i4          .              .             1.0000     80238.4589      
-i3.i4.i2.i1          .              .             1.0000    238558.3678      
+i3.i4.i1.i2          .              .             1.0000    242852.3005      
+i3.i4.i1.i3          .              .             1.0000    258355.2106      
+i3.i4.i1.i4          .              .             1.0000     80238.4593      
+i3.i4.i2.i1          .              .             1.0000    238558.3690      
 i3.i4.i2.i2          .              .             1.0000         EPS         
-i3.i4.i2.i3          .              .             1.0000    273380.0706      
-i3.i4.i2.i4          .              .             1.0000    118997.2699      
-i3.i4.i3.i1          .              .             1.0000    263172.0879      
-i3.i4.i3.i2          .              .             1.0000    275606.3173      
+i3.i4.i2.i3          .              .             1.0000    273380.0719      
+i3.i4.i2.i4          .              .             1.0000    118997.2704      
+i3.i4.i3.i1          .              .             1.0000    263172.0892      
+i3.i4.i3.i2          .              .             1.0000    275606.3186      
 i3.i4.i3.i3          .              .             1.0000         EPS         
 i3.i4.i3.i4          .             0.2511         1.0000          .          
-i3.i4.i4.i1          .              .             1.0000     84430.5422      
-i3.i4.i4.i2          .              .             1.0000    120238.5897      
-i3.i4.i4.i3          .              .             1.0000     45310.1817      
+i3.i4.i4.i1          .              .             1.0000     84430.5426      
+i3.i4.i4.i2          .              .             1.0000    120238.5902      
+i3.i4.i4.i3          .              .             1.0000     45310.1819      
 i3.i4.i4.i4          .              .             1.0000         EPS         
 i4.i1.i1.i1          .              .             1.0000         EPS         
 i4.i1.i1.i2          .              .             1.0000         EPS         
@@ -4078,18 +4072,18 @@ i4.i2.i4.i2          .             0.2353         1.0000          .
 i4.i2.i4.i3          .              .             1.0000     53128.8798      
 i4.i2.i4.i4          .              .             1.0000         EPS         
 i4.i3.i1.i1          .              .             1.0000         EPS         
-i4.i3.i1.i2          .              .             1.0000    263512.9209      
+i4.i3.i1.i2          .              .             1.0000          .          
 i4.i3.i1.i3          .              .             1.0000    280334.7385      
 i4.i3.i1.i4          .              .             1.0000     87064.7333      
 i4.i3.i2.i1          .              .             1.0000    258853.6838      
 i4.i3.i2.i2          .              .             1.0000         EPS         
-i4.i3.i2.i3          .              .             1.0000    296637.8375      
+i4.i3.i2.i3          .              .             1.0000          .          
 i4.i3.i2.i4          .              .             1.0000    129120.9440      
 i4.i3.i3.i1          .              .             1.0000    285561.4122      
 i4.i3.i3.i2          .              .             1.0000    299053.4818      
 i4.i3.i3.i3          .              .             1.0000         EPS         
 i4.i3.i3.i4          .              .             1.0000     48741.6044      
-i4.i3.i4.i1          .              .             1.0000     91613.4574      
+i4.i3.i4.i1          .              .             1.0000          .          
 i4.i3.i4.i2          .              .             1.0000    130467.8689      
 i4.i3.i4.i3          .             0.2490         1.0000          .          
 i4.i3.i4.i4          .              .             1.0000         EPS         
@@ -4116,26 +4110,26 @@ i4.i4.i4.i4          .              .             1.0000         EPS
 
 seg1 .i1.i2          .              .            +INF            EPS         
 seg1 .i1.i3          .              .            +INF            EPS         
-seg1 .i1.i4          .              .            +INF            EPS         
+seg1 .i1.i4          .            22.3635        +INF             .          
 seg1 .i2.i1          .              .            +INF            EPS         
-seg1 .i2.i3          .              .            +INF            EPS         
-seg1 .i2.i4          .              .            +INF         3083.7914      
+seg1 .i2.i3          .            24.0314        +INF             .          
+seg1 .i2.i4          .              .            +INF         3083.7913      
 seg1 .i3.i1          .              .            +INF            EPS         
 seg1 .i3.i2          .              .            +INF            EPS         
-seg1 .i3.i4          .              .            +INF          571.1591      
+seg1 .i3.i4          .              .            +INF          571.1590      
 seg1 .i4.i1          .              .            +INF            EPS         
 seg1 .i4.i2          .              .            +INF            EPS         
 seg1 .i4.i3          .              .            +INF            EPS         
-seg2 .i1.i2          .              .            +INF            EPS         
-seg2 .i1.i3          .              .            +INF            EPS         
+seg2 .i1.i2          .             0.8123        +INF             .          
+seg2 .i1.i3          .             3.1311        +INF             .          
 seg2 .i1.i4          .              .            +INF            EPS         
-seg2 .i2.i1          .              .            +INF            EPS         
+seg2 .i2.i1          .             3.1825        +INF             .          
 seg2 .i2.i3          .              .            +INF            EPS         
-seg2 .i2.i4          .              .            +INF         2333.3767      
-seg2 .i3.i1          .              .            +INF            EPS         
-seg2 .i3.i2          .              .            +INF            EPS         
+seg2 .i2.i4          .              .            +INF         2333.3766      
+seg2 .i3.i1          .             3.0493        +INF             .          
+seg2 .i3.i2          .             2.4430        +INF             .          
 seg2 .i3.i4          .              .            +INF          432.1678      
-seg2 .i4.i1          .              .            +INF            EPS         
+seg2 .i4.i1          .             1.3966        +INF             .          
 seg2 .i4.i2          .              .            +INF            EPS         
 seg2 .i4.i3          .              .            +INF            EPS         
 seg3 .i1.i2          .              .            +INF            EPS         
@@ -4211,12 +4205,12 @@ seg8 .i4.i1          .              .            +INF            EPS
 seg8 .i4.i2          .              .            +INF            EPS         
 seg8 .i4.i3          .              .            +INF            EPS         
 seg9 .i1.i2          .              .            +INF            EPS         
-seg9 .i1.i3          .             0.1429        +INF             .          
+seg9 .i1.i3          .              .            +INF            EPS         
 seg9 .i1.i4          .              .            +INF            EPS         
 seg9 .i2.i1          .              .            +INF            EPS         
 seg9 .i2.i3          .              .            +INF            EPS         
 seg9 .i2.i4          .              .            +INF          716.6713      
-seg9 .i3.i1          .             0.1429        +INF             .          
+seg9 .i3.i1          .              .            +INF            EPS         
 seg9 .i3.i2          .              .            +INF            EPS         
 seg9 .i3.i4          .              .            +INF           62.9973      
 seg9 .i4.i1          .              .            +INF            EPS         
@@ -4229,7 +4223,7 @@ seg10.i1.i4          .              .            +INF            EPS
 seg10.i2.i1          .              .            +INF            EPS         
 seg10.i2.i2          .              .            +INF            EPS         
 seg10.i2.i3          .              .            +INF            EPS         
-seg10.i2.i4          .              .            +INF         3088.5417      
+seg10.i2.i4          .              .            +INF         3088.5416      
 seg10.i3.i1          .              .            +INF            EPS         
 seg10.i3.i2          .              .            +INF            EPS         
 seg10.i3.i3          .              .            +INF            EPS         
@@ -4243,16 +4237,16 @@ seg10.i4.i4          .              .            +INF            EPS
 
              LOWER          LEVEL          UPPER         MARGINAL
 
-i1.i2          .             0.9950        +INF             .          
-i1.i3          .             0.9950        +INF             .          
-i1.i4          .             0.9950        +INF             .          
-i2.i1          .             0.9950        +INF             .          
-i2.i3          .             0.9950        +INF             .          
+i1.i2          .             0.0347        +INF             .          
+i1.i3          .             0.1196        +INF             .          
+i1.i4          .             0.0047        +INF             .          
+i2.i1          .             0.1215        +INF             .          
+i2.i3          .             0.0050        +INF             .          
 i2.i4          .             0.2378        +INF             .          
-i3.i1          .             0.9950        +INF             .          
-i3.i2          .             0.9950        +INF             .          
+i3.i1          .             0.1166        +INF             .          
+i3.i2          .             0.0944        +INF             .          
 i3.i4          .             0.2511        +INF             .          
-i4.i1          .             0.9950        +INF             .          
+i4.i1          .             0.0561        +INF             .          
 i4.i2          .             0.2378        +INF             .          
 i4.i3          .             0.2511        +INF             .          
 
@@ -4270,7 +4264,7 @@ i4          .             1.0000         1.0000         0.0001
           LOWER          LEVEL          UPPER         MARGINAL
 
 i1          .              .             1.0000         0.0001      
-i2          .              .             1.0000       -10.0009      
+i2          .              .             1.0000         0.0001      
 i3          .              .             1.0000         0.0001      
 i4          .             1.0000         1.0000         0.0001      
 
@@ -4299,16 +4293,16 @@ i4.i4          .             1.0000         1.0000         EPS
 
              LOWER          LEVEL          UPPER         MARGINAL
 
-i1.i2          .              .             1.0000   -209283.6802      
-i1.i3          .              .             1.0000   -177734.8815      
-i1.i4          .       8.128085E-10         1.0000    -53669.5422      
+i1.i2          .             1.0000         1.0000         EPS         
+i1.i3          .             1.0000         1.0000         EPS         
+i1.i4          .             1.0000         1.0000         EPS         
 i2.i1          .              .             1.0000   -205583.2838      
-i2.i3          .              .             1.0000    -84452.0927      
-i2.i4          .             1.0000         1.0000      6247.2296      
+i2.i3          .             1.0000         1.0000         EPS         
+i2.i4          .             1.0000         1.0000      6247.2295      
 i3.i1          .              .             1.0000   -181048.6421      
 i3.i2          .              .             1.0000    -85139.8209      
-i3.i4          .             1.0000         1.0000      1070.7298      
-i4.i1          .              .             1.0000    -56473.5241      
+i3.i4          .             1.0000         1.0000      1070.7297      
+i4.i1          .             1.0000         1.0000         EPS         
 i4.i2          .             1.0000         1.0000         EPS         
 i4.i3          .             1.0000         1.0000         EPS         
 
@@ -4334,12 +4328,12 @@ i1.i1.i4.i3          .              .             1.0000         EPS
 i1.i1.i4.i4          .              .             1.0000         EPS         
 i1.i2.i1.i1          .              .             1.0000         EPS         
 i1.i2.i1.i2          .              .             1.0000         EPS         
-i1.i2.i1.i3          .              .             1.0000         EPS         
-i1.i2.i1.i4          .              .             1.0000         EPS         
+i1.i2.i1.i3          .             1.0000         1.0000    177734.8815      
+i1.i2.i1.i4          .             1.0000         1.0000     55199.8662      
 i1.i2.i2.i1          .              .             1.0000         EPS         
 i1.i2.i2.i2          .              .             1.0000         EPS         
 i1.i2.i2.i3          .              .             1.0000         EPS         
-i1.i2.i2.i4          .              .             1.0000      5335.6411      
+i1.i2.i2.i4          .              .             1.0000      5335.6410      
 i1.i2.i3.i1          .              .             1.0000         EPS         
 i1.i2.i3.i2          .              .             1.0000         EPS         
 i1.i2.i3.i3          .              .             1.0000         EPS         
@@ -4351,11 +4345,11 @@ i1.i2.i4.i4          .              .             1.0000         EPS
 i1.i3.i1.i1          .              .             1.0000         EPS         
 i1.i3.i1.i2          .              .             1.0000         EPS         
 i1.i3.i1.i3          .              .             1.0000         EPS         
-i1.i3.i1.i4          .       4.064043E-10         1.0000         EPS         
+i1.i3.i1.i4          .              .             1.0000         EPS         
 i1.i3.i2.i1          .              .             1.0000         EPS         
 i1.i3.i2.i2          .              .             1.0000         EPS         
 i1.i3.i2.i3          .              .             1.0000         EPS         
-i1.i3.i2.i4          .              .             1.0000      5624.3580      
+i1.i3.i2.i4          .              .             1.0000      5624.3578      
 i1.i3.i3.i1          .              .             1.0000         EPS         
 i1.i3.i3.i2          .              .             1.0000         EPS         
 i1.i3.i3.i3          .              .             1.0000         EPS         
@@ -4365,17 +4359,17 @@ i1.i3.i4.i2          .              .             1.0000         EPS
 i1.i3.i4.i3          .              .             1.0000         EPS         
 i1.i3.i4.i4          .              .             1.0000         EPS         
 i1.i4.i1.i1          .              .             1.0000         EPS         
-i1.i4.i1.i2          .              .             1.0000         EPS         
+i1.i4.i1.i2          .             1.0000         1.0000         EPS         
 i1.i4.i1.i3          .              .             1.0000         EPS         
-i1.i4.i1.i4          .       4.064043E-10         1.0000         EPS         
+i1.i4.i1.i4          .              .             1.0000         EPS         
 i1.i4.i2.i1          .              .             1.0000         EPS         
 i1.i4.i2.i2          .              .             1.0000         EPS         
-i1.i4.i2.i3          .              .             1.0000         EPS         
-i1.i4.i2.i4          .              .             1.0000      5078.8443      
+i1.i4.i2.i3          .             1.0000         1.0000         EPS         
+i1.i4.i2.i4          .              .             1.0000      5078.8442      
 i1.i4.i3.i1          .              .             1.0000         EPS         
-i1.i4.i3.i2          .              .             1.0000         EPS         
+i1.i4.i3.i2          .             1.0000         1.0000         EPS         
 i1.i4.i3.i3          .              .             1.0000         EPS         
-i1.i4.i3.i4          .       1.4236881E-9         1.0000       940.6595      
+i1.i4.i3.i4          .              .             1.0000       940.6595      
 i1.i4.i4.i1          .              .             1.0000         EPS         
 i1.i4.i4.i2          .              .             1.0000         EPS         
 i1.i4.i4.i3          .              .             1.0000         EPS         
@@ -4386,8 +4380,8 @@ i2.i1.i1.i3          .              .             1.0000         EPS
 i2.i1.i1.i4          .              .             1.0000         EPS         
 i2.i1.i2.i1          .              .             1.0000         EPS         
 i2.i1.i2.i2          .              .             1.0000         EPS         
-i2.i1.i2.i3          .              .             1.0000         EPS         
-i2.i1.i2.i4          .              .             1.0000      5335.6411      
+i2.i1.i2.i3          .             1.0000         1.0000         EPS         
+i2.i1.i2.i4          .              .             1.0000      5335.6410      
 i2.i1.i3.i1          .              .             1.0000         EPS         
 i2.i1.i3.i2          .              .             1.0000         EPS         
 i2.i1.i3.i3          .              .             1.0000         EPS         
@@ -4414,12 +4408,12 @@ i2.i2.i4.i3          .              .             1.0000         EPS
 i2.i2.i4.i4          .              .             1.0000         EPS         
 i2.i3.i1.i1          .              .             1.0000         EPS         
 i2.i3.i1.i2          .              .             1.0000         EPS         
-i2.i3.i1.i3          .              .             1.0000         EPS         
-i2.i3.i1.i4          .              .             1.0000         EPS         
+i2.i3.i1.i3          .             1.0000         1.0000         EPS         
+i2.i3.i1.i4          .             1.0000         1.0000         EPS         
 i2.i3.i2.i1          .              .             1.0000         EPS         
 i2.i3.i2.i2          .              .             1.0000         EPS         
 i2.i3.i2.i3          .              .             1.0000         EPS         
-i2.i3.i2.i4          .              .             1.0000      4023.8408      
+i2.i3.i2.i4          .              .             1.0000      4023.8407      
 i2.i3.i3.i1          .              .             1.0000         EPS         
 i2.i3.i3.i2          .              .             1.0000         EPS         
 i2.i3.i3.i3          .              .             1.0000         EPS         
@@ -4431,15 +4425,15 @@ i2.i3.i4.i4          .              .             1.0000         EPS
 i2.i4.i1.i1          .              .             1.0000         EPS         
 i2.i4.i1.i2          .              .             1.0000         EPS         
 i2.i4.i1.i3          .              .             1.0000         EPS         
-i2.i4.i1.i4          .              .             1.0000         EPS         
+i2.i4.i1.i4          .             1.0000         1.0000     80171.4075      
 i2.i4.i2.i1          .              .             1.0000         EPS         
 i2.i4.i2.i2          .              .             1.0000         EPS         
 i2.i4.i2.i3          .              .             1.0000         EPS         
-i2.i4.i2.i4          .             1.0000         1.0000    125536.4809      
-i2.i4.i3.i1          .              .             1.0000         EPS         
+i2.i4.i2.i4          .             1.0000         1.0000    125536.4813      
+i2.i4.i3.i1          .             1.0000         1.0000         EPS         
 i2.i4.i3.i2          .              .             1.0000         EPS         
 i2.i4.i3.i3          .              .             1.0000         EPS         
-i2.i4.i3.i4          .              .             1.0000      1229.5536      
+i2.i4.i3.i4          .              .             1.0000      1229.5535      
 i2.i4.i4.i1          .              .             1.0000         EPS         
 i2.i4.i4.i2          .              .             1.0000         EPS         
 i2.i4.i4.i3          .              .             1.0000         EPS         
@@ -4451,23 +4445,23 @@ i3.i1.i1.i4          .              .             1.0000         EPS
 i3.i1.i2.i1          .              .             1.0000         EPS         
 i3.i1.i2.i2          .              .             1.0000         EPS         
 i3.i1.i2.i3          .              .             1.0000         EPS         
-i3.i1.i2.i4          .              .             1.0000      5624.3580      
+i3.i1.i2.i4          .              .             1.0000      5624.3578      
 i3.i1.i3.i1          .              .             1.0000         EPS         
 i3.i1.i3.i2          .              .             1.0000         EPS         
 i3.i1.i3.i3          .              .             1.0000         EPS         
-i3.i1.i3.i4          .       1.4236881E-9         1.0000      1041.6948      
-i3.i1.i4.i1          .       -2.67839E-10         1.0000         EPS         
+i3.i1.i3.i4          .              .             1.0000      1041.6948      
+i3.i1.i4.i1          .             1.0000         1.0000         EPS         
 i3.i1.i4.i2          .              .             1.0000         EPS         
 i3.i1.i4.i3          .              .             1.0000         EPS         
 i3.i1.i4.i4          .              .             1.0000         EPS         
 i3.i2.i1.i1          .              .             1.0000         EPS         
-i3.i2.i1.i2          .              .             1.0000         EPS         
+i3.i2.i1.i2          .             1.0000         1.0000         EPS         
 i3.i2.i1.i3          .              .             1.0000         EPS         
-i3.i2.i1.i4          .              .             1.0000         EPS         
+i3.i2.i1.i4          .             1.0000         1.0000         EPS         
 i3.i2.i2.i1          .              .             1.0000         EPS         
 i3.i2.i2.i2          .              .             1.0000         EPS         
 i3.i2.i2.i3          .              .             1.0000         EPS         
-i3.i2.i2.i4          .              .             1.0000      4023.8408      
+i3.i2.i2.i4          .              .             1.0000      4023.8407      
 i3.i2.i3.i1          .              .             1.0000         EPS         
 i3.i2.i3.i2          .              .             1.0000         EPS         
 i3.i2.i3.i3          .              .             1.0000         EPS         
@@ -4495,15 +4489,15 @@ i3.i3.i4.i4          .              .             1.0000         EPS
 i3.i4.i1.i1          .              .             1.0000         EPS         
 i3.i4.i1.i2          .              .             1.0000         EPS         
 i3.i4.i1.i3          .              .             1.0000         EPS         
-i3.i4.i1.i4          .       4.064043E-10         1.0000         EPS         
-i3.i4.i2.i1          .              .             1.0000         EPS         
+i3.i4.i1.i4          .              .             1.0000         EPS         
+i3.i4.i2.i1          .             1.0000         1.0000         EPS         
 i3.i4.i2.i2          .              .             1.0000         EPS         
 i3.i4.i2.i3          .              .             1.0000         EPS         
-i3.i4.i2.i4          .              .             1.0000      6373.7784      
+i3.i4.i2.i4          .              .             1.0000      6373.7782      
 i3.i4.i3.i1          .              .             1.0000         EPS         
 i3.i4.i3.i2          .              .             1.0000         EPS         
 i3.i4.i3.i3          .              .             1.0000         EPS         
-i3.i4.i3.i4          .             1.0000         1.0000     46100.5351      
+i3.i4.i3.i4          .             1.0000         1.0000     46100.5353      
 i3.i4.i4.i1          .              .             1.0000         EPS         
 i3.i4.i4.i2          .              .             1.0000         EPS         
 i3.i4.i4.i3          .              .             1.0000         EPS         
@@ -4515,12 +4509,12 @@ i4.i1.i1.i4          .              .             1.0000         EPS
 i4.i1.i2.i1          .              .             1.0000         EPS         
 i4.i1.i2.i2          .              .             1.0000         EPS         
 i4.i1.i2.i3          .              .             1.0000         EPS         
-i4.i1.i2.i4          .              .             1.0000      5078.8443      
+i4.i1.i2.i4          .              .             1.0000      5078.8442      
 i4.i1.i3.i1          .              .             1.0000         EPS         
-i4.i1.i3.i2          .              .             1.0000         EPS         
+i4.i1.i3.i2          .             1.0000         1.0000         EPS         
 i4.i1.i3.i3          .              .             1.0000         EPS         
 i4.i1.i3.i4          .              .             1.0000       940.6595      
-i4.i1.i4.i1          .       3.133041E-10         1.0000         EPS         
+i4.i1.i4.i1          .              .             1.0000         EPS         
 i4.i1.i4.i2          .              .             1.0000         EPS         
 i4.i1.i4.i3          .              .             1.0000         EPS         
 i4.i1.i4.i4          .              .             1.0000         EPS         
@@ -4531,28 +4525,28 @@ i4.i2.i1.i4          .              .             1.0000         EPS
 i4.i2.i2.i1          .              .             1.0000         EPS         
 i4.i2.i2.i2          .              .             1.0000         EPS         
 i4.i2.i2.i3          .              .             1.0000         EPS         
-i4.i2.i2.i4          .              .             1.0000      6638.6519      
-i4.i2.i3.i1          .              .             1.0000         EPS         
+i4.i2.i2.i4          .              .             1.0000      6638.6517      
+i4.i2.i3.i1          .             1.0000         1.0000         EPS         
 i4.i2.i3.i2          .              .             1.0000         EPS         
 i4.i2.i3.i3          .              .             1.0000         EPS         
-i4.i2.i3.i4          .              .             1.0000      1229.5536      
+i4.i2.i3.i4          .              .             1.0000      1229.5535      
 i4.i2.i4.i1          .              .             1.0000         EPS         
-i4.i2.i4.i2          .             1.0000         1.0000    140986.8897      
+i4.i2.i4.i2          .             1.0000         1.0000    140986.8894      
 i4.i2.i4.i3          .              .             1.0000         EPS         
 i4.i2.i4.i4          .              .             1.0000         EPS         
 i4.i3.i1.i1          .              .             1.0000         EPS         
-i4.i3.i1.i2          .              .             1.0000         EPS         
+i4.i3.i1.i2          .             1.0000         1.0000    263512.9209      
 i4.i3.i1.i3          .              .             1.0000         EPS         
 i4.i3.i1.i4          .              .             1.0000         EPS         
-i4.i3.i2.i1          .              .             1.0000         EPS         
+i4.i3.i2.i1          .             1.0000         1.0000         EPS         
 i4.i3.i2.i2          .              .             1.0000         EPS         
-i4.i3.i2.i3          .              .             1.0000         EPS         
-i4.i3.i2.i4          .              .             1.0000      6373.7784      
+i4.i3.i2.i3          .             1.0000         1.0000    296637.8375      
+i4.i3.i2.i4          .              .             1.0000      6373.7782      
 i4.i3.i3.i1          .              .             1.0000         EPS         
 i4.i3.i3.i2          .              .             1.0000         EPS         
 i4.i3.i3.i3          .              .             1.0000         EPS         
-i4.i3.i3.i4          .              .             1.0000      1180.4960      
-i4.i3.i4.i1          .       -2.67839E-10         1.0000         EPS         
+i4.i3.i3.i4          .              .             1.0000      1180.4959      
+i4.i3.i4.i1          .             1.0000         1.0000     91613.4574      
 i4.i3.i4.i2          .              .             1.0000         EPS         
 i4.i3.i4.i3          .             1.0000         1.0000     49164.9384      
 i4.i3.i4.i4          .              .             1.0000         EPS         
@@ -4579,38 +4573,38 @@ i4.i4.i4.i4          .              .             1.0000         EPS
 
 seg1 .i1.i2          .              .             1.0000         EPS         
 seg1 .i1.i3          .              .             1.0000         EPS         
-seg1 .i1.i4          .              .             1.0000         EPS         
+seg1 .i1.i4          .             1.0000         1.0000         EPS         
 seg1 .i2.i1          .              .             1.0000         EPS         
-seg1 .i2.i3          .              .             1.0000         EPS         
-seg1 .i2.i4          .              .             1.0000    -92656.2510      
+seg1 .i2.i3          .             1.0000         1.0000         EPS         
+seg1 .i2.i4          .              .             1.0000    -92656.2485      
 seg1 .i3.i1          .              .             1.0000         EPS         
 seg1 .i3.i2          .              .             1.0000         EPS         
-seg1 .i3.i4          .              .             1.0000    -17160.9879      
+seg1 .i3.i4          .              .             1.0000    -17160.9869      
 seg1 .i4.i1          .              .             1.0000         EPS         
 seg1 .i4.i2          .              .             1.0000         EPS         
 seg1 .i4.i3          .              .             1.0000         EPS         
-seg2 .i1.i2          .              .             1.0000         EPS         
-seg2 .i1.i3          .              .             1.0000         EPS         
+seg2 .i1.i2          .             1.0000         1.0000         EPS         
+seg2 .i1.i3          .             1.0000         1.0000         EPS         
 seg2 .i1.i4          .              .             1.0000         EPS         
-seg2 .i2.i1          .              .             1.0000         EPS         
+seg2 .i2.i1          .             1.0000         1.0000         EPS         
 seg2 .i2.i3          .              .             1.0000         EPS         
-seg2 .i2.i4          .              .             1.0000    -25682.1483      
-seg2 .i3.i1          .              .             1.0000         EPS         
-seg2 .i3.i2          .              .             1.0000         EPS         
-seg2 .i3.i4          .       3.444622E-10         1.0000     -4672.2580      
-seg2 .i4.i1          .       -1.66718E-10         1.0000         EPS         
+seg2 .i2.i4          .              .             1.0000    -25682.1476      
+seg2 .i3.i1          .             1.0000         1.0000         EPS         
+seg2 .i3.i2          .             1.0000         1.0000         EPS         
+seg2 .i3.i4          .              .             1.0000     -4672.2577      
+seg2 .i4.i1          .             1.0000         1.0000         EPS         
 seg2 .i4.i2          .              .             1.0000         EPS         
 seg2 .i4.i3          .              .             1.0000         EPS         
 seg3 .i1.i2          .              .             1.0000         EPS         
 seg3 .i1.i3          .              .             1.0000         EPS         
-seg3 .i1.i4          .       7.412061E-10         1.0000         EPS         
+seg3 .i1.i4          .              .             1.0000         EPS         
 seg3 .i2.i1          .              .             1.0000         EPS         
 seg3 .i2.i3          .              .             1.0000         EPS         
-seg3 .i2.i4          .             1.0000         1.0000    -17792.4221      
+seg3 .i2.i4          .             1.0000         1.0000    -17792.4216      
 seg3 .i3.i1          .              .             1.0000         EPS         
 seg3 .i3.i2          .              .             1.0000         EPS         
-seg3 .i3.i4          .             1.0000         1.0000     -3210.9913      
-seg3 .i4.i1          .       1.667183E-10         1.0000         EPS         
+seg3 .i3.i4          .             1.0000         1.0000     -3210.9911      
+seg3 .i4.i1          .              .             1.0000         EPS         
 seg3 .i4.i2          .             1.0000         1.0000         EPS         
 seg3 .i4.i3          .             1.0000         1.0000         EPS         
 seg4 .i1.i2          .              .             1.0000         EPS         
@@ -4618,10 +4612,10 @@ seg4 .i1.i3          .              .             1.0000         EPS
 seg4 .i1.i4          .              .             1.0000         EPS         
 seg4 .i2.i1          .              .             1.0000         EPS         
 seg4 .i2.i3          .              .             1.0000         EPS         
-seg4 .i2.i4          .              .             1.0000    -18555.0020      
+seg4 .i2.i4          .              .             1.0000    -18555.0015      
 seg4 .i3.i1          .              .             1.0000         EPS         
 seg4 .i3.i2          .              .             1.0000         EPS         
-seg4 .i3.i4          .              .             1.0000     -3352.2297      
+seg4 .i3.i4          .              .             1.0000     -3352.2295      
 seg4 .i4.i1          .              .             1.0000         EPS         
 seg4 .i4.i2          .              .             1.0000         EPS         
 seg4 .i4.i3          .              .             1.0000         EPS         
@@ -4630,10 +4624,10 @@ seg5 .i1.i3          .              .             1.0000         EPS
 seg5 .i1.i4          .              .             1.0000         EPS         
 seg5 .i2.i1          .              .             1.0000         EPS         
 seg5 .i2.i3          .              .             1.0000         EPS         
-seg5 .i2.i4          .              .             1.0000    -19547.1576      
+seg5 .i2.i4          .              .             1.0000    -19547.1570      
 seg5 .i3.i1          .              .             1.0000         EPS         
 seg5 .i3.i2          .              .             1.0000         EPS         
-seg5 .i3.i4          .              .             1.0000     -3535.9882      
+seg5 .i3.i4          .              .             1.0000     -3535.9880      
 seg5 .i4.i1          .              .             1.0000         EPS         
 seg5 .i4.i2          .              .             1.0000         EPS         
 seg5 .i4.i3          .              .             1.0000         EPS         
@@ -4642,10 +4636,10 @@ seg6 .i1.i3          .              .             1.0000         EPS
 seg6 .i1.i4          .              .             1.0000         EPS         
 seg6 .i2.i1          .              .             1.0000         EPS         
 seg6 .i2.i3          .              .             1.0000         EPS         
-seg6 .i2.i4          .              .             1.0000    -20539.3131      
+seg6 .i2.i4          .              .             1.0000    -20539.3125      
 seg6 .i3.i1          .              .             1.0000         EPS         
 seg6 .i3.i2          .              .             1.0000         EPS         
-seg6 .i3.i4          .              .             1.0000     -3719.7466      
+seg6 .i3.i4          .              .             1.0000     -3719.7464      
 seg6 .i4.i1          .              .             1.0000         EPS         
 seg6 .i4.i2          .              .             1.0000         EPS         
 seg6 .i4.i3          .              .             1.0000         EPS         
@@ -4654,10 +4648,10 @@ seg7 .i1.i3          .              .             1.0000         EPS
 seg7 .i1.i4          .              .             1.0000         EPS         
 seg7 .i2.i1          .              .             1.0000         EPS         
 seg7 .i2.i3          .              .             1.0000         EPS         
-seg7 .i2.i4          .              .             1.0000    -21301.8930      
+seg7 .i2.i4          .              .             1.0000    -21301.8924      
 seg7 .i3.i1          .              .             1.0000         EPS         
 seg7 .i3.i2          .              .             1.0000         EPS         
-seg7 .i3.i4          .              .             1.0000     -3860.9850      
+seg7 .i3.i4          .              .             1.0000     -3860.9848      
 seg7 .i4.i1          .              .             1.0000         EPS         
 seg7 .i4.i2          .              .             1.0000         EPS         
 seg7 .i4.i3          .              .             1.0000         EPS         
@@ -4666,35 +4660,35 @@ seg8 .i1.i3          .              .             1.0000         EPS
 seg8 .i1.i4          .              .             1.0000         EPS         
 seg8 .i2.i1          .              .             1.0000         EPS         
 seg8 .i2.i3          .              .             1.0000         EPS         
-seg8 .i2.i4          .              .             1.0000    -21301.8930      
+seg8 .i2.i4          .              .             1.0000    -21301.8924      
 seg8 .i3.i1          .              .             1.0000         EPS         
 seg8 .i3.i2          .              .             1.0000         EPS         
-seg8 .i3.i4          .              .             1.0000     -3860.9850      
+seg8 .i3.i4          .              .             1.0000     -3860.9848      
 seg8 .i4.i1          .              .             1.0000         EPS         
 seg8 .i4.i2          .              .             1.0000         EPS         
 seg8 .i4.i3          .              .             1.0000         EPS         
 seg9 .i1.i2          .              .             1.0000         EPS         
-seg9 .i1.i3          .             1.0000         1.0000         EPS         
+seg9 .i1.i3          .              .             1.0000         EPS         
 seg9 .i1.i4          .              .             1.0000         EPS         
 seg9 .i2.i1          .              .             1.0000         EPS         
-seg9 .i2.i3          .             1.0000         1.0000         EPS         
-seg9 .i2.i4          .              .             1.0000    -21301.8930      
-seg9 .i3.i1          .             1.0000         1.0000         EPS         
+seg9 .i2.i3          .              .             1.0000         EPS         
+seg9 .i2.i4          .              .             1.0000    -21301.8924      
+seg9 .i3.i1          .              .             1.0000         EPS         
 seg9 .i3.i2          .              .             1.0000         EPS         
-seg9 .i3.i4          .              .             1.0000     -3860.9850      
+seg9 .i3.i4          .              .             1.0000     -3860.9848      
 seg9 .i4.i1          .              .             1.0000         EPS         
 seg9 .i4.i2          .              .             1.0000         EPS         
 seg9 .i4.i3          .              .             1.0000         EPS         
-seg10.i1.i2          .             1.0000         1.0000         EPS         
+seg10.i1.i2          .              .             1.0000         EPS         
 seg10.i1.i3          .              .             1.0000         EPS         
-seg10.i1.i4          .             1.0000         1.0000         EPS         
-seg10.i2.i1          .             1.0000         1.0000         EPS         
+seg10.i1.i4          .              .             1.0000         EPS         
+seg10.i2.i1          .              .             1.0000         EPS         
 seg10.i2.i3          .              .             1.0000         EPS         
-seg10.i2.i4          .              .             1.0000    -20530.3715      
+seg10.i2.i4          .              .             1.0000    -20530.3709      
 seg10.i3.i1          .              .             1.0000         EPS         
-seg10.i3.i2          .             1.0000         1.0000         EPS         
-seg10.i3.i4          .              .             1.0000     -3802.4575      
-seg10.i4.i1          .             1.0000         1.0000         EPS         
+seg10.i3.i2          .              .             1.0000         EPS         
+seg10.i3.i4          .              .             1.0000     -3802.4573      
+seg10.i4.i1          .              .             1.0000         EPS         
 seg10.i4.i2          .              .             1.0000         EPS         
 seg10.i4.i3          .              .             1.0000         EPS         
 
@@ -4702,7 +4696,7 @@ seg10.i4.i3          .              .             1.0000         EPS
 **** REPORT SUMMARY :        0     NONOPT
                              0 INFEASIBLE
                              0  UNBOUNDED
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/21/26 16:26:11 Page 9
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 12:28:31 Page 9
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -4751,15 +4745,15 @@ seg9.i4                  -1.077      -0.929
 
 ----   1011 PARAMETER budget               =   200000.000  
             MODEL netdesign.ObjVal         =    -5866.306  
-            MODEL netdesign.ObjEst         =    -5866.305  
-            PARAMETER mipgap               =  1.952074E-8  
+            MODEL netdesign.ObjEst         =    -5866.306  
+            PARAMETER mipgap               =  6.581962E-8  
 
 **** REPORT FILE SUMMARY
 
 fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\fij_long.csv
 
 
-EXECUTION TIME       =        1.672 SECONDS      8 MB  50.4.1 84b10359 WEX-WEI
+EXECUTION TIME       =        6.156 SECONDS      8 MB  50.4.1 84b10359 WEX-WEI
 
 
 USER: Luis Cadarso Morga                             G250911+0003Ac-GEN

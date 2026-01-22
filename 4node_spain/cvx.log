@@ -1,0 +1,182 @@
+
+--- Job cvx.gms Start 01/22/26 19:12:05 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\50\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\cvx.gms
+    PageSize 0
+    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\225c\
+    SysDir C:\GAMS\50\
+    LogOption 3
+    AppendLog 1
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+Licensee: Luis Cadarso Morga                             G250911+0003Ac-GEN
+          University Rey Juan Carlos                                DCE4613
+          225c\gamslice.dat
+          node:23539203 mem:64 cores:8 ipport:50996 v:2                    
+          Course license for use within the course and related course work
+          The expiration date of time-limited license is Feb 08, 2026
+System information: 8 physical cores and 64 Gb physical memory detected
+GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
+--- Starting compilation
+--- cvx.gms(2) 2 Mb
+--- . param_definition_cvx.gms(18) 3 Mb
+--- .. demand.txt(16) 3 Mb
+--- . param_definition_cvx.gms(24) 3 Mb
+--- .. alt_utility.txt(16) 3 Mb
+--- . param_definition_cvx.gms(31) 3 Mb
+--- .. link_cost.txt(16) 3 Mb
+--- . param_definition_cvx.gms(36) 3 Mb
+--- .. link_capacity_slope.txt(16) 3 Mb
+--- . param_definition_cvx.gms(41) 3 Mb
+--- .. prices.txt(16) 3 Mb
+--- . param_definition_cvx.gms(46) 3 Mb
+--- .. op_link_cost.txt(16) 3 Mb
+--- . param_definition_cvx.gms(52) 3 Mb
+--- .. candidates.txt(16) 3 Mb
+--- . param_definition_cvx.gms(57) 3 Mb
+--- .. travel_time.txt(16) 3 Mb
+--- . param_definition_cvx.gms(63) 3 Mb
+--- .. station_cost.txt(4) 3 Mb
+--- . param_definition_cvx.gms(68) 3 Mb
+--- .. hub_cost.txt(4) 3 Mb
+--- . param_definition_cvx.gms(73) 3 Mb
+--- .. station_capacity_slope.txt(4) 3 Mb
+--- . param_definition_cvx.gms(78) 3 Mb
+--- .. budget.txt(1) 3 Mb
+--- . param_definition_cvx.gms(84) 3 Mb
+--- .. s_prev.txt(4) 3 Mb
+--- . param_definition_cvx.gms(89) 3 Mb
+--- .. sh_prev.txt(4) 3 Mb
+--- . param_definition_cvx.gms(105) 3 Mb
+--- .. lam.txt(1) 3 Mb
+--- . param_definition_cvx.gms(109) 3 Mb
+--- .. alfa.txt(1) 3 Mb
+--- . param_definition_cvx.gms(114) 3 Mb
+--- .. current_iter.txt(1) 3 Mb
+--- . param_definition_cvx.gms(118) 3 Mb
+--- .. niters.txt(1) 3 Mb
+--- . param_definition_cvx.gms(126) 3 Mb
+--- cvx.gms(401) 3 Mb
+--- Starting execution: elapsed 0:00:00.027
+--- cvx.gms(594) 4 Mb
+--- Generating NLP model netplan
+--- cvx.gms(596) 6 Mb
+---   426 rows  412 columns  1,847 non-zeroes
+---   256 nl-code  64 nl-non-zeroes
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.000E-03, 2.000E+12] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E+00, 1.000E+00] - Zero values observed as well
+--- Matrix    [min, max] : [ 1.000E-02, 7.589E+05]
+--- cvx.gms(596) 4 Mb
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:00.033
+
+MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+
+Extraction of quadratics (ThreePass algorithm): 0.00s
+A numerically large upper bound value  2.0e+12 is specified for constraint 'bud_final' (3).
+ (53)
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : CONIC (conic optimization problem)
+  Constraints            : 425             
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 32              
+  Scalar variables       : 411             
+  Matrix variables       : 0               
+  Integer variables      : 0               
+
+Optimizer started.
+Presolve started.
+Linear dependency checker started.
+Linear dependency checker terminated.
+Eliminator started.
+Freed constraints in eliminator : 9
+Eliminator terminated.
+Eliminator - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - primal attempts        : 1                 successes              : 1               
+Lin. dep.  - dual attempts          : 0                 successes              : 0               
+Lin. dep.  - primal deps.           : 12                dual deps.             : 0               
+Presolve terminated. Time: 0.00    
+Optimizer  - threads                : 16              
+Optimizer  - solved problem         : the primal      
+Optimizer  - Constraints            : 127             
+Optimizer  - Cones                  : 24              
+Optimizer  - Scalar variables       : 297               conic                  : 72              
+Optimizer  - Semi-definite variables: 0                 scalarized             : 0               
+Factor     - setup time             : 0.00            
+Factor     - dense det. time        : 0.00              GP order time          : 0.00            
+Factor     - nonzeros before factor : 1263              after factor           : 1600            
+Factor     - dense dim.             : 0                 flops                  : 3.39e+04        
+ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
+0   2.4e+08  2.7e+05  2.9e+06  0.00e+00   2.933171646e+06   -3.098226504e+01  1.0e+00  0.00  
+1   5.8e+07  6.6e+04  1.4e+06  -1.00e+00  7.548799686e+06   4.615660912e+06   2.4e-01  0.00  
+2   7.6e+06  8.5e+03  5.2e+05  -1.00e+00  5.515593515e+07   5.222283806e+07   3.1e-02  0.00  
+3   1.8e+06  2.0e+03  2.5e+05  -1.00e+00  2.064081665e+08   2.034751828e+08   7.4e-03  0.00  
+4   7.9e+05  8.8e+02  1.7e+05  -1.00e+00  1.206610183e+08   1.177282685e+08   3.2e-03  0.00  
+5   8.8e+04  9.9e+01  5.6e+04  -1.00e+00  1.805958981e+08   1.776663686e+08   3.6e-04  0.00  
+6   7.8e+03  8.8e+00  1.7e+04  -9.99e-01  1.130204087e+08   1.101287634e+08   3.2e-05  0.00  
+7   2.2e+03  2.4e+00  8.6e+03  -9.90e-01  1.342931598e+08   1.315265288e+08   8.8e-06  0.00  
+8   3.8e+02  4.2e-01  3.3e+03  -9.54e-01  1.559157237e+08   1.538952222e+08   1.5e-06  0.00  
+9   8.0e+01  9.0e-02  9.5e+02  -6.37e-01  4.101831818e+07   4.059615379e+07   3.3e-07  0.00  
+10  1.5e+01  1.7e-02  4.3e+01  5.81e-01   8.273278673e+06   8.054952918e+06   6.2e-08  0.00  
+11  5.7e+00  6.4e-03  1.3e+01  7.70e-01   5.806069854e+06   5.724914239e+06   2.3e-08  0.00  
+12  2.7e+00  3.0e-03  4.7e+00  8.83e-01   2.834343642e+06   2.798875761e+06   1.1e-08  0.00  
+13  6.0e-01  6.8e-04  4.7e-01  1.01e+00   1.744238353e+06   1.736026792e+06   2.5e-09  0.00  
+14  2.2e-01  2.5e-04  1.1e-01  1.13e+00   1.603929549e+06   1.601312450e+06   9.0e-10  0.00  
+15  1.1e-01  1.2e-04  4.3e-02  9.25e-01   1.591577680e+06   1.590380537e+06   4.4e-10  0.01  
+16  8.8e-02  9.9e-05  3.7e-02  3.18e-01   1.605840390e+06   1.604830197e+06   3.6e-10  0.01  
+17  5.4e-02  6.1e-05  1.8e-02  5.81e-01   1.622632756e+06   1.621975740e+06   2.2e-10  0.01  
+18  4.1e-02  4.6e-05  1.5e-02  4.03e-01   1.634742160e+06   1.634273700e+06   1.7e-10  0.01  
+19  1.6e-02  1.8e-05  3.5e-03  7.29e-01   1.660465861e+06   1.660275744e+06   6.4e-11  0.01  
+20  7.9e-03  8.9e-06  1.6e-03  6.07e-01   1.676365692e+06   1.676309673e+06   3.2e-11  0.01  
+21  2.1e-03  2.4e-06  2.5e-04  7.93e-01   1.691854703e+06   1.691854701e+06   8.6e-12  0.01  
+22  6.2e-04  7.0e-07  4.9e-05  7.52e-01   1.698268219e+06   1.698277336e+06   2.5e-12  0.01  
+23  3.7e-04  4.1e-07  2.5e-05  7.43e-01   1.700078886e+06   1.700088903e+06   1.5e-12  0.01  
+24  9.5e-05  1.1e-07  3.6e-06  8.73e-01   1.702204435e+06   1.702208207e+06   3.9e-13  0.01  
+25  4.2e-05  4.7e-08  1.2e-06  8.08e-01   1.702851689e+06   1.702854253e+06   1.7e-13  0.01  
+26  1.3e-05  1.5e-08  2.3e-07  8.80e-01   1.703270194e+06   1.703271261e+06   5.5e-14  0.01  
+27  8.3e-06  9.4e-09  1.3e-07  7.99e-01   1.703368809e+06   1.703369677e+06   3.4e-14  0.01  
+28  2.7e-06  3.0e-09  2.4e-08  9.04e-01   1.703492364e+06   1.703492696e+06   1.1e-14  0.01  
+29  1.7e-06  1.9e-09  1.3e-08  8.31e-01   1.703518749e+06   1.703519006e+06   6.9e-15  0.01  
+30  4.0e-07  4.5e-10  1.6e-09  9.07e-01   1.703556515e+06   1.703556590e+06   1.6e-15  0.01  
+31  1.3e-07  1.5e-10  3.5e-10  8.49e-01   1.703566534e+06   1.703566568e+06   5.5e-16  0.01  
+32  5.1e-08  5.7e-11  9.0e-11  8.90e-01   1.703570405e+06   1.703570420e+06   2.1e-16  0.01  
+Optimizer terminated. Time: 0.01    
+
+
+Interior-point solution summary
+  Problem status  : PRIMAL_AND_DUAL_FEASIBLE
+  Solution status : OPTIMAL
+  Primal.  obj: 1.7035704046e+06    nrm: 3e+06    Viol.  con: 4e+03    var: 2e-09    cones: 0e+00  
+  Dual.    obj: 1.7035704198e+06    nrm: 2e+08    Viol.  con: 3e-13    var: 6e-04    cones: 0e+00  
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
+--- Reading solution for model netplan
+--- Executing after solve: elapsed 0:00:00.079
+--- cvx.gms(609) 4 Mb
+--- GDX File (execute_unload) C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\resultado.gdx
+--- cvx.gms(618) 6 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- cvx.gms(631) 6 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- cvx.gms(644) 7 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- Putfile fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\fij_long.csv
+*** Status: Normal completion
+--- Job cvx.gms Stop 01/22/26 19:12:06 elapsed 0:00:00.749

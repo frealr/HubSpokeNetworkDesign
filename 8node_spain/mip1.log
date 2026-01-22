@@ -1,5 +1,4 @@
-
---- Job mip.gms Start 01/21/26 16:26:54 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
+--- Job mip.gms Start 01/22/26 12:07:17 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\50\gmsprmNT.txt
 --- GAMS Parameters defined
@@ -16,7 +15,7 @@
 Licensee: Luis Cadarso Morga                             G250911+0003Ac-GEN
           University Rey Juan Carlos                                DCE4613
           225f\gamslice.dat
-          node:23539203 mem:64 cores:8 ipport:51435 v:2                    
+          node:23539203 mem:64 cores:8 ipport:65498 v:2                    
           Course license for use within the course and related course work
           The expiration date of time-limited license is Feb 08, 2026
 System information: 8 physical cores and 64 Gb physical memory detected
@@ -75,7 +74,7 @@ GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
 --- .. budget.txt(1) 3 Mb
 --- . param_definition.gms(166) 3 Mb
 --- mip.gms(289) 3 Mb
---- Starting execution: elapsed 0:00:00.013
+--- Starting execution: elapsed 0:00:00.118
 --- mip.gms(2958) 4 Mb
 --- Generating MIP model netdesign
 --- mip.gms(2962) 9 Mb
@@ -85,7 +84,7 @@ GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
 --- RHS       [min, max] : [ 4.082E-02, 4.000E+08] - Zero values observed as well
 --- Bound     [min, max] : [ 1.000E+00, 1.000E+00] - Zero values observed as well
 --- Matrix    [min, max] : [ 8.000E-10, 2.731E+06]
---- Executing CPLEX (Solvelink=2): elapsed 0:00:00.045
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:00.143
 
 IBM ILOG CPLEX   50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
 
@@ -113,21 +112,21 @@ MIP Presolve modified 3680 coefficients.
 Aggregator did 160 substitutions.
 Reduced MIP has 8544 rows, 6292 columns, and 34857 nonzeros.
 Reduced MIP has 3300 binaries, 0 generals, 0 SOSs, and 0 indicators.
-Presolve time = 0.02 sec. (41.98 ticks)
-Found incumbent of value 0.001280 after 0.05 sec. (75.41 ticks)
-Probing fixed 53 vars, tightened 703 bounds.
-Probing time = 0.02 sec. (8.17 ticks)
-Cover probing fixed 0 vars, tightened 2809 bounds.
+Presolve time = 0.02 sec. (37.55 ticks)
+Found incumbent of value 0.001280 after 0.06 sec. (70.26 ticks)
+Probing fixed 53 vars, tightened 55 bounds.
+Probing time = 0.00 sec. (3.72 ticks)
+Cover probing fixed 0 vars, tightened 2810 bounds.
 Tried aggregator 1 time.
 Detecting symmetries...
 MIP Presolve eliminated 141 rows and 506 columns.
 MIP Presolve modified 7571 coefficients.
 Reduced MIP has 8403 rows, 5786 columns, and 33534 nonzeros.
 Reduced MIP has 2879 binaries, 0 generals, 0 SOSs, and 0 indicators.
-Presolve time = 0.02 sec. (32.55 ticks)
-Probing fixed 0 vars, tightened 4 bounds.
-Probing time = 0.02 sec. (6.04 ticks)
-Clique table members: 5753.
+Presolve time = 0.01 sec. (29.70 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (5.39 ticks)
+Clique table members: 5752.
 MIP emphasis: balance optimality and feasibility.
 MIP search method: dynamic search.
 Parallel mode: deterministic, using up to 16 threads.
@@ -138,536 +137,261 @@ Parallel mode: deterministic, using up to 13 threads for concurrent optimization
  * Starting primal Simplex on 1 thread...
 Tried aggregator 1 time.
 No LP presolve or aggregator reductions.
-Presolve time = 0.00 sec. (4.01 ticks)
+Presolve time = 0.00 sec. (4.05 ticks)
 Initializing dual steep norms . . .
 
 Iteration log . . .
 Iteration:     1   Dual objective     =     -38951270.963118
 Perturbation started.
-Iteration:   101   Dual objective     =     -38951270.963118
-Iteration:   357   Dual objective     =     -38951270.963085
-Iteration:   606   Dual objective     =     -38738658.864134
-Iteration:   834   Dual objective     =     -37834760.421144
-Iteration:  1049   Dual objective     =     -36616958.847104
-Iteration:  1260   Dual objective     =     -36049709.856451
-Iteration:  1510   Dual objective     =     -35192487.404984
-Iteration:  1723   Dual objective     =     -34694998.813561
-Iteration:  1962   Dual objective     =     -34496240.491184
-Iteration:  2242   Dual objective     =     -34082362.091413
+Iteration:   202   Dual objective     =     -38951270.963118
+Iteration:   496   Dual objective     =     -38951270.963062
+Iteration:   745   Dual objective     =     -36090356.760583
+Iteration:   991   Dual objective     =     -34902896.272642
+Iteration:  1217   Dual objective     =     -34179526.126316
+Iteration:  1522   Dual objective     =     -34082362.092686
 Removing perturbation.
 
 Dual simplex solved model.
 
-Root relaxation solution time = 0.05 sec. (84.07 ticks)
+Root relaxation solution time = 0.03 sec. (39.00 ticks)
 
         Nodes                                         Cuts/
    Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
 
 *     0+    0                            0.0013  -3.89513e+07              --- 
-Found incumbent of value 0.001280 after 0.17 sec. (231.88 ticks)
-      0     0  -3.40824e+07   924        0.0013  -3.40824e+07     2267     --- 
+Found incumbent of value 0.001280 after 0.16 sec. (173.23 ticks)
+      0     0  -3.40824e+07   929        0.0013  -3.40824e+07     1673     --- 
 *     0+    0                            0.0000  -3.40824e+07              --- 
-Found incumbent of value 0.000000 after 1.14 sec. (1682.53 ticks)
-      0     0  -3.36438e+07  1074        0.0000    Cuts: 1495    11884     --- 
-*     0+    0                            0.0000  -3.36438e+07              --- 
-Found incumbent of value 0.000000 after 1.66 sec. (2446.29 ticks)
-      0     0  -2.97490e+07   925        0.0000     Cuts: 585    15876     --- 
-      0     0  -2.71025e+07   838        0.0000     Cuts: 448    17159     --- 
-      0     0  -2.62160e+07   895        0.0000     Cuts: 401    17714     --- 
-      0     0  -2.54832e+07   884        0.0000     Cuts: 288    18178     --- 
+Found incumbent of value 0.000000 after 0.70 sec. (1038.44 ticks)
+      0     0  -3.34222e+07  1048        0.0000    Cuts: 1460     7624     --- 
+      0     0  -2.94083e+07   876        0.0000     Cuts: 510    12360     --- 
+      0     0  -2.75754e+07   882        0.0000     Cuts: 338    13186     --- 
+      0     0  -2.67503e+07   909        0.0000     Cuts: 333    13708     --- 
+      0     0  -2.59384e+07   926        0.0000     Cuts: 275    14212     --- 
 Detecting symmetries...
-      0     0  -2.51947e+07   892        0.0000     Cuts: 279    18539     --- 
-      0     0  -2.50226e+07   912        0.0000     Cuts: 223    18798     --- 
-      0     0  -2.48655e+07   926        0.0000     Cuts: 220    19129     --- 
-      0     0  -2.48180e+07   916        0.0000     Cuts: 166    19334     --- 
-      0     0  -2.46607e+07   919        0.0000     Cuts: 157    19549     --- 
-      0     0  -2.46009e+07   928        0.0000     Cuts: 147    19702     --- 
-      0     0  -2.45644e+07   937        0.0000     Cuts: 113    19832     --- 
-      0     0  -2.45222e+07   957        0.0000     Cuts: 171    19937     --- 
-      0     0  -2.44588e+07   941        0.0000      Cuts: 87    20041     --- 
-      0     0  -2.43882e+07   937        0.0000     Cuts: 138    20164     --- 
-      0     0  -2.43510e+07   945        0.0000      Cuts: 80    20259     --- 
-      0     0  -2.39590e+07   926        0.0000      Cuts: 85    20531     --- 
-      0     0  -2.38162e+07   955        0.0000     Cuts: 127    20758     --- 
-      0     0  -2.37527e+07   972        0.0000     Cuts: 126    20930     --- 
-      0     0  -2.35935e+07   984        0.0000      Cuts: 92    21073     --- 
-      0     0  -2.35508e+07   972        0.0000      Cuts: 85    21350     --- 
-      0     0  -2.35223e+07   985        0.0000      Cuts: 92    21470     --- 
-      0     0  -2.34760e+07   989        0.0000      Cuts: 85    21572     --- 
-      0     0  -2.34549e+07   988        0.0000      Cuts: 51    21680     --- 
-      0     0  -2.34025e+07   986        0.0000      Cuts: 53    21737     --- 
-      0     0  -2.33966e+07   994        0.0000      Cuts: 27    21774     --- 
-      0     0  -2.33868e+07   993        0.0000      Cuts: 34    21802     --- 
-      0     0  -2.33788e+07   988        0.0000      Cuts: 18    21825     --- 
-      0     0  -2.33717e+07   986        0.0000       Cuts: 8    21849     --- 
-      0     0  -2.33461e+07   982        0.0000      Cuts: 10    21886     --- 
-      0     0  -2.33445e+07   985        0.0000      Cuts: 16    21896     --- 
+      0     0  -2.56800e+07   933        0.0000     Cuts: 276    14559     --- 
+      0     0  -2.50187e+07   918        0.0000     Cuts: 222    15068     --- 
+      0     0  -2.48317e+07   915        0.0000     Cuts: 176    15359     --- 
+      0     0  -2.46554e+07   949        0.0000     Cuts: 190    15597     --- 
+      0     0  -2.46091e+07   957        0.0000     Cuts: 141    15754     --- 
+      0     0  -2.44666e+07   976        0.0000     Cuts: 150    16012     --- 
+      0     0  -2.43931e+07   987        0.0000     Cuts: 115    16216     --- 
+      0     0  -2.43324e+07   993        0.0000     Cuts: 103    16411     --- 
+      0     0  -2.43013e+07   996        0.0000      Cuts: 79    16528     --- 
+      0     0  -2.42679e+07  1004        0.0000      Cuts: 90    16656     --- 
+      0     0  -2.41483e+07  1002        0.0000      Cuts: 66    16769     --- 
+      0     0  -2.41301e+07  1010        0.0000      Cuts: 58    16832     --- 
+      0     0  -2.41254e+07  1009        0.0000      Cuts: 48    16871     --- 
+      0     0  -2.40811e+07  1013        0.0000      Cuts: 33    16935     --- 
+      0     0  -2.40513e+07  1011        0.0000      Cuts: 28    16991     --- 
+      0     0  -2.38331e+07   993        0.0000      Cuts: 48    17269     --- 
+      0     0  -2.37782e+07  1005        0.0000     Cuts: 104    17403     --- 
+      0     0  -2.37325e+07  1017        0.0000      Cuts: 52    17524     --- 
+      0     0  -2.37107e+07  1021        0.0000      Cuts: 44    17594     --- 
+      0     0  -2.37027e+07  1025        0.0000      Cuts: 50    17655     --- 
+      0     0  -2.37001e+07  1034        0.0000      Cuts: 36    17695     --- 
+*     0+    0                      -531508.2573  -2.35758e+07              --- 
+Found incumbent of value -531508.257270 after 3.06 sec. (3872.99 ticks)
+      0     0  -2.35769e+07  1007  -531508.2573      Cuts: 37    17845     --- 
+      0     0  -2.35390e+07  1017  -531508.2573     Cuts: 161    17985     --- 
+      0     0  -2.35055e+07  1018  -531508.2573     Cuts: 126    18078     --- 
+      0     0  -2.34690e+07  1021  -531508.2573     Cuts: 100    18155     --- 
+      0     0  -2.34381e+07  1027  -531508.2573      Cuts: 35    18215     --- 
+      0     0  -2.34060e+07  1020  -531508.2573      Cuts: 37    18301     --- 
+      0     0  -2.33763e+07  1019  -531508.2573      Cuts: 16    18360     --- 
+      0     0  -2.32886e+07   995  -531508.2573      Cuts: 48    18476     --- 
+      0     0  -2.32646e+07   994  -531508.2573      Cuts: 40    18544     --- 
+      0     0  -2.32596e+07   990  -531508.2573      Cuts: 26    18588     --- 
+*     0+    0                      -531508.2624  -2.32596e+07              --- 
+Found incumbent of value -531508.262404 after 4.16 sec. (5137.93 ticks)
 Detecting symmetries...
-      0     2  -2.33445e+07   982        0.0000  -2.32409e+07    21896     --- 
-Elapsed time = 4.52 sec. (5400.09 ticks, tree = 0.02 MB)
-    164   128  -1.69269e+07   880        0.0000  -2.32409e+07    27645     --- 
-                                                 Impl Bds: 21                  
-    526   397 -8278430.1774   684        0.0000  -2.29873e+07    38304     --- 
-   1389  1090  -1.01023e+07   693        0.0000  -2.29597e+07    54344     --- 
-   2222  1768 -3321453.5328   226        0.0000  -2.29597e+07    65308     --- 
-   3096  2447 -3195009.9823   333        0.0000  -2.26015e+07    75596     --- 
-   3928  3264 -7253043.5820   568        0.0000  -2.22813e+07    89672     --- 
+      0     2  -2.32596e+07   986  -531508.2624  -2.32108e+07    18588     --- 
+Elapsed time = 4.34 sec. (5332.08 ticks, tree = 0.02 MB)
+    297   208  -1.58721e+07   835  -531508.2624  -2.26090e+07    31311     --- 
+                                                  Impl Bds: 6                  
+    868   687    infeasible        -531508.2624  -2.26090e+07    46104     --- 
+   1641  1376 -8900452.8785   609  -531508.2624  -2.26090e+07    59867     --- 
+   2412  1939 -8881641.4714   566  -531508.2624  -2.26090e+07    67227     --- 
+   3311  2581 -5183133.9551   509  -531508.2624  -2.26090e+07    74803     --- 
+   4271  3484 -2869221.2486   280  -531508.2624  -2.26090e+07    85233     --- 
 
 Performing restart 1
 
 Repeating presolve.
 Tried aggregator 1 time.
-MIP Presolve modified 1343 coefficients.
-Reduced MIP has 8403 rows, 5786 columns, and 33504 nonzeros.
+MIP Presolve modified 1256 coefficients.
+Reduced MIP has 8403 rows, 5786 columns, and 33514 nonzeros.
 Reduced MIP has 2879 binaries, 0 generals, 0 SOSs, and 0 indicators.
-Presolve time = 0.01 sec. (15.14 ticks)
+Presolve time = 0.02 sec. (13.65 ticks)
 Tried aggregator 1 time.
-MIP Presolve modified 5 coefficients.
-Reduced MIP has 8403 rows, 5786 columns, and 33504 nonzeros.
+MIP Presolve modified 117 coefficients.
+Reduced MIP has 8403 rows, 5786 columns, and 33514 nonzeros.
 Reduced MIP has 2879 binaries, 0 generals, 0 SOSs, and 0 indicators.
-Presolve time = 0.02 sec. (22.09 ticks)
-Represolve time = 0.09 sec. (75.51 ticks)
+Presolve time = 0.00 sec. (20.60 ticks)
+Represolve time = 0.06 sec. (69.75 ticks)
 Tried aggregator 1 time.
-LP Presolve eliminated 11 rows and 0 columns.
-Reduced LP has 9417 rows, 5786 columns, and 54921 nonzeros.
-Presolve time = 0.02 sec. (6.82 ticks)
+LP Presolve eliminated 13 rows and 0 columns.
+Reduced LP has 9425 rows, 5786 columns, and 54545 nonzeros.
+Presolve time = 0.00 sec. (6.84 ticks)
 Initializing dual steep norms . . .
 
 Iteration log . . .
-Iteration:     1   Dual objective     =     -29592130.116022
+Iteration:     1   Dual objective     =     -32292653.100338
 Perturbation started.
-Iteration:   202   Dual objective     =     -29592130.116023
-Iteration:   451   Dual objective     =     -29318276.583123
-Iteration:   718   Dual objective     =     -29314058.620492
-Iteration:   954   Dual objective     =     -28989283.781409
-Iteration:  1203   Dual objective     =     -27444944.411226
-Iteration:  1360   Dual objective     =     -27179811.623883
-Iteration:  1535   Dual objective     =     -26172417.986589
-Iteration:  1719   Dual objective     =     -25699282.136167
-Iteration:  1903   Dual objective     =     -25475351.953873
-Iteration:  2069   Dual objective     =     -25163442.583690
-Iteration:  2229   Dual objective     =     -24332179.385328
-Iteration:  2391   Dual objective     =     -22811750.629909
-Iteration:  2612   Dual objective     =     -22007298.672464
-Iteration:  2760   Dual objective     =     -21988127.611657
-Iteration:  2899   Dual objective     =     -21721239.399138
-Iteration:  3041   Dual objective     =     -21715572.606206
-Iteration:  3166   Dual objective     =     -21666931.820559
-Iteration:  3347   Dual objective     =     -21666931.791062
-Iteration:  3493   Dual objective     =     -21666931.743006
-Iteration:  3656   Dual objective     =     -21170748.386690
-Iteration:  3795   Dual objective     =     -20926790.461614
-Iteration:  3938   Dual objective     =     -20926790.056268
-Markowitz threshold set to 0.1
-Iteration:  3999   Dual objective     =     -20921557.640885
-Iteration:  4296   Dual objective     =     -20424575.722687
-Iteration:  4564   Dual objective     =     -20164545.805092
-Iteration:  4837   Dual objective     =     -19986903.864263
-Iteration:  5042   Dual objective     =     -19976190.949403
-Iteration:  5287   Dual objective     =     -19975265.420961
-Iteration:  5580   Dual objective     =     -19859849.589318
-Iteration:  5882   Dual objective     =     -19795616.716102
-Iteration:  6101   Dual objective     =     -19785402.173465
-Iteration:  6307   Dual objective     =     -19785402.172904
-Iteration:  6526   Dual objective     =     -19776576.736026
-Iteration:  6776   Dual objective     =     -19775726.204406
-Iteration:  7017   Dual objective     =     -19766528.469808
-Iteration:  7292   Dual objective     =     -19765121.991661
+Iteration:   202   Dual objective     =     -32292653.100338
+Iteration:   450   Dual objective     =     -32283482.860955
+Iteration:   723   Dual objective     =     -32055402.462848
+Iteration:   998   Dual objective     =     -30278319.619824
+Iteration:  1279   Dual objective     =     -29141824.866400
+Iteration:  1453   Dual objective     =     -28965734.660073
+Iteration:  1633   Dual objective     =     -27194007.562641
+Iteration:  1817   Dual objective     =     -25876325.039886
+Iteration:  1994   Dual objective     =     -25463467.860789
+Iteration:  2132   Dual objective     =     -25014254.900608
+Iteration:  2275   Dual objective     =     -24557905.024273
+Iteration:  2450   Dual objective     =     -23798937.176879
+Iteration:  2681   Dual objective     =     -23199548.218733
+Iteration:  2855   Dual objective     =     -22862091.821251
+Iteration:  3046   Dual objective     =     -22179047.926061
+Iteration:  3209   Dual objective     =     -21746580.510420
+Iteration:  3438   Dual objective     =     -21107228.590546
+Iteration:  3656   Dual objective     =     -20695603.031728
+Iteration:  3875   Dual objective     =     -20414257.583923
+Iteration:  4150   Dual objective     =     -20165997.243397
+Iteration:  4426   Dual objective     =     -20032116.698785
 Removing perturbation.
-Iteration:  7333   Scaled dual infeas =             0.000116
-Iteration:  7386   Dual objective     =     -19765093.907096
 Initializing dual steep norms . . .
-*  4219+    0                            0.0000  -1.97651e+07              --- 
-Found incumbent of value 0.000000 after 8.97 sec. (9189.62 ticks)
-   4219     0  -1.86114e+07   912        0.0000     Cuts: 399   109673     --- 
-   4219     0  -1.81078e+07   945        0.0000     Cuts: 354   112518     --- 
-   4219     0  -1.78850e+07  1021        0.0000     Cuts: 326   114183     --- 
-   4219     0  -1.77265e+07  1050        0.0000     Cuts: 331   116236     --- 
-   4219     0  -1.75687e+07  1033        0.0000     Cuts: 337   117930     --- 
-   4219     0  -1.74245e+07  1041        0.0000     Cuts: 319   119351     --- 
-   4219     0  -1.73317e+07  1071        0.0000     Cuts: 354   120785     --- 
-   4219     0  -1.72474e+07  1049        0.0000     Cuts: 309   121917     --- 
-   4219     0  -1.71486e+07  1084        0.0000     Cuts: 326   123019     --- 
-   4219     0  -1.70761e+07  1080        0.0000     Cuts: 364   124053     --- 
-   4219     0  -1.69779e+07  1066        0.0000     Cuts: 282   124653     --- 
-   4219     0  -1.69190e+07  1074        0.0000     Cuts: 268   125041     --- 
-   4219     0  -1.68811e+07  1067        0.0000     Cuts: 237   125621     --- 
-   4219     0  -1.68282e+07  1064        0.0000     Cuts: 238   125989     --- 
-   4219     0  -1.68079e+07  1086        0.0000     Cuts: 204   126377     --- 
-   4219     0  -1.67905e+07  1109        0.0000     Cuts: 213   127148     --- 
-   4219     0  -1.67743e+07  1060        0.0000     Cuts: 197   127579     --- 
-   4219     0  -1.67627e+07  1087        0.0000     Cuts: 191   127812     --- 
-   4219     0  -1.67390e+07  1068        0.0000     Cuts: 206   128083     --- 
-   4219     0  -1.67026e+07  1085        0.0000     Cuts: 168   128360     --- 
-   4219     0  -1.66783e+07  1088        0.0000     Cuts: 161   128587     --- 
-*  4219+    0                           -0.0125  -1.66783e+07              --- 
-Found incumbent of value -0.012477 after 15.06 sec. (16851.36 ticks)
-   4219     0  -1.66607e+07  1080       -0.0125     Cuts: 162   128830     --- 
-   4219     0  -1.66367e+07  1076       -0.0125     Cuts: 130   129042     --- 
-   4219     0  -1.66128e+07  1073       -0.0125     Cuts: 122   129510     --- 
-   4219     0  -1.65691e+07  1081       -0.0125     Cuts: 173   129749     --- 
-   4219     0  -1.65457e+07  1064       -0.0125     Cuts: 181   129971     --- 
-   4219     0  -1.65354e+07  1073       -0.0125     Cuts: 159   130129     --- 
-   4219     0  -1.65275e+07  1082       -0.0125     Cuts: 149   130272     --- 
-   4219     0  -1.65201e+07  1085       -0.0125     Cuts: 136   130537     --- 
-   4219     0  -1.65174e+07  1095       -0.0125     Cuts: 138   130683     --- 
-*  4219+    0                       -96633.7345  -1.65174e+07              --- 
-Found incumbent of value -96633.734545 after 16.95 sec. (18684.82 ticks)
-   4219     0  -1.65142e+07  1097   -96633.7345      Cuts: 90   130749     --- 
-   4219     0  -1.65094e+07  1095   -96633.7345      Cuts: 59   130830     --- 
-   4219     0  -1.65063e+07  1092   -96633.7345      Cuts: 97   130948     --- 
-   4219     0  -1.64918e+07  1098   -96633.7345      Cuts: 75   131111     --- 
-   4219     0  -1.64878e+07  1090   -96633.7345      Cuts: 87   131206     --- 
-   4219     2  -1.64878e+07  1083   -96633.7345  -1.64878e+07   131206     --- 
-   4220     3  -1.63114e+07  1070   -96633.7345  -1.63114e+07   131321     --- 
-   4221     4  -1.60791e+07  1056   -96633.7345  -1.60416e+07   131451     --- 
-*  4223+    2                       -96633.7353  -1.60416e+07              --- 
-Found incumbent of value -96633.735337 after 19.92 sec. (21483.69 ticks)
-*  4237+    7                       -96633.7361  -1.59279e+07              --- 
-Found incumbent of value -96633.736107 after 20.66 sec. (21938.46 ticks)
-*  4242+    8                       -96633.7361  -1.59279e+07              --- 
-Found incumbent of value -96633.736119 after 20.75 sec. (22009.48 ticks)
-   4306    35  -1.44613e+07   989   -96633.7361  -1.57869e+07   133884     --- 
-                                                     Cuts: 24                  
-Elapsed time = 21.30 sec. (22253.20 ticks, tree = 0.04 MB)
-   4925   535 -9473840.8849   797   -96633.7361  -1.57869e+07   166652     --- 
-   6095  1720 -7543688.9378   647   -96633.7361  -1.57869e+07   226866     --- 
-   8587  3308 -2883983.3822   426   -96633.7361  -1.57869e+07   258161     --- 
-  11550  6526 -1188420.9100   113   -96633.7361  -1.56359e+07   291487     --- 
-                                                     Cuts: 57                  
-* 13508+ 7747                      -157130.4312  -1.56359e+07              --- 
-Found incumbent of value -157130.431177 after 29.74 sec. (26561.29 ticks)
-  14622  9386  -1.31502e+07   970  -157130.4312  -1.56301e+07   341501     --- 
-* 15110+ 9420                      -253764.1657  -1.54815e+07              --- 
-Found incumbent of value -253764.165732 after 30.95 sec. (27234.05 ticks)
-* 15147+ 9696                      -253764.1657  -1.54815e+07              --- 
-Found incumbent of value -253764.165740 after 30.99 sec. (27251.77 ticks)
-* 15338+ 9692                      -253764.1657  -1.54815e+07              --- 
-Found incumbent of value -253764.165748 after 31.12 sec. (27322.48 ticks)
-* 15706+ 9423                      -253764.1667  -1.54815e+07              --- 
-Found incumbent of value -253764.166670 after 31.38 sec. (27462.77 ticks)
-* 16319+ 9833                      -430010.1947  -1.54815e+07              --- 
-Found incumbent of value -430010.194676 after 31.80 sec. (27674.35 ticks)
-* 16580+ 9833                      -430010.1981  -1.54815e+07              --- 
-Found incumbent of value -430010.198140 after 31.97 sec. (27755.05 ticks)
-  17424 10484 -4950306.8473   546  -430010.1981  -1.54815e+07   412642     --- 
-* 18203+11034                      -587140.6259  -1.54815e+07              --- 
-Found incumbent of value -587140.625927 after 32.88 sec. (28174.53 ticks)
-* 18237+11034                      -683774.3605  -1.54815e+07              --- 
-Found incumbent of value -683774.360474 after 32.88 sec. (28188.62 ticks)
-* 18802+11375                      -683774.3634  -1.54815e+07              --- 
-Found incumbent of value -683774.363386 after 33.14 sec. (28344.70 ticks)
-* 18897+11432                      -683774.3657  -1.54815e+07              --- 
-Found incumbent of value -683774.365740 after 33.20 sec. (28370.88 ticks)
-* 19424+11967                      -696825.1592  -1.52007e+07              --- 
-Found incumbent of value -696825.159192 after 33.52 sec. (28517.32 ticks)
-* 19807+11931                     -1088171.2193  -1.52007e+07              --- 
-Found incumbent of value -1088171.219308 after 33.69 sec. (28620.29 ticks)
-* 20043+12511                     -1201772.9428  -1.52007e+07              --- 
-Found incumbent of value -1201772.942837 after 33.88 sec. (28693.51 ticks)
-* 20064+12511                     -1242757.5248  -1.52007e+07              --- 
-Found incumbent of value -1242757.524757 after 33.89 sec. (28699.11 ticks)
-  20559 11473  -1.35246e+07   987 -1242757.5248  -1.52007e+07   459259     --- 
-* 20623+11696                     -1283813.8430  -1.52007e+07              --- 
-                                                    Cuts: 112                  
-Found incumbent of value -1283813.843000 after 34.38 sec. (28994.11 ticks)
-* 20664+11448                     -1283813.8430  -1.51926e+07              --- 
-Found incumbent of value -1283813.843009 after 34.42 sec. (29025.40 ticks)
-* 20826+11922                     -1283813.8511  -1.51435e+07              --- 
-                                                     Cuts: 11                  
-Found incumbent of value -1283813.851123 after 35.09 sec. (29335.02 ticks)
-* 21061+11793                     -1283813.8512  -1.51435e+07              --- 
-Found incumbent of value -1283813.851206 after 35.47 sec. (29521.25 ticks)
-* 21796+12348                     -1283813.8523  -1.50788e+07              --- 
-                                                  MIRcuts: 32                  
-Found incumbent of value -1283813.852256 after 35.95 sec. (29803.84 ticks)
-  21997 12460 -7229599.2731   699 -1283813.8523  -1.50788e+07   517379     --- 
-                                                      Cuts: 7                  
-* 22141+12532                     -1451315.0004  -1.50788e+07           938.97%
-Found incumbent of value -1451315.000438 after 36.27 sec. (29947.50 ticks)
-* 22457+12517                     -1510567.1586  -1.50788e+07           898.22%
-Found incumbent of value -1510567.158649 after 36.45 sec. (30088.30 ticks)
-* 22537+12732                     -1510567.1587  -1.50788e+07           898.22%
-Found incumbent of value -1510567.158674 after 36.58 sec. (30185.99 ticks)
-* 22679+12613                     -1510567.1682  -1.50788e+07           898.22%
-Found incumbent of value -1510567.168169 after 37.05 sec. (30446.80 ticks)
-  23515 13138 -5781599.5435   581 -1510567.1682  -1.50788e+07   564742  898.22%
-  25766 15765 -6458702.2318   609 -1510567.1682  -1.48511e+07   628780  883.15%
-                                                      Cuts: 6                  
-Elapsed time = 39.58 sec. (31793.00 ticks, tree = 48.43 MB)
-  27581 17361 -5268541.1776   561 -1510567.1682  -1.48511e+07   677546  883.15%
-                                                      Cuts: 9                  
-* 28211+17402                     -1510567.1692  -1.48435e+07           882.64%
-Found incumbent of value -1510567.169161 after 41.92 sec. (32920.95 ticks)
-  30918 19930 -4666357.4111   481 -1510567.1692  -1.47367e+07   743837  875.57%
-  32564 22276  -1.07178e+07   857 -1510567.1692  -1.46489e+07   808333  869.76%
-                                                      Cuts: 6                  
-* 33582+22487                     -1510567.1758  -1.46318e+07           868.63%
-Found incumbent of value -1510567.175770 after 45.95 sec. (34979.82 ticks)
-  34727 24043 -8451378.5196   756 -1510567.1758  -1.46081e+07   855813  867.06%
-  37106 25722 -4880119.8080   481 -1510567.1758  -1.45795e+07   910217  865.17%
-  39998 29167 -4975257.0103   518 -1510567.1758  -1.45246e+07  1007356  861.53%
-  42705 31131 -6251328.5396   586 -1510567.1758  -1.45182e+07  1062139  861.11%
-  45143 33534 -6008412.6566   627 -1510567.1758  -1.44993e+07  1118820  859.86%
-  46883 36363  -1.17813e+07   885 -1510567.1758  -1.44962e+07  1187978  859.65%
-  49041 37509 -4357835.0744   534 -1510567.1758  -1.44962e+07  1224312  859.65%
-Elapsed time = 58.39 sec. (41335.02 ticks, tree = 117.41 MB)
-  51031 39723  -1.33049e+07   973 -1510567.1758  -1.44335e+07  1287659  855.51%
-* 54374+42104                     -2008517.9251  -1.44273e+07           618.30%
-Found incumbent of value -2008517.925060 after 62.27 sec. (43181.20 ticks)
-  54601 42448 -8897141.9753   792 -2008517.9251  -1.44273e+07  1350710  618.30%
-* 57423+43513                     -2008517.9269  -1.44010e+07           616.99%
-Found incumbent of value -2008517.926895 after 64.22 sec. (44100.90 ticks)
-  57759 43899 -4450033.4541   557 -2008517.9269  -1.43913e+07  1435115  616.52%
-                                                      Cuts: 2                  
-* 59223+45791                     -2008517.9393  -1.43913e+07           616.52%
-Found incumbent of value -2008517.939291 after 65.38 sec. (44621.32 ticks)
-  61118 46765 -5991839.7545   602 -2008517.9393  -1.43733e+07  1502909  615.62%
-* 61248+47105                     -2008517.9441  -1.43733e+07           615.62%
-Found incumbent of value -2008517.944122 after 66.56 sec. (45185.38 ticks)
-  64058 50190 -5604474.0750   643 -2008517.9441  -1.43401e+07  1590387  613.97%
-* 64548+50471                     -2076131.1070  -1.43362e+07           590.52%
-Found incumbent of value -2076131.106968 after 68.50 sec. (46378.25 ticks)
-* 66153+52505                     -2262699.7073  -1.43306e+07           533.34%
-Found incumbent of value -2262699.707315 after 69.61 sec. (46978.18 ticks)
-  66419 52443 -7677201.4294   646 -2262699.7073  -1.43306e+07  1672333  533.34%
-* 68539+52924                     -2262699.7095  -1.43172e+07           532.75%
-                                                     Cuts: 33                  
-Found incumbent of value -2262699.709508 after 71.41 sec. (47791.43 ticks)
-  68932 53760  -1.11152e+07   888 -2262699.7095  -1.43104e+07  1713328  532.45%
-  71359 56192 -3396241.2175   449 -2262699.7095  -1.42950e+07  1777405  531.77%
-  74788 58496 -6592256.7296   645 -2262699.7095  -1.42765e+07  1838350  530.95%
-  78114 61565 -5022997.6703   554 -2262699.7095  -1.42499e+07  1921591  529.78%
-Elapsed time = 78.00 sec. (50875.94 ticks, tree = 190.43 MB)
-  81641 65986 -6073590.2414   617 -2262699.7095  -1.42424e+07  2035420  529.44%
-  85017 69332 -4325739.7028   483 -2262699.7095  -1.42033e+07  2116240  527.72%
+   4380     0  -1.94136e+07   923  -531508.2624     Cuts: 310    97816     --- 
+   4380     0  -1.89658e+07   934  -531508.2624     Cuts: 269    98666     --- 
+   4380     0  -1.87754e+07   947  -531508.2624     Cuts: 294    99236     --- 
+   4380     0  -1.85885e+07   957  -531508.2624     Cuts: 261    99915     --- 
+   4380     0  -1.84402e+07   979  -531508.2624     Cuts: 263   100490     --- 
+   4380     0  -1.82756e+07   992  -531508.2624     Cuts: 286   101417     --- 
+   4380     0  -1.81141e+07   995  -531508.2624     Cuts: 247   102014     --- 
+   4380     0  -1.79849e+07  1003  -531508.2624     Cuts: 244   102541     --- 
+   4380     0  -1.77768e+07  1029  -531508.2624     Cuts: 256   103009     --- 
+   4380     0  -1.76919e+07  1023  -531508.2624     Cuts: 231   103431     --- 
+   4380     0  -1.76156e+07  1038  -531508.2624     Cuts: 186   103710     --- 
+   4380     0  -1.75473e+07  1038  -531508.2624     Cuts: 167   103983     --- 
+   4380     0  -1.75175e+07  1043  -531508.2624     Cuts: 181   104230     --- 
+   4380     0  -1.74608e+07  1053  -531508.2624     Cuts: 167   104444     --- 
+   4380     0  -1.74267e+07  1054  -531508.2624     Cuts: 133   104596     --- 
+   4380     0  -1.74030e+07  1057  -531508.2624     Cuts: 139   104735     --- 
+   4380     0  -1.73693e+07  1047  -531508.2624     Cuts: 113   104876     --- 
+   4380     0  -1.73370e+07  1039  -531508.2624      Cuts: 74   105004     --- 
+   4380     0  -1.73302e+07  1042  -531508.2624      Cuts: 84   105093     --- 
+   4380     0  -1.73111e+07  1048  -531508.2624      Cuts: 75   105213     --- 
+   4380     0  -1.72994e+07  1050  -531508.2624      Cuts: 62   105312     --- 
+   4380     0  -1.72787e+07  1048  -531508.2624      Cuts: 72   105422     --- 
+   4380     0  -1.72708e+07  1049  -531508.2624      Cuts: 54   105492     --- 
+   4380     0  -1.72634e+07  1040  -531508.2624      Cuts: 52   105561     --- 
+   4380     0  -1.72589e+07  1037  -531508.2624      Cuts: 52   105604     --- 
+   4380     0  -1.72013e+07  1014  -531508.2624      Cuts: 31   105724     --- 
+   4380     0  -1.71769e+07  1025  -531508.2624      Cuts: 56   105800     --- 
+   4380     0  -1.71557e+07  1025  -531508.2624      Cuts: 34   105843     --- 
+   4380     0  -1.71523e+07  1025  -531508.2624      Cuts: 28   105864     --- 
+   4380     0  -1.71478e+07  1023  -531508.2624      Cuts: 22   105899     --- 
+   4380     0  -1.71434e+07  1031  -531508.2624      Cuts: 22   105934     --- 
+   4380     0  -1.71320e+07  1030  -531508.2624      Cuts: 22   105980     --- 
+   4380     0  -1.71211e+07  1033  -531508.2624      Cuts: 26   106014     --- 
+   4380     0  -1.71142e+07  1034  -531508.2624   MIRcuts: 20   106053     --- 
+   4380     0  -1.71099e+07  1028  -531508.2624      Cuts: 17   106076     --- 
+   4380     0  -1.71031e+07  1031  -531508.2624      Cuts: 11   106097     --- 
+   4380     0  -1.71012e+07  1032  -531508.2624    MIRcuts: 6   106101     --- 
+*  4380+    0                      -723129.9648  -1.71012e+07              --- 
+Found incumbent of value -723129.964793 after 17.25 sec. (17861.09 ticks)
+   4380     0  -1.70933e+07  1003  -723129.9648      Cuts: 16   106136     --- 
+   4380     0  -1.70914e+07  1006  -723129.9648      Cuts: 50   106205     --- 
+   4380     0  -1.70849e+07   991  -723129.9648      Cuts: 22   106254     --- 
+   4380     0  -1.70811e+07  1008  -723129.9648      Cuts: 50   106338     --- 
+   4380     0  -1.70791e+07  1003  -723129.9648      Cuts: 19   106381     --- 
+*  4380+    0                      -723129.9657  -1.70791e+07              --- 
+Found incumbent of value -723129.965697 after 19.09 sec. (19921.20 ticks)
+   4380     2  -1.70791e+07   993  -723129.9657  -1.70791e+07   106381     --- 
+   4383     5  -1.69119e+07   972  -723129.9657  -1.69106e+07   106448     --- 
+*  4400+    2                      -723129.9680  -1.66673e+07              --- 
+Found incumbent of value -723129.967969 after 20.44 sec. (20833.47 ticks)
+   4400     4  -1.64112e+07   962  -723129.9680  -1.66673e+07   106467     --- 
+*  4403+    4                      -723129.9689  -1.66673e+07              --- 
+                                                     Cuts: 29                  
+Found incumbent of value -723129.968868 after 20.58 sec. (20868.24 ticks)
+   5343   757 -9155672.9928   706  -723129.9689  -1.64112e+07   141489     --- 
+                                                      Cuts: 5                  
+Elapsed time = 22.30 sec. (21793.19 ticks, tree = 1.42 MB)
+   7864  2868 -4432411.8979   484  -723129.9689  -1.64112e+07   186673     --- 
+  10550  5590 -1325890.9249   225  -723129.9689  -1.64112e+07   207948     --- 
+  13504  8140 -5548533.9372   575  -723129.9689  -1.64112e+07   257527     --- 
+                                                     Cuts: 10                  
+* 16321+10360                      -723129.9691  -1.61478e+07              --- 
+Found incumbent of value -723129.969111 after 29.33 sec. (25294.16 ticks)
+* 16501+10594                      -723129.9699  -1.61478e+07              --- 
+Found incumbent of value -723129.969866 after 29.41 sec. (25331.99 ticks)
+  17673 11893  -974018.3865   158  -723129.9699  -1.61478e+07   300747     --- 
+* 18308+12279                      -723129.9703  -1.61478e+07              --- 
                                                      Cuts: 50                  
-  88270 71948 -8003634.0666   717 -2262699.7095  -1.41847e+07  2185278  526.89%
-  91671 75326 -3863115.0950   526 -2262699.7095  -1.41736e+07  2270722  526.40%
-  92718 77532  -1.03638e+07   882 -2262699.7095  -1.41586e+07  2327885  525.74%
-                                                     Cuts: 64                  
-  95362 79526  -1.35084e+07   949 -2262699.7095  -1.41578e+07  2385165  525.70%
-  98644 83245 -8646900.9428   800 -2262699.7095  -1.41386e+07  2494378  524.85%
-                                                     Cuts: 66                  
- 101972 86533 -7153162.1757   671 -2262699.7095  -1.41246e+07  2582142  524.24%
- 104821 89814 -4496357.7867   617 -2262699.7095  -1.41082e+07  2678778  523.51%
- 108134 91280 -4353172.2238   536 -2262699.7095  -1.41008e+07  2715686  523.18%
-                                                     Cuts: 18                  
-Elapsed time = 97.44 sec. (60415.92 ticks, tree = 286.47 MB)
- 111570 95567 -3977921.9277   481 -2262699.7095  -1.40846e+07  2831846  522.47%
-*112470+96332                     -2661044.7503  -1.40846e+07           429.29%
-Found incumbent of value -2661044.750303 after 100.02 sec. (61643.49 ticks)
-*112554+96332                     -2667096.5661  -1.40846e+07           428.09%
-Found incumbent of value -2667096.566141 after 100.06 sec. (61672.52 ticks)
-*113966+96986                     -2667096.5670  -1.40687e+07           427.49%
-Found incumbent of value -2667096.567021 after 100.91 sec. (62058.73 ticks)
- 114870 97595 -3540587.9246   466 -2667096.5670  -1.40677e+07  2939824  427.46%
-*115547+97317                     -2667096.5715  -1.40677e+07           427.46%
-Found incumbent of value -2667096.571458 after 101.91 sec. (62546.86 ticks)
- 117241 99119 -4219615.5456   515 -2667096.5715  -1.40539e+07  2986430  426.94%
-                                                     Cuts: 28                  
- 118503 102379 -9600689.9209   811 -2667096.5715  -1.40443e+07  3078970  426.58%
- 121460 104137  -1.16279e+07   909 -2667096.5715  -1.40421e+07  3137469  426.49%
- 124728 105850 -4386115.2876   467 -2667096.5715  -1.40333e+07  3190724  426.16%
-                                                     Cuts: 27                  
- 127470 109521  -1.23222e+07   981 -2667096.5715  -1.40222e+07  3297582  425.75%
- 130280 111951  -1.00104e+07   856 -2667096.5715  -1.40204e+07  3376188  425.68%
-*131458+113454                     -2820129.5755  -1.40204e+07           397.15%
-Found incumbent of value -2820129.575480 after 114.00 sec. (68453.15 ticks)
-*132922+113945                     -2820129.5882  -1.40129e+07           396.89%
-Found incumbent of value -2820129.588247 after 115.02 sec. (68897.22 ticks)
- 133236 114766 -4605539.4381   561 -2820129.5882  -1.40129e+07  3503353  396.89%
-*134064+114247                     -2820129.5886  -1.40129e+07           396.89%
-Found incumbent of value -2820129.588648 after 115.66 sec. (69270.67 ticks)
-*134098+115817                     -2878895.0578  -1.40129e+07           386.75%
-Found incumbent of value -2878895.057751 after 115.67 sec. (69280.65 ticks)
-*135688+116853                     -2878895.0708  -1.40043e+07           386.45%
-Found incumbent of value -2878895.070849 after 116.88 sec. (69864.96 ticks)
- 135876 116054 -5076907.4643   592 -2878895.0708  -1.40043e+07  3551584  386.45%
-Elapsed time = 117.05 sec. (69957.36 ticks, tree = 364.72 MB)
- 138061 119109 -3474155.3880   460 -2878895.0708  -1.39931e+07  3641594  386.06%
-*138459+119514                     -2878895.0714  -1.39931e+07           386.06%
-Found incumbent of value -2878895.071427 after 118.74 sec. (71048.36 ticks)
-*140328+120053                     -2878895.0726  -1.39905e+07           385.97%
-Found incumbent of value -2878895.072613 after 119.94 sec. (71625.73 ticks)
- 141035 120986 -2884443.6610   433 -2878895.0726  -1.39868e+07  3702608  385.84%
-*141697+121414                     -2878895.0744  -1.39854e+07           385.79%
-Found incumbent of value -2878895.074373 after 121.41 sec. (72242.40 ticks)
- 142759 124743 -3982956.3858   486 -2878895.0744  -1.39772e+07  3810033  385.51%
-*143960+125176                     -2878895.0753  -1.39754e+07           385.44%
-Found incumbent of value -2878895.075268 after 123.75 sec. (73272.55 ticks)
-*144323+125038                     -2878895.0754  -1.39736e+07           385.38%
-Found incumbent of value -2878895.075400 after 123.97 sec. (73392.94 ticks)
- 145675 125447 -5372026.6559   634 -2878895.0754  -1.39721e+07  3838185  385.33%
-*148125+127258                     -2878895.0764  -1.39601e+07           384.91%
-Found incumbent of value -2878895.076445 after 126.30 sec. (74501.14 ticks)
- 148867 127672 -3387352.3195   413 -2878895.0764  -1.39601e+07  3896968  384.91%
- 152177 132773 -3804242.8432   475 -2878895.0764  -1.39547e+07  4045959  384.72%
- 155470 136147 -4484795.3178   661 -2878895.0764  -1.39535e+07  4143817  384.68%
- 158802 140187 -6489912.9458   662 -2878895.0764  -1.39355e+07  4250801  384.06%
-*159426+140071                     -2878895.0791  -1.39355e+07           384.06%
-Found incumbent of value -2878895.079132 after 133.36 sec. (77778.50 ticks)
- 161944 141836 -4881001.0356   650 -2878895.0791  -1.39334e+07  4295995  383.98%
- 165343 145387 -6442141.8027   670 -2878895.0791  -1.39155e+07  4395221  383.36%
-Elapsed time = 137.00 sec. (79497.89 ticks, tree = 460.79 MB)
- 167923 147959  -1.07049e+07   908 -2878895.0791  -1.39103e+07  4465633  383.18%
- 170493 150730 -2960721.9540   399 -2878895.0791  -1.39014e+07  4550279  382.87%
- 172351 152954  -1.09706e+07   893 -2878895.0791  -1.38935e+07  4612845  382.60%
- 174856 154990 -9623095.1266   802 -2878895.0791  -1.38903e+07  4684203  382.49%
- 177991 157742 -4760636.1577   508 -2878895.0791  -1.38780e+07  4760447  382.06%
- 181036 160911 -4312492.0444   527 -2878895.0791  -1.38766e+07  4858655  382.01%
- 184120 163197 -4484376.0105   507 -2878895.0791  -1.38668e+07  4929405  381.67%
- 187260 167146 -3121193.0294   468 -2878895.0791  -1.38568e+07  5047265  381.32%
- 190472 168940 -4686316.8060   584 -2878895.0791  -1.38515e+07  5100930  381.14%
-*192500+170493                     -3375803.5012  -1.38473e+07           310.19%
-Found incumbent of value -3375803.501223 after 155.89 sec. (88700.73 ticks)
- 193713 172438 -5993614.0778   642 -3375803.5012  -1.38449e+07  5202353  310.12%
-Elapsed time = 156.67 sec. (89038.47 ticks, tree = 548.96 MB)
-*196281+167193                     -3375803.5062  -1.38352e+07           309.83%
-Found incumbent of value -3375803.506188 after 158.27 sec. (89823.26 ticks)
-*196375+166603                     -3375803.5092  -1.38352e+07           309.83%
-Found incumbent of value -3375803.509192 after 158.33 sec. (89849.88 ticks)
-*196452+167698                     -3375803.5120  -1.38352e+07           309.83%
-Found incumbent of value -3375803.512015 after 158.39 sec. (89874.20 ticks)
- 196815 168054  -1.12703e+07   913 -3375803.5120  -1.38352e+07  5307502  309.83%
-*197024+167821                     -3375803.5142  -1.38243e+07           309.51%
-Found incumbent of value -3375803.514241 after 158.80 sec. (90076.73 ticks)
-*198003+168901                     -3375803.5143  -1.38221e+07           309.45%
-Found incumbent of value -3375803.514312 after 159.42 sec. (90413.74 ticks)
-*199192+169577                     -3375803.5147  -1.38221e+07           309.45%
-Found incumbent of value -3375803.514657 after 160.28 sec. (90795.20 ticks)
- 199566 170217 -4622071.6901   508 -3375803.5147  -1.38221e+07  5370330  309.45%
- 201193 173813 -4647259.2550   610 -3375803.5147  -1.38116e+07  5476875  309.14%
- 202877 175820 -7477412.4579   699 -3375803.5147  -1.38067e+07  5539735  308.99%
-*204727+176007                     -3375803.5150  -1.38062e+07           308.97%
-Found incumbent of value -3375803.515048 after 165.44 sec. (93490.08 ticks)
-*204915+176079                     -3375803.5153  -1.38045e+07           308.92%
-Found incumbent of value -3375803.515301 after 165.56 sec. (93544.67 ticks)
- 205819 177618 -7072703.1742   662 -3375803.5153  -1.38045e+07  5603635  308.92%
-*207600+177811                     -3375803.5162  -1.37947e+07           308.64%
-Found incumbent of value -3375803.516158 after 167.36 sec. (94394.83 ticks)
-*207845+179928                     -3375803.5223  -1.37887e+07           308.46%
-Found incumbent of value -3375803.522296 after 167.55 sec. (94475.42 ticks)
- 208958 179617 -3452653.1754   467 -3375803.5223  -1.37877e+07  5671302  308.43%
- 211770 181477 -6264969.7893   641 -3375803.5223  -1.37789e+07  5731936  308.17%
- 214847 185244 -4032149.6566   559 -3375803.5223  -1.37691e+07  5853045  307.88%
- 217867 189992 -8813776.1019   792 -3375803.5223  -1.37629e+07  5984266  307.69%
- 221046 191617 -8109094.2985   701 -3375803.5223  -1.37540e+07  6036002  307.43%
-Elapsed time = 176.19 sec. (98578.14 ticks, tree = 610.95 MB)
-*222268+192211                     -3375803.5229  -1.37540e+07           307.43%
-Found incumbent of value -3375803.522926 after 176.89 sec. (98901.53 ticks)
- 224599 196545 -7291598.1271   695 -3375803.5229  -1.37448e+07  6178917  307.16%
-*226411+197454                     -3375803.5236  -1.37311e+07           306.75%
-Found incumbent of value -3375803.523642 after 179.34 sec. (100096.23 ticks)
- 227732 198331 -5709826.8275   629 -3375803.5236  -1.37311e+07  6236418  306.75%
- 230589 199472 -5584569.8719   625 -3375803.5236  -1.37224e+07  6268733  306.49%
- 232307 203537 -9686959.9661   841 -3375803.5236  -1.37211e+07  6388452  306.45%
- 234383 205085 -5783501.9762   660 -3375803.5236  -1.37124e+07  6437688  306.20%
- 237461 206904 -6047563.2016   710 -3375803.5236  -1.37064e+07  6494286  306.02%
- 240890 210444 -4023559.2126   549 -3375803.5236  -1.36991e+07  6598268  305.80%
- 243937 212707  -1.16203e+07   946 -3375803.5236  -1.36881e+07  6668098  305.48%
-                                                      Cuts: 2                  
- 246887 216170 -5198166.3341   629 -3375803.5236  -1.36812e+07  6780885  305.27%
-*256987+225472                     -3375803.5412  -1.36596e+07           304.63%
-Found incumbent of value -3375803.541223 after 200.44 sec. (110136.28 ticks)
- 259721 227993 -9897647.8138   787 -3375803.5412  -1.36562e+07  7127889  304.53%
-                                                     Cuts: 22                  
-Elapsed time = 202.20 sec. (110978.82 ticks, tree = 726.30 MB)
- 268900 239217 -8027476.7344   700 -3375803.5412  -1.36304e+07  7474097  303.77%
- 281058 249798  -1.05104e+07   869 -3375803.5412  -1.36104e+07  7787068  303.18%
-                                                     Cuts: 34                  
- 293991 262432 -4733699.7579   597 -3375803.5412  -1.35921e+07  8151285  302.63%
- 304808 272440 -6394915.1986   639 -3375803.5412  -1.35609e+07  8451685  301.71%
- 316863 282999  -1.00392e+07   814 -3375803.5412  -1.35431e+07  8746515  301.18%
- 328017 294399 -4565098.2583   581 -3375803.5412  -1.35238e+07  9108978  300.61%
- 338774 304767 -4910946.2544   586 -3375803.5412  -1.35079e+07  9453371  300.14%
- 349094 315448 -4311701.5365   554 -3375803.5412  -1.34860e+07  9778677  299.49%
- 361312 325291 -3743241.8706   507 -3375803.5412  -1.34691e+07 10111953  298.99%
- 371453 337224  -1.15352e+07   933 -3375803.5412  -1.34507e+07 10514790  298.44%
-Elapsed time = 279.81 sec. (149129.61 ticks, tree = 1082.81 MB)
- 382538 347233 -3634014.1658   543 -3375803.5412  -1.34287e+07 10850885  297.79%
- 393921 357046 -9526745.5616   805 -3375803.5412  -1.34129e+07 11166579  297.32%
- 404112 367420 -4966306.1562   588 -3375803.5412  -1.33939e+07 11495277  296.76%
- 415728 377530 -7462387.9113   730 -3375803.5412  -1.33804e+07 11839191  296.36%
- 425670 390213 -3622375.6077   570 -3375803.5412  -1.33644e+07 12279907  295.89%
- 436149 400260  -1.02441e+07   831 -3375803.5412  -1.33502e+07 12597021  295.47%
- 447782 410887 -6166892.3518   649 -3375803.5412  -1.33320e+07 12922924  294.93%
- 461691 422951 -8025608.0157   752 -3375803.5412  -1.33175e+07 13206864  294.50%
- 472254 432724  -1.23899e+07  1026 -3375803.5412  -1.33055e+07 13429305  294.14%
- 473203 433790  -1.18072e+07   868 -3375803.5412  -1.33053e+07 13453196  294.14%
-Elapsed time = 373.12 sec. (187301.32 ticks, tree = 2155.67 MB)
-Nodefile size = 104.99 MB (71.52 MB after compression)
- 474178 434532  -1.10136e+07   878 -3375803.5412  -1.33053e+07 13467615  294.14%
- 474877 435359 -5821629.2698   616 -3375803.5412  -1.33053e+07 13483004  294.14%
- 475611 435936 -5884804.2744   623 -3375803.5412  -1.33053e+07 13495833  294.14%
- 476179 436612 -5326377.4040   607 -3375803.5412  -1.33053e+07 13505204  294.14%
- 476819 437248  -1.03213e+07   821 -3375803.5412  -1.33053e+07 13518063  294.14%
- 477220 437680 -8104877.6615   720 -3375803.5412  -1.33053e+07 13526774  294.14%
- 477645 438039  -1.21640e+07   979 -3375803.5412  -1.33053e+07 13535426  294.14%
- 477918 438318 -4443036.7013   559 -3375803.5412  -1.33053e+07 13539837  294.14%
- 478198 438510 -7197899.1988   671 -3375803.5412  -1.33053e+07 13545676  294.14%
- 478500 438892 -9619586.3408   838 -3375803.5412  -1.33053e+07 13552059  294.14%
-Elapsed time = 400.94 sec. (232373.98 ticks, tree = 2563.91 MB)
-Nodefile size = 515.18 MB (356.11 MB after compression)
- 478724 439138 -9415317.7119   871 -3375803.5412  -1.33053e+07 13557473  294.14%
- 478999 439376  -1.03777e+07   814 -3375803.5412  -1.33053e+07 13562094  294.14%
- 479078 439364  -1.17957e+07   896 -3375803.5412  -1.33053e+07 13564251  294.14%
- 479265 439619 -4687629.8695   555 -3375803.5412  -1.33053e+07 13568031  294.14%
- 479592 439986  -1.26585e+07   980 -3375803.5412  -1.33053e+07 13573895  294.14%
- 480081 440308 -3661993.0581   466 -3375803.5412  -1.33053e+07 13580659  294.14%
- 480172 440483  -1.18213e+07   963 -3375803.5412  -1.33053e+07 13584035  294.14%
- 480478 440830  -1.00738e+07   805 -3375803.5412  -1.33053e+07 13593333  294.14%
- 480914 441263 -5189834.8532   601 -3375803.5412  -1.33053e+07 13603323  294.14%
- 481083 441409 -4729385.6786   562 -3375803.5412  -1.33053e+07 13605134  294.14%
-Elapsed time = 416.67 sec. (273292.42 ticks, tree = 2728.44 MB)
-Nodefile size = 675.58 MB (467.66 MB after compression)
- 481216 441544  -1.05541e+07   850 -3375803.5412  -1.33053e+07 13608189  294.14%
- 482271 442659 -3415001.4649   460 -3375803.5412  -1.33053e+07 13628095  294.14%
- 483484 444227 -4136619.8109   516 -3375803.5412  -1.33053e+07 13660005  294.14%
- 486916 447426 -7145024.2623   693 -3375803.5412  -1.33053e+07 13732878  294.14%
- 489086 449852 -9422425.1543   751 -3375803.5412  -1.33053e+07 13792605  294.14%
- 490204 450621 -6135351.0243   642 -3375803.5412  -1.33053e+07 13808531  294.14%
- 491501 451994 -3535553.3541   450 -3375803.5412  -1.33053e+07 13830197  294.14%
- 492230 452732 -8063463.2051   789 -3375803.5412  -1.33053e+07 13850060  294.14%
- 495298 455635  -1.00649e+07   770 -3375803.5412  -1.33053e+07 13912031  294.14%
- 496211 456665 -4792833.0563   576 -3375803.5412  -1.33053e+07 13931174  294.14%
-Elapsed time = 466.45 sec. (312093.99 ticks, tree = 3363.62 MB)
-Nodefile size = 1314.76 MB (920.66 MB after compression)
- 498038 458259 -7274788.9987   676 -3375803.5412  -1.33053e+07 13970690  294.14%
- 499138 459192 -7943715.0751   725 -3375803.5412  -1.33053e+07 13992030  294.14%
- 500204 460385 -6112602.8940   597 -3375803.5412  -1.33053e+07 14010885  294.14%
- 502391 462401 -4496199.2156   605 -3375803.5412  -1.33053e+07 14062182  294.14%
- 503349 463572 -4404613.1330   526 -3375803.5412  -1.33053e+07 14083821  294.14%
- 506027 465853 -3890934.1952   488 -3375803.5412  -1.33053e+07 14139832  294.14%
- 508792 468351 -7670279.3894   720 -3375803.5412  -1.33053e+07 14191509  294.14%
- 514910 474093 -4099266.1114   449 -3375803.5412  -1.33050e+07 14317116  294.13%
-Starting limited solution polishing.
- 517608 477737        cutoff       -3375803.5412  -1.33050e+07 14398928  294.13%
- 520352 481677  -1.25136e+07   995 -3375803.5412  -1.33036e+07 14483135  294.09%
-Elapsed time = 589.55 sec. (350266.06 ticks, tree = 4926.82 MB)
-Nodefile size = 2876.78 MB (2070.45 MB after compression)
+Found incumbent of value -723129.970268 after 30.30 sec. (25799.27 ticks)
+* 18586+12738                      -723129.9706  -1.61478e+07              --- 
+                                                  MIRcuts: 15                  
+Found incumbent of value -723129.970590 after 30.48 sec. (25892.96 ticks)
+* 18948+13060                      -894684.5036  -1.61478e+07              --- 
+                                                     Cuts: 14                  
+Found incumbent of value -894684.503607 after 30.73 sec. (26070.54 ticks)
+* 18956+13060                      -898038.3961  -1.61478e+07              --- 
+Found incumbent of value -898038.396071 after 30.75 sec. (26076.33 ticks)
+* 19337+12677                      -898038.3962  -1.61478e+07              --- 
+                                                     Cuts: 16                  
+Found incumbent of value -898038.396165 after 31.00 sec. (26233.68 ticks)
+* 19695+12943                      -906714.4326  -1.61478e+07              --- 
+                                                      Cuts: 3                  
+Found incumbent of value -906714.432633 after 31.31 sec. (26406.08 ticks)
+  20003 13076 -8422701.7915   687  -906714.4326  -1.58502e+07   339363     --- 
+* 20606+13970                     -1318855.4356  -1.55429e+07              --- 
+Found incumbent of value -1318855.435599 after 32.42 sec. (26967.04 ticks)
+* 20641+13970                     -1318855.4366  -1.55429e+07              --- 
+Found incumbent of value -1318855.436585 after 32.44 sec. (26976.68 ticks)
+* 20829+13976                     -1552151.1759  -1.55429e+07           901.38%
+Found incumbent of value -1552151.175902 after 32.55 sec. (27039.82 ticks)
+* 21398+12305                     -1871688.2755  -1.55429e+07           730.42%
+Found incumbent of value -1871688.275483 after 32.83 sec. (27183.92 ticks)
+* 21435+12305                     -1871688.2765  -1.55429e+07           730.42%
+Found incumbent of value -1871688.276469 after 32.86 sec. (27193.58 ticks)
+* 21465+12305                     -1964292.1775  -1.55429e+07           691.27%
+Found incumbent of value -1964292.177495 after 32.88 sec. (27200.97 ticks)
+* 21673+12501                     -1964292.1775  -1.55429e+07           691.27%
+Found incumbent of value -1964292.177496 after 32.95 sec. (27257.87 ticks)
+  22772 12717 -6524552.2279   634 -1964292.1775  -1.53795e+07   406796  682.95%
+* 24421+13264                     -1964292.1902  -1.53786e+07           682.91%
+Found incumbent of value -1964292.190155 after 34.08 sec. (27821.06 ticks)
+* 24744+13583                     -1964292.1904  -1.53612e+07           682.02%
+Found incumbent of value -1964292.190408 after 34.23 sec. (27905.04 ticks)
+  25912 15727 -9799389.7928   733 -1964292.1904  -1.52800e+07   454567  677.89%
+                                                      Cuts: 4                  
+* 26982+16162                     -1964292.1928  -1.52721e+07           677.49%
+                                                     Cuts: 35                  
+Found incumbent of value -1964292.192840 after 35.94 sec. (28704.73 ticks)
+GAMScom-Server: Socket not open, can't process 'stepLine'
 
-GUB cover cuts applied:  128
+GUB cover cuts applied:  73
 Clique cuts applied:  11
-Cover cuts applied:  12
-Implied bound cuts applied:  50
-Flow cuts applied:  140
-Mixed integer rounding cuts applied:  1062
-Zero-half cuts applied:  101
-Lift and project cuts applied:  51
-Gomory fractional cuts applied:  62
+Cover cuts applied:  9
+Implied bound cuts applied:  35
+Flow cuts applied:  81
+Mixed integer rounding cuts applied:  625
+Zero-half cuts applied:  54
+Lift and project cuts applied:  61
+Gomory fractional cuts applied:  50
 
 Root node processing (before b&c):
-  Real time             =    4.45 sec. (5373.67 ticks)
+  Real time             =    4.30 sec. (5315.13 ticks)
 Parallel b&c, 16 threads:
-  Real time             =  601.23 sec. (348495.93 ticks)
-  Sync time (average)   =  208.19 sec.
+  Real time             =   32.95 sec. (24100.34 ticks)
+  Sync time (average)   =    3.86 sec.
   Wait time (average)   =    0.03 sec.
                           ------------
-Total (root+branch&cut) =  605.69 sec. (353869.59 ticks)
+Total (root+branch&cut) =   37.25 sec. (29415.47 ticks)
 
---- MIP status (107): time limit exceeded.
---- Cplex Time: 605.72sec (det. 353869.62 ticks)
+--- MIP status (113): aborted.
+--- Cplex Time: 37.25sec (det. 29415.50 ticks)
 
 --- Returning a primal only solution to GAMS (marginals all set to NA).
 --- Fixing integer variables and solving final LP...
@@ -685,32 +409,33 @@ Parallel mode: deterministic, using up to 16 threads for concurrent optimization
  * Starting Barrier on 14 threads...
  * Starting primal Simplex on 1 thread...
 Tried aggregator 1 time.
-LP Presolve eliminated 15839 rows and 9555 columns.
-Aggregator did 135 substitutions.
-Reduced LP has 63 rows, 90 columns, and 241 nonzeros.
-Presolve time = 0.09 sec. (7.78 ticks)
+LP Presolve eliminated 15761 rows and 9496 columns.
+Aggregator did 183 substitutions.
+Reduced LP has 93 rows, 101 columns, and 466 nonzeros.
+Presolve time = 0.02 sec. (8.76 ticks)
 
 Iteration log . . .
-Iteration:     1   Scaled dual infeas =         37804.877337
-Iteration:     5   Dual objective     =     -14147453.148901
+Iteration:     1   Scaled dual infeas =         83975.353382
+Iteration:     8   Dual objective     =      -9758011.638716
+Iteration:    48   Dual objective     =      -1964292.178114
 
 Dual simplex solved model.
 
 
 --- Fixed MIP status (1): optimal.
---- Cplex Time: 0.22sec (det. 15.29 ticks)
+--- Cplex Time: 0.03sec (det. 16.40 ticks)
 
 
-Resource limit exceeded
-MIP Solution:     -3375803.541223    (1.45379e+07 iterations, 521858 nodes)
-Final Solve:      -3375803.509223    (41 iterations)
+Problem aborted
+MIP Solution:     -1964292.192840    (523608 iterations, 29892 nodes)
+Final Solve:      -1964292.177429    (49 iterations)
 
-Best possible:   -13292272.951024
-Absolute gap:      9916469.441801
-Relative gap:            0.746033
+Best possible:   -15161344.630603
+Absolute gap:     13197052.453174
+Relative gap:            0.870441
 
 --- Reading solution for model netdesign
---- Executing after solve: elapsed 0:10:14.474
+--- Executing after solve: elapsed 0:00:37.557
 --- mip.gms(2981) 9 Mb
 --- GDX File (execute_unload) C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\resultado.gdx
 --- mip.gms(2990) 11 Mb
@@ -724,4 +449,4 @@ Relative gap:            0.746033
 --- Execute embedded library embconnectcclib64.dll
 --- Putfile fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\fij_long.csv
 *** Status: Normal completion
---- Job mip.gms Stop 01/21/26 16:37:09 elapsed 0:10:15.239
+--- Job mip.gms Stop 01/22/26 12:07:55 elapsed 0:00:38.327

@@ -58,13 +58,13 @@ E 3710 a
 E 3741 f
 E 4147 fext
 E 4163 zij
-E 4187 delta
-E 4212 ghat
-E 4231 s_bin
-E 4253 sh_bin
-E 4275 a_bin
-E 4291 z
-E 4316 fij
+E 4189 delta
+E 4214 ghat
+E 4233 s_bin
+E 4255 sh_bin
+E 4277 a_bin
+E 4293 z
+E 4318 fij
 E 4344 alfaseg
 B 4367 Range Statistics    SOLVE netdesign Using MIP From line 2962
 B 4378 Model Statistics    SOLVE netdesign Using MIP From line 2962

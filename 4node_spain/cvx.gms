@@ -38,12 +38,18 @@ Equation
     prim_s_def(i)
     prim_a_def(i,j)
 
-    cap_link(i,j)
-    cap_station_out(i)
-    cap_station_in(i)
+    link_cap(i,j)
+    station_cap(i)
+    hub_connect_cap(i)
+    hub_direct_cap(o,d)
 
-    sum_aprim_cap
+    tot_links
     link_flow_to_f(o,d)
+    
+    profitability(o,d)
+    
+    bud_avail
+    bud_final
 
     flow_start(o,d)     "conservación en origen o para cada destino d != o"
     flow_end(o,d)       "conservación en destino d para cada origen o != d"
@@ -59,7 +65,7 @@ Equation
     candidates_zero(i,j)
 
     fix_s_at_zero(i)
-    fix_a_at_zero(i,j)
+    fix_sh_at_zero(i)
     
     expconef(o,d)
     exponefext(o,d)
@@ -80,30 +86,33 @@ Equation
 
 * Presupuesto (bud): costes lineales + (si iter<niters) costes fijos aproximados
 bud_def..
-    bud =e= 1e-2*sum(i, station_capacity_slope(i)*(s(i) + sh(i))
-         + 1e-2*sum((i,j), link_capacity_slope(i,j)*aprim(i,j))
-         + (1e-2*lam*sum((i,j),
-                        link_cost(i,j)*aprim(i,j)/(a_prev(i,j)+epsi))
-         + 1e-2*lam*sum(i     ,
-                        station_cost(i)*sprim(i)/(s_prev(i)+epsi)))$(iter<niters);
+    bud =e= sum(i, station_capacity_slope(i)*(s(i) + sh(i)))
+         + sum(i,
+                        station_cost(i)*(s(i)+sh(i))/(s_prev(i)+sh_prev(i)+epsi))$(iter<niters)
+         + sum(i,
+                        lam*hub_cost(i)*sh(i)/(sh_prev(i)+epsi))$(iter<niters);
+                        
+
 
 * Operación (op): coste lineal de operar enlaces
-def_op_obj..
-    op_obj =e=  sum((i,j), op_link_cost(i,j) * a(i,j));
+op_def..
+    op =e= 0;
+*sum((i,j), op_link_cost(i,j) * a(i,j));
 
 * Pasajeros (pax): tiempos/precios en ruta y alternativas + entropías
 pax_def..
     pax =e=
-      1e-2*sum((o,d),
-            demand(o,d)
-          * sum((i,j), (travel_time(i,j)+prices(i,j))*fij(i,j,o,d)*logit_coef))
-    + 1e-2*sum((o,d), demand(o,d)
-          * (alt_time(o,d)+alt_price(o,d))*fext(o,d)*logit_coef)
+      sum((o,d),
+            prices(o,d)*demand(o,d) *  
+           ( logit_coef*prices(o,d)*f(o,d) + sum((i,j), (travel_time(i,j))*fij(i,j,o,d)*logit_coef)))
 
-    + 1e-2*sum((o,d),demand(o,d)* ft(o,d))
+    - sum((o,d), prices(o,d)*demand(o,d)
+          * alt_utility(o,d)*fext(o,d))
+
+    + sum((o,d),demand(o,d)*prices(o,d)* ft(o,d))
 *          * (  ( f(o,d)*log(f(o,d)) - f(o,d) ) ))
 
-   + 1e-2*sum((o,d), demand(o,d)*ftext(o,d))
+   + sum((o,d), demand(o,d)*prices(o,d)*ftext(o,d))
 *          * (  ( fext(o,d)*log(fext(o,d)) - fext(o,d) ) ))
 
 *    + 1e-3*sum((o,d), demand(o,d)
@@ -121,34 +130,48 @@ pax_def..
 
 * Objetivo total
 obj_def..
-    obj =e= alfa*pax/dm_pax + beta*bud + (1-alfa)*op/(dm_op);
+    obj =e= alfa*pax  + op + 1e-2*bud;
 *alfa*pax/dm_pax + beta*bud + (1-alfa)*op/(dm_op);
 
 *---------------------*
 * Restricciones       *
 *---------------------*
 
-* Definiciones primadas
-prim_s_def(i)..  sprim(i) =e= s(i) + deltas(i);
-prim_a_def(i,j)..aprim(i,j) =e= a(i,j) + deltaa(i,j);
+
+bud_avail..
+    bud$(iter < niters) =l= budget;
+    
+bud_final..
+    (sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$(s_prev(i) > 0.05 or sh_prev(i) > 0.05), station_cost(i))
+  + sum(i$(sh_prev(i) > 0.05), lam*hub_cost(i)))$(iter = niters)
+    =l=
+    budget
+;
+
+
+profitability(o,d).. demand(o,d)*prices(o,d)*f(o,d) =g= sum((i,j),demand(o,d)*fij(i,j,o,d)*op_link_cost(i,j)/(a_nom*tau));
 
 * Simetría de a_prim
-link_sym(i,j)$(ord(i) ne ord(j))..  aprim(i,j) =e= aprim(j,i);
+link_sym(i,j)$(ord(i) ne ord(j))..  a(i,j) =e= a(j,i);
 
 * Capacidad de enlace: sum_{o,d} fij(i,j,o,d)*demand(o,d) <= tau*a(i,j)*a_nom
-cap_link(i,j)..
-    sum((o,d), fij(i,j,o,d)*demand(o,d))*tau =l= a(i,j)*a_nom;
+link_cap(i,j)..
+    sum((o,d), fij(i,j,o,d)*demand(o,d)) =l= a(i,j)*a_nom*tau;
 
-* Capacidad/servicio en estación i (salidas y entradas)
-cap_station_out(i)..
-    sigma* sum(j,aprim(i,j) ) =l= s(i);
+    
+station_cap(i)..   sigma * (sum(j, a(j,i)) + sum(j, a(i,j))) =l= s(i) + sh(i);
 
-cap_station_in(i)..
-    sigma* sum(j,aprim(j,i))  =l= s(i);
+hub_connect_cap(i).. sigma * (sum( (o,d,j)$(ord(o)<>ord(i)),
+    demand(o,d) * fij(i,j,o,d) / (a_nom * tau))  + sum( (o,d,j)$(ord(d)<>ord(i)),
+    demand(o,d) * fij(j,i,o,d) / (a_nom * tau))) =l= sh(i);
+    
+    
+hub_direct_cap(o,d).. sigma * demand(o,d) * fij(o,d,o,d) / (a_nom * tau) =l= sh(o) + sh(d);
+
 
 * Límite total de links construidos/operativos
-sum_aprim_cap..
-    sum((i,j), aprim(i,j)) =l= a_max;
+tot_links..
+    sum((i,j), a(i,j)) =l= a_max;
 
 * Relación f con flujos saliendo del origen
 link_flow_to_f(o,d)..
@@ -186,14 +209,15 @@ split_choice(o,d)$(ord(o) ne ord(d))..
 
 * Enlaces no candidatesidatos forzados a 0: a_prim(i,j)=0 si ~(i,j) en candidates
 candidates_zero(i,j)$(not candidates(i,j))..
-    aprim(i,j) =e= 0;
+    a(i,j) =e= 0;
 
 * Fijaciones en la iteración final si previos pequeños (replica iter==niters … <=0.1)
-fix_s_at_zero(i)$( (s_prev(i) <= 0.1) and (iter = niters) )..
-    sprim(i) =l= epsi;
+fix_s_at_zero(i)$( (s_prev(i) <= 0.05) and (iter = niters) )..
+    s(i) =l= epsi;
+    
+fix_sh_at_zero(i)$( (sh_prev(i) <= 0.05) and (iter = niters) )..
+    sh(i) =l= epsi;
 
-fix_a_at_zero(i,j)$( (a_prev(i,j) <= 0.1) and (iter = niters))..
-    aprim(i,j) =l= epsi;
     
 
 expconef(o,d)..  fy(o,d) =g= f(o,d)*exp(fr(o,d)/f(o,d));
@@ -203,16 +227,6 @@ exponefext(o,d)..  fyext(o,d) =g= fext(o,d)*exp(frext(o,d)/fext(o,d));
 epigraphf(o,d)..  ft(o,d) =g= -fr(o,d)-f(o,d);
 
 epigraphfext(o,d)..  ftext(o,d) =g= -frext(o,d)-fext(o,d);
-
-def_deltasaux(i).. deltasaux(i) =e= deltas(i) + epsi;
-
-def_deltaaaux(i,j).. deltaaaux(i,j) =e= deltaa(i,j) + epsi;
-
-powercones(i).. sqrt(deltasaux(i)) * sqrt(deltast(i)) =g= deltasz(i);
-
-powerconea(i,j).. deltaaaux(i,j)**0.5 * deltaat(i,j)**0.5 =g= deltaaz(i,j);
-
-deltasz.fx(i) = 1;
 
 *rescap(i,j,o,d).. fij(i,j,o,d) =l= capa(i,j);
 
@@ -226,36 +240,40 @@ deltasz.fx(i) = 1;
 * Solve               *
 *---------------------*
 Model netplan /
-    bud_def      
-    op_def     
+    bud_def
+    op_def  
     pax_def      
-    obj_def      
+    obj_def
+    
+    bud_avail
+    bud_final
+    
+    profitability
 
-**    link_sym
-    prim_s_def
-    prim_a_def
+    link_sym
+    link_cap
+    station_cap
+    hub_connect_cap
+    hub_direct_cap
+    tot_links
 
-    cap_link
-    cap_station_out
-    cap_station_in
-
-    sum_aprim_cap
+   
     link_flow_to_f
     flow_start   
     flow_end  
     flow_mid    
 
     zero_diag_od
+    zero_diag_odext
     zero_fij_self
     zero_fij_origin
     zero_fij_dest
-    zero_diag_odext
 
     split_choice
     candidates_zero
 
     fix_s_at_zero
-    fix_a_at_zero
+    fix_sh_at_zero
     
     expconef
     exponefext
@@ -268,11 +286,9 @@ Model netplan /
 
 *+$ontext
 s.l(i)=0.5;
-sprim.l(i)=0.5;
-deltas.l(i)=0.5;
 a.l(i,j)=0.5;
-aprim.l(i,j)=0.5;
-deltaa.l(i,j)=0.5;
+
+
 
 f.l(o,d)=0.5;
 fext.l(o,d)=0.5;
@@ -290,8 +306,6 @@ fext.up(o,d)=1;
 fy.fx(o,d)=1;
 fyext.fx(o,d)=1;
 
-deltasz.fx(i) = 1;
-deltaaz.fx(i,j) = 1;
 
 
 
@@ -325,60 +339,44 @@ putclose fijx;
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:
-      - name: aprim
+      - name: a
 - Projection:
-    name: aprim.l(i,j)
-    newName: aprim_level(i,j)
+    name: a.l(i,j)
+    newName: a_level(i,j)
 - ExcelWriter:
     file: output_a.xlsx
     symbols:
-      - name: aprim_level
+      - name: a_level
 endEmbeddedCode
 
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:
-      - name: sprim
+      - name: s
 - Projection:
-    name: sprim.l(i)
-    newName: sprim_level(i)
+    name: s.l(i)
+    newName: s_level(i)
 - ExcelWriter:
     file: output_s.xlsx
     symbols:
-      - name: sprim_level
+      - name: s_level
 endEmbeddedCode
 
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:
-      - name: sprim
       - name: s
-      - name: deltas
-      - name: aprim
       - name: a
-      - name: deltaa
       - name: f
       - name: fext
       - name: fnew
       - name: solverTime
 - Projection:
-    name: sprim.l(i)
-    newName: sprim_level(i)
-- Projection:
     name: s.l(i)
     newName: s_level(i)
 - Projection:
-    name: deltas.l(i)
-    newName: deltas_level(i)
-- Projection:
-    name: aprim.l(i,j)
-    newName: aprim_level(i,j)
-- Projection:
     name: a.l(i,j)
     newName: a_level(i,j)
-- Projection:
-    name: deltaa.l(i,j)
-    newName: deltaa_level(i,j)
 - Projection:
     name: f.l(o,d)
     newName: f_level(o,d)
@@ -394,12 +392,8 @@ EmbeddedCode Connect:
 - ExcelWriter:
     file: output_all.xlsx
     symbols:
-      - name: sprim_level
       - name: s_level
-      - name: deltas_level
-      - name: aprim_level
       - name: a_level
-      - name: deltaa_level
       - name: f_level
       - name: fext_level
       - name: fij_level

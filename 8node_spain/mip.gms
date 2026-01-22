@@ -86,10 +86,10 @@ link_cap(i,j)..
 station_cap(i)..   sigma * (sum(j, a(j,i)) + sum(j, a(i,j))) =l= s(i) + sh(i);
 
 hub_connect_cap(i).. sigma * (sum( (o,d,j)$(ord(o)<>ord(i)),
-    demand(o,d) * fij(i,j,o,d) / (a_nom * tau))  + sum( (o,d,j)$(ord(d)<>ord(i)),
-    demand(o,d) * fij(j,i,o,d) / (a_nom * tau))) =l= sh(i);
+    demand(o,d) * zij(i,j,o,d) / (a_nom * tau))  + sum( (o,d,j)$(ord(d)<>ord(i)),
+    demand(o,d) * zij(j,i,o,d) / (a_nom * tau))) =l= sh(i);
     
-hub_direct_cap(o,d).. sigma * demand(o,d) * fij(o,d,o,d) / (a_nom * tau) =l= sh(o) + sh(d);
+hub_direct_cap(o,d).. sigma * demand(o,d) * zij(o,d,o,d) / (a_nom * tau) =l= sh(o) + sh(d);
 
 tot_links.. sum((i,j), a(i,j)) =l= a_max;
 
