@@ -1,4 +1,4 @@
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 1
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -682,7 +682,7 @@ INCLUDE    C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\n
  678        - name: fij_level
  679        - name: solver_time
  680  endEmbeddedCode
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 2
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -711,8 +711,8 @@ Include File Summary
     20      272 INCLUDE        2     118  ..C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt\niters.txt
 
 
-COMPILATION TIME     =        0.000 SECONDS      3 MB  50.4.1 84b10359 WEX-WEI
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 3
+COMPILATION TIME     =        0.063 SECONDS      3 MB  50.4.1 84b10359 WEX-WEI
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -780,7 +780,7 @@ i1 4100.000,    i2 4100.000,    i3 4100.000,    i4 4100.000
 ----    280 PARAMETER a_max                =   100000.000  
             PARAMETER iter                 =       10.000  
             PARAMETER niters               =       10.000  
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 4
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 4
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Equation Listing    SOLVE netplan Using NLP From line 596
 
@@ -1060,7 +1060,7 @@ epigraphfext(i1,i3)..  fext(i1,i3) + ftext(i1,i3) + frext(i1,i3) =G= 0 ; (LHS = 
      
 REMAINING 13 ENTRIES SKIPPED
 
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 5
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 5
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Column Listing      SOLVE netplan Using NLP From line 596
 
@@ -1382,7 +1382,7 @@ fyext(i1,i3)
         1       exponefext(i1,i3)
 
 REMAINING 13 ENTRIES SKIPPED
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 6
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 6
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Range Statistics    SOLVE netplan Using NLP From line 596
 
@@ -1393,7 +1393,7 @@ RHS       [min, max] : [ 1.000E-03, 2.000E+12] - Zero values observed as well
 Bound     [min, max] : [ 1.000E+00, 1.000E+00] - Zero values observed as well
 Matrix    [min, max] : [ 1.000E-02, 7.589E+05]
 
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 7
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 7
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE netplan Using NLP From line 596
 
@@ -1407,7 +1407,7 @@ CODE LENGTH                 256     CONSTANT POOL              16
 
 
 GENERATION TIME      =        0.015 SECONDS      4 MB  50.4.1 84b10359 WEX-WEI
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 8
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 8
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE netplan Using NLP From line 596
 
@@ -2484,7 +2484,7 @@ i4.i4         1.0000         1.0000         1.0000         EPS
                              0 INFEASIBLE
                              0  UNBOUNDED
                             12     ERRORS ( ****)
-GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/22/26 19:12:05 Page 9
+GAMS 50.4.1  84b10359 Aug 28, 2025          WEX-WEI x86 64bit/MS Windows - 01/23/26 12:56:20 Page 9
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -2600,7 +2600,7 @@ i1 0.001,    i2 0.461,    i3 0.224,    i4 0.581
 fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\fij_long.csv
 
 
-EXECUTION TIME       =        0.687 SECONDS      7 MB  50.4.1 84b10359 WEX-WEI
+EXECUTION TIME       =        5.125 SECONDS      7 MB  50.4.1 84b10359 WEX-WEI
 
 
 USER: Luis Cadarso Morga                             G250911+0003Ac-GEN
