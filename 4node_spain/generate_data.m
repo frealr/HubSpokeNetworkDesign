@@ -351,164 +351,17 @@ obj_val = pax_obj + op_obj;
 end
 
 
-
-function [sprim,s,deltas,aprim,a,deltaa,f,fext,fij,comp_time] = compute_sim_MIP_entr(lam,beta,alfa,n,budget)
-
-tic;
-fid = fopen("./export_txt/lam.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', lam);
-fclose(fid);
-
-fid = fopen("./export_txt/alfa.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', alfa);
-fclose(fid);
-
-fid = fopen("./export_txt/beta.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', beta);
-fclose(fid);
-
-
-a_prev = 1e4*ones(n);
-s_prev = 1e4*ones(1,n);
-write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
-write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
-
-dm_pax = 0.01;
-dm_op = 0.008;
-
-fid = fopen("./export_txt/dm_pax.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', dm_pax);
-fclose(fid);
-
-fid = fopen("./export_txt/dm_op.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', dm_op);
-fclose(fid);
-
-fid = fopen("./export_txt/budget.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', budget);
-fclose(fid);
-
-% fid = fopen("./export_txt/niters.txt",'w');
-% if fid < 0, error('No puedo abrir %s', filename); end
-%     fprintf(fid, '%d', niters);
-% fclose(fid);
-
-
-cmdpath = "cd C:\GAMS\50";
-
-system(cmdpath);
-
-gmsFile  = 'C:\Users\freal\MATLAB\Projects\untitled\code\6node\mipreg_mosek.gms';
-
-gamsExe = 'C:\GAMS\50\gams.exe';
-
-
-
-cmd = sprintf('%s %s ', ...
-    gamsExe, gmsFile);
-[status,out] = system(cmd);
-disp(out);
-
-results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
-comp_time = table2array(results_file_ctime);
-
-
-results_file_sprim = readtable('./output_all.xlsx','Sheet','sprim_level');
-sprim = table2array(results_file_sprim(1,:));
-
-results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
-s = table2array(results_file_s(1,:));
-
-results_file_deltas = readtable('./output_all.xlsx','Sheet','deltas_level');
-deltas = table2array(results_file_deltas(1,:));
-
-results_file_aprim = readtable('./output_all.xlsx','Sheet','aprim_level');
-aprim = table2array(results_file_aprim(1:n,2:(n+1)));
-
-results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
-a = table2array(results_file_a(1:n,2:(n+1)));
-
-results_file_deltaa = readtable('./output_all.xlsx','Sheet','deltaa_level');
-deltaa = table2array(results_file_deltaa(1:n,2:(n+1)));
-
-results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-f = table2array(results_file_f(1:n,2:(n+1)));
-
-results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-fext = table2array(results_file_fext(1:n,2:(n+1)));
-
-T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
-[iU,~,iIdx] = unique(T.i,'stable');
-[jU,~,jIdx] = unique(T.j,'stable');
-[oU,~,oIdx] = unique(T.o,'stable');
-[dU,~,dIdx] = unique(T.d,'stable');
-
-
-fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
-    [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
-
-a_bin = zeros(n);
-a_bin(aprim > 1e-2) = 1;
-
-s_bin = zeros(n,1);
-s_bin(sprim > 1e-2) = 1;
-
-write_gams_param_ii('./export_txt/a_bin_mipreg.txt', a_bin);
-write_gams_param_ii('./export_txt/a_prim_mipreg.txt', max(0,aprim));
-write_gams_param1d_full('./export_txt/s_bin_mipreg.txt', s_bin);
-write_gams_param1d_full('./export_txt/s_prim_mipreg.txt', max(0,sprim));
-
-gmsFile  = 'C:\Users\freal\MATLAB\Projects\untitled\code\6node\flow_assignment.gms';
-
-gamsExe = 'C:\GAMS\50\gams.exe';
-
-
-
-cmd = sprintf('%s %s ', ...
-    gamsExe, gmsFile);
-[status,out] = system(cmd);
-disp(out);
-
-
-results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-f = table2array(results_file_f(1:n,2:(n+1)));
-
-results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-fext = table2array(results_file_fext(1:n,2:(n+1)));
-
-T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
-[iU,~,iIdx] = unique(T.i,'stable');
-[jU,~,jIdx] = unique(T.j,'stable');
-[oU,~,oIdx] = unique(T.o,'stable');
-[dU,~,dIdx] = unique(T.d,'stable');
-
-
-fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
-    [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
-
-
-
-end
-
-
 function [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,beta,alfa,n,budget)
+
 
 [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
-    congestion_coef_links,travel_time,alt_time,alt_price,a_nom,tau,eta,...
-    a_max,candidasourcertes] = parameters_8node_network();
+    congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_4node_network()
 
 tic;
 
-dm_pax = 0.01;
-dm_op = 0.008;
 
 fid = fopen("./export_txt/lam.txt",'w');
 if fid < 0, error('No puedo abrir %s', fid); end
@@ -536,17 +389,6 @@ a_prev = 1e4*ones(n);
 s_prev = 1e4*ones(1,n);
 write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
 write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
-
-
-fid = fopen("./export_txt/dm_pax.txt",'w');
-if fid < 0, error('No puedo abrir %s', fid); end
-fprintf(fid, '%d', dm_pax);
-fclose(fid);
-
-fid = fopen("./export_txt/dm_op.txt",'w');
-if fid < 0, error('No puedo abrir %s', fid); end
-fprintf(fid, '%d', dm_op);
-fclose(fid);
 
 
 
@@ -611,7 +453,7 @@ comp_time = table2array(results_file_ctime);
 prices,a,f,demand)
 budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam);
-filename = sprintf('./6node_hs_prueba_v0/beta=%d_lam=%d.mat',beta,lam);
+filename = sprintf('./4node_hs_prueba_v0/beta=%d_lam=%d.mat',beta,lam);
 save(filename,'s','sprim','deltas', ...
     'a','f','fext','fij','comp_time','budget', ...
     'pax_obj','op_obj','obj_val','mipgap');
