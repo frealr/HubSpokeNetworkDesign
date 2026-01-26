@@ -136,9 +136,6 @@ Scalar alfa /
 $include "%TXTDIR%\alfa.txt"
 /;
 
-Scalar beta /
-$include "%TXTDIR%\beta.txt"
-/;
 
 Scalar dm_pax /
 $include "%TXTDIR%\dm_pax.txt"

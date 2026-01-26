@@ -80,18 +80,23 @@ write_gams_param1d_full('./export_txt/congestion_coefs_stations.txt', congestion
 %% Parameter definition
 
 alfa = 0.5;
-betas = 1;
-budgets = 4e4;
+budgets = [4e4,5e4,6e4,7e4,8e4,9e4];
 lam = 5;
 
 %% run MIP
 
-for bb=1:length(betas)
-    beta = betas(bb);
+for bb=1:length(budgets)
     bud = budgets(bb);
-    [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,beta,alfa,n,bud);
+    [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,alfa,n,bud);
 end
 
+%% run cvx model
+
+
+for bb=1:length(budgets)
+    bud = budgets(bb);
+    [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,alfa,n,bud);
+end
 
 %% dibujar la red
 
@@ -305,15 +310,11 @@ budget = 0;
 for i=1:n
     if s(i) > 1e-2
         budget = budget + station_cost(i)+ ...
-            station_capacity_slope(i)*(s(i) + sh(i));
+            station_capacity_slope(i)*(s(i));
     end
     if sh(i) > 1e-2
-        budget = budget + lam*hub_cost(i);
-    end
-    for j=1:n
-        if a(i,j) > 1e-2
-            budget = budget + link_cost(i,j);
-        end
+        budget = budget + lam*hub_cost(i) + ...
+            station_capacity_slope(i)*(sh(i));
     end
 end
 end
@@ -336,29 +337,30 @@ end
 
 function [obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
     prices,a,f,demand)
-n = size(a,1);
-pax_obj = 0;
-op_obj = 0;
 
-
-op_obj = op_obj + (sum(sum(op_link_cost.*a))); %operational costs
-for o=1:n
-    for d=1:n
-        pax_obj = pax_obj - prices(o,d)*demand(o,d).*f(o,d);
+    n = size(a,1);
+    pax_obj = 0;
+    op_obj = 0;
+    
+    
+    op_obj = op_obj + (sum(sum(op_link_cost.*a))); %operational costs
+    for o=1:n
+        for d=1:n
+            pax_obj = pax_obj - prices(o,d)*demand(o,d).*f(o,d);
+        end
     end
-end
-obj_val = pax_obj + op_obj;
+    obj_val = pax_obj + op_obj;
 end
 
 
-function [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,beta,alfa,n,budget)
+function [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,alfa,n,budget)
 
 
 [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
-    a_max,candidasourcertes,omega_t,omega_p] = parameters_4node_network()
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_4node_network();
 
 tic;
 
@@ -371,11 +373,6 @@ fclose(fid);
 fid = fopen("./export_txt/alfa.txt",'w');
 if fid < 0, error('No puedo abrir %s', fid); end
 fprintf(fid, '%d', alfa);
-fclose(fid);
-
-fid = fopen("./export_txt/beta.txt",'w');
-if fid < 0, error('No puedo abrir %s', fid); end
-fprintf(fid, '%d', beta);
 fclose(fid);
 
 fid = fopen("./export_txt/budget.txt",'w');
@@ -450,127 +447,15 @@ fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
 results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
 comp_time = table2array(results_file_ctime);
 [obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
-prices,a,f,demand)
+prices,a,f,demand);
 budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam);
-filename = sprintf('./4node_hs_prueba_v0/beta=%d_lam=%d.mat',beta,lam);
+filename = sprintf('./4node_hs_prueba_v0/bud=%d_lam=%d.mat',budget,lam);
 save(filename,'s','sprim','deltas', ...
     'a','f','fext','fij','comp_time','budget', ...
     'pax_obj','op_obj','obj_val','mipgap');
 
 end
-
-% compute_sim_MIP_rand removed
-
-
-
-function [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
-    station_capacity_slope,demand,prices,...
-    load_factor,op_link_cost,congestion_coef_stations,...
-    congestion_coef_links,travel_time,alt_time,alt_price,a_nom,tau,eta,...
-    a_max,candidates] = parameters_6node_network()
-
-n = 8;
-
-%candidates to construct a link for each neighbor
-candidates = {[2,3],[1,3,4],[1,2,4,5],[2,3,5,6],[3,4,6],[4,5]};
-
-%cost of using the alternative network for each o-d pair
-alt_cost = [0,1.6,0.8,2,1.6,2.5;
-    2,0,0.9,1.2,1.5,2.5;
-    1.5,1.4,0,1.3,0.9,2;
-    1.9,2,1.9,0,1.8,2;
-    3,1.5,2,2,0,1.5;
-    2.1,2.7,2.2,1,1.5,0];
-
-%fixed cost for constructing links
-link_cost = (1e6/(25*365.25)).*[0,1.7,2.7,0,0,0;
-    1.7,0,2.1,3,0,0;
-    2.7,2.1,0,2.6,1.7,0;
-    0,3,2.6,0,2.8,2.4;
-    0,0,1.7,2.8,0,1.9;
-    0,0,0,2.4,1.9,0];
-link_cost (link_cost ==0) = 1e4;
-
-
-%fixed cost for constructing stations
-station_cost = (1e6/(25*365.25)).*[2, 3, 2.2, 3, 2.5, 1.3];
-
-hub_cost = (1e6/(25*365.25)).*[200, 100, 2, 300, 200, 100];
-
-link_capacity_slope = 0.04.*link_cost;
-station_capacity_slope = 0.04.*station_cost;
-
-%demand between od pairs
-demand = 1e3.*[0,9,26,19,13,12;
-    11,0,14,26,7,18;
-    30,19,0,30,24,8;
-    21,9,11,0,22,16;
-    14,14,8,9,0,20;
-    26,1,22,24,13,0];
-
-distance = 1e4 * ones(n); % Distances between arcs
-
-for i = 1:n
-    distance(i, i) = 0;
-end
-
-distance(1, 2) = 0.75;
-distance(1, 3) = 0.7;
-
-
-distance(2, 3) = 0.6;
-distance(2, 4) = 1.1;
-
-distance(3, 4) = 1.1;
-distance(3, 5) = 0.5;
-
-
-distance(4,5) = 0.8;
-distance(4,6) = 0.7;
-
-
-distance(5,6) = 0.5;
-
-
-for i = 1:n
-    for j = i+1:n
-        distance(j, i) = distance(i, j); % Distances are symmetric
-    end
-end
-
-%Load factor on stations
-load_factor = 0.25 .* ones(1, n);
-
-% Op Link Cost
-op_link_cost = 4.*distance;
-
-% Congestion Coefficients
-congestion_coef_stations = 0.1 .* ones(1, n);
-congestion_coef_links = 0.1 .* ones(n);
-
-% Prices
-prices = (distance).^(0.7);
-prices(prices > 10) = 1.2;
-%prices = zeros(n);
-
-% Travel Time
-travel_time = 60 .* distance ./ 30; % Time in minutes
-
-% Alt Time
-alt_time = 60 .* alt_cost ./ 30; % Time in minutes
-
-alt_price = (alt_cost).^(0.7); %price
-
-a_nom = 588;
-
-tau = 0.57;
-eta = 0.25;
-a_max = 1e9;
-eps = 1e-3;
-end
-
-% parameters_6node_network_rand removed
 
 
 function [lin_coef,bord,b] = get_linearization(n,nreg,alt_utility,vals_regs,n_airlines)
