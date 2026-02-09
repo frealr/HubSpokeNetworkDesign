@@ -19,7 +19,7 @@ if ~exist(basedir,'dir'); mkdir(basedir); end
     a_max,candidasourcertes,omega_t,omega_p] = parameters_4node_network();
 
 M = 1e4;
-nreg = 10;
+nreg = 40;
 eps = 1e-3;
 n_airlines = 5;
 vals_regs = linspace(0.005,0.995,nreg-1);
@@ -53,6 +53,11 @@ write_scalar_csv_append = @(name, val, fn) ( ...
     );
 
 
+% Initialize alfa_od and beta_od, gamma
+alfa_od = ones(n);
+beta_od = ones(n);
+gamma = 5;
+
 write_gams_param_iii('./export_txt/lin_coef.txt', lin_coef);
 write_gams_param_iii('./export_txt/b.txt', b);
 write_gams_param_iii('./export_txt/bord.txt', bord);
@@ -68,6 +73,15 @@ write_gams_param_ii('./export_txt/op_link_cost.txt', op_link_cost);
 write_gams_param_ii('./export_txt/candidates.txt', candidates);
 write_gams_param_ii('./export_txt/congestion_coefs_links.txt', congestion_coef_links);
 
+%For BLO
+write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
+write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
+
+fid = fopen("./export_txt/gamma.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', gamma);
+fclose(fid);
+
 
 
 
@@ -80,8 +94,13 @@ write_gams_param1d_full('./export_txt/congestion_coefs_stations.txt', congestion
 %% Parameter definition
 
 alfa = 0.5;
-budgets = [4e4,5e4,6e4,7e4,8e4,9e4];
-lam = 5;
+budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
+%budgets = [4e4];
+%budgets = 5e4;
+%budgets = [4e4,5e4,6e4,7e4,8e4,9e4];
+
+
+lam = 4;
 
 %% run MIP
 
@@ -89,17 +108,62 @@ for bb=1:length(budgets)
     bud = budgets(bb);
     [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,alfa,n,bud);
 end
+%%
+
+for bb=1:length(budgets)
+    bud = budgets(bb);
+    filename = sprintf('./4node_hs_prueba_v0/bud=%d_lam=%d',bud,lam);
+    load(filename);
+    disp(obj_val);
+    f
+   % disp(used_budget);
+end
 
 %% run cvx model
 
 
+alfas = 0.1;
+gamma = 5;
+
 for bb=1:length(budgets)
     bud = budgets(bb);
-    [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,alfa,n,bud);
+    for al=1:length(alfas)
+        alfa = alfas(al);
+
+        % Initialize alfa_od and beta_od, gamma
+        alfa_od = ones(n);
+        beta_od = ones(n);
+
+        %For BLO
+        write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
+        write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
+
+        [s,sh,a,f,fext,fij] = compute_sim_cvx_blo(lam,alfa,n,bud);
+    end
 end
 
-%% dibujar la red
+% check solutions quality 
 
+best_obj = 1e3*ones(1,length(budgets));
+best_alfa = zeros(1,length(budgets));
+used_bud = best_alfa;
+
+%%
+
+for bb=1:length(budgets)
+    bud = budgets(bb);
+    for al=1:length(alfas)
+        alfa = alfas(al);
+        filename = sprintf('./4node_hs_prueba_v0_cvx/bud=%d_lam=%d_alfa=%d',bud,lam,alfa);
+        load(filename);
+        obj_val
+        if obj_val < best_obj(bb)
+                best_obj(bb) = obj_val;
+                best_alfa(bb) = alfa;
+                used_bud(bb) = used_budget;
+        end
+    end
+end
 
 
 
@@ -308,13 +372,13 @@ function budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam)
 budget = 0;
 for i=1:n
-    if s(i) > 1e-2
+    if (s(i) > 5e-2) && (sh(i) < 5e-2)
         budget = budget + station_cost(i)+ ...
             station_capacity_slope(i)*(s(i));
     end
-    if sh(i) > 1e-2
-        budget = budget + lam*hub_cost(i) + ...
-            station_capacity_slope(i)*(sh(i));
+    if (sh(i) > 5e-2)
+        budget = budget + station_cost(i) + lam*hub_cost(i) + ...
+            station_capacity_slope(i)*(sh(i)+s(i));
     end
 end
 end
@@ -346,10 +410,453 @@ function [obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
     op_obj = op_obj + (sum(sum(op_link_cost.*a))); %operational costs
     for o=1:n
         for d=1:n
-            pax_obj = pax_obj - prices(o,d)*demand(o,d).*f(o,d);
+            pax_obj = pax_obj - prices(o,d)*demand(o,d)*f(o,d);
         end
     end
     obj_val = pax_obj + op_obj;
+end
+
+
+
+
+function [s,sh,a,f,fext,fij] = compute_sim_cvx(lam,alfa,n,budget)
+
+
+[n,link_cost,station_cost,hub_cost,link_capacity_slope,...
+    station_capacity_slope,demand,prices,...
+    load_factor,op_link_cost,congestion_coef_stations,...
+    congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_4node_network();
+
+tic;
+
+niters = 30;
+
+fid = fopen("./export_txt/niters.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', niters);
+fclose(fid);
+
+fid = fopen("./export_txt/lam.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', lam);
+fclose(fid);
+
+fid = fopen("./export_txt/alfa.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', alfa);
+fclose(fid);
+
+fid = fopen("./export_txt/budget.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', budget);
+fclose(fid);
+
+disp(budget);
+
+a_prev = 1e4*ones(n);
+s_prev = 1e4*ones(1,n);
+sh_prev = s_prev;
+write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
+write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
+write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
+
+
+
+
+
+%cmdpath = "cd C:\GAMS\50";
+cmdpath = "cd C:\GAMS\50";
+
+system(cmdpath);
+gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\cvx.gms';
+
+gamsExe = 'C:\GAMS\50\gams.exe'; 
+
+
+cmd = sprintf('%s %s ', ...
+    gamsExe, gmsFile);
+
+comp_time = 0;
+
+for iter=1:niters
+    fid = fopen("./export_txt/current_iter.txt",'w');
+    if fid < 0, error('No puedo abrir %s', fid); end
+    fprintf(fid, '%d', iter);
+    fclose(fid);
+    [status,out] = system(cmd);
+    %disp(out);
+
+    results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
+    comp_time = comp_time + table2array(results_file_ctime);
+
+    results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
+    sh = table2array(results_file_sh(1,:));
+    sh = max(sh,1e-4);
+
+
+    results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
+    s = table2array(results_file_s(1,:));
+    s = max(s,1e-4);
+    s+sh
+
+    results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
+    a = table2array(results_file_a(1:n,2:(n+1)));
+    a = max(a,1e-4);
+
+    write_gams_param_ii('./export_txt/a_prev.txt', a);
+    write_gams_param1d_full('./export_txt/s_prev.txt', s);
+    write_gams_param1d_full('./export_txt/sh_prev.txt', sh);
+
+
+end
+
+ gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\flow_assignment.gms';
+ [status,out] = system(cmd);
+
+results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
+f = table2array(results_file_f(1:n,2:(n+1)));
+
+results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
+fext = table2array(results_file_fext(1:n,2:(n+1)));
+
+
+T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
+[iU,~,iIdx] = unique(T.i,'stable');
+[jU,~,jIdx] = unique(T.j,'stable');
+[oU,~,oIdx] = unique(T.o,'stable');
+[dU,~,dIdx] = unique(T.d,'stable');
+
+
+fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
+    [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
+
+a(a < 1e-2) = 0;
+f(f < 1e-2) = 0;
+
+
+[obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
+prices,a,f,demand);
+used_budget = get_budget(s,sh,a,n,...
+    station_cost,station_capacity_slope,hub_cost,link_cost,lam);
+filename = sprintf('./4node_hs_prueba_v0_cvx/bud=%d_lam=%d_alfa=%d.mat',budget,lam,alfa);
+save(filename,'s','sh', ...
+    'a','f','fext','fij','comp_time','used_budget', ...
+    'pax_obj','op_obj','obj_val');
+
+end
+
+
+function [s,sh,a,f,fext,fij] = compute_sim_cvx_blo(lam,alfa,n,budget)
+
+
+[n,link_cost,station_cost,hub_cost,link_capacity_slope,...
+    station_capacity_slope,demand,prices,...
+    load_factor,op_link_cost,congestion_coef_stations,...
+    congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_4node_network();
+
+
+
+niters = 30;
+
+mu_alfa = 1e-4; mu_beta = 2;
+
+alfa_od = ones(n);
+beta_od = ones(n);
+gamma = 5;
+
+logit_coef = 0.02; n_airlines = 5;
+
+fid = fopen("./export_txt/niters.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', niters);
+fclose(fid);
+
+fid = fopen("./export_txt/lam.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', lam);
+fclose(fid);
+
+fid = fopen("./export_txt/alfa.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', alfa);
+fclose(fid);
+
+fid = fopen("./export_txt/budget.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', budget);
+fclose(fid);
+
+disp(budget);
+
+obj_hist = zeros(1,10);   % histórico
+figure;
+h = plot(nan, nan, '-o', 'LineWidth', 2);
+grid on;
+xlabel('Iteración BL');
+ylabel('obj\_val\_ll');
+title('Evolución del valor objetivo');
+bliters = 30;
+
+comp_time = 0;
+
+obj_val = 0;
+obj_val_prev = 1e3;
+for bliter=1:bliters
+
+    if abs((obj_val-obj_val_prev)./obj_val) <= 1e-2
+        break;
+    else
+
+        a_prev = 1e4*ones(n);
+        s_prev = 1e4*ones(1,n);
+        sh_prev = s_prev;
+        write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
+        write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
+        write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
+        
+        
+        
+        
+        
+        %cmdpath = "cd C:\GAMS\50";
+        cmdpath = "cd C:\GAMS\50";
+        
+        system(cmdpath);
+        gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\cvx-ll.gms';
+        
+        gamsExe = 'C:\GAMS\50\gams.exe'; 
+        
+        
+        cmd = sprintf('%s %s ', ...
+            gamsExe, gmsFile);
+        
+    
+        
+        for iter=1:niters
+            fid = fopen("./export_txt/current_iter.txt",'w');
+            if fid < 0, error('No puedo abrir %s', fid); end
+            fprintf(fid, '%d', iter);
+            fclose(fid);
+            [status,out] = system(cmd);
+            %disp(out);
+        
+            results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
+            comp_time = comp_time + table2array(results_file_ctime);
+        
+            results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
+            sh = table2array(results_file_sh(1,:));
+            sh = max(sh,1e-4);
+    
+        
+        
+            results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
+            s = table2array(results_file_s(1,:));
+            s = max(s,1e-4);
+    
+        
+            results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
+            a = table2array(results_file_a(1:n,2:(n+1)));
+            a = max(a,1e-4);
+    
+    
+            write_gams_param_ii('./export_txt/a_prev.txt', a);
+            write_gams_param1d_full('./export_txt/s_prev.txt', s);
+            write_gams_param1d_full('./export_txt/sh_prev.txt', sh);
+        
+        
+        end
+        
+        results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
+        f = table2array(results_file_f(1:n,2:(n+1)));
+        
+        
+        results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
+        fext = table2array(results_file_fext(1:n,2:(n+1)));
+        
+        
+        T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
+        [iU,~,iIdx] = unique(T.i,'stable');
+        [jU,~,jIdx] = unique(T.j,'stable');
+        [oU,~,oIdx] = unique(T.o,'stable');
+        [dU,~,dIdx] = unique(T.d,'stable');
+        
+        
+        fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
+            [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
+        
+        a(a < 1e-2) = 0;
+        f(f < 1e-2) = 0;
+        fij(fij < 1e-2) = 0;
+        fext(fext > 0.99) = 1;
+        
+        a_ll = a;
+        f_ll = f;
+        
+        disp('f del ll:');
+        disp(f);
+        
+        %comprobar que está bien
+        grad_alfa_v = zeros(n);
+        grad_beta_v = zeros(n);
+        for oo=1:n
+            for dd=1:n
+                
+                propio = ((prices(oo,dd) * demand(oo,dd)).^beta_od(oo,dd)) * (logit_coef*prices(oo,dd)*f(oo,dd) + logit_coef*sum(sum( squeeze(fij(:,:,oo,dd)).*travel_time ))   );
+                externo = - ((prices(oo,dd) * demand(oo,dd)).^beta_od(oo,dd)) * (alt_utility(oo,dd)*fext(oo,dd) );
+                log_propio = ((prices(oo,dd) * demand(oo,dd)).^beta_od(oo,dd)) * (f(oo,dd)*( log(max(0,f(oo,dd)) + 1e-4) - 1 ));
+                log_ext = ((prices(oo,dd) * demand(oo,dd)).^beta_od(oo,dd)) * (fext(oo,dd)*( log(max(0,fext(oo,dd))/n_airlines + 1e-4)  - 1 ));
+    
+    
+                grad_alfa_v(oo,dd) = propio+externo+log_propio+log_ext;
+                grad_beta_v(oo,dd) = (alfa_od(oo,dd)+1e-4)*((beta_od(oo,dd)*demand(oo,dd)*prices(oo,dd)).^(beta_od(oo,dd)-1)) * (logit_coef * prices(oo,dd) * f(oo,dd) + logit_coef * sum(sum(squeeze(fij(:,:,oo,dd)) .* travel_time)) - alt_utility(oo,dd) * fext(oo,dd) + f(oo,dd)*( log(max(0,f(oo,dd)) + 1e-4) - 1 ) + fext(oo,dd)*( log(max(0,fext(oo,dd))/n_airlines + 1e-4)  - 1 ) );
+            end
+        end
+    
+        grad_alfa_v
+        grad_beta_v
+        
+        
+        
+        
+        a_prev = 1e4*ones(n);
+        s_prev = 1e4*ones(1,n);
+        sh_prev = s_prev;
+        write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
+        write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
+        write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
+           
+        
+        gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\cvx-sl.gms';
+        
+        gamsExe = 'C:\GAMS\50\gams.exe'; 
+        
+        
+        cmd = sprintf('%s %s ', ...
+            gamsExe, gmsFile);
+        
+        
+        for iter=1:niters
+            fid = fopen("./export_txt/current_iter.txt",'w');
+            if fid < 0, error('No puedo abrir %s', fid); end
+            fprintf(fid, '%d', iter);
+            fclose(fid);
+            [status,out] = system(cmd);
+            %disp(out);
+        
+            results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
+            comp_time = comp_time + table2array(results_file_ctime);
+        
+            results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
+            sh = table2array(results_file_sh(1,:));
+            sh = max(sh,1e-4);
+        
+        
+            results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
+            s = table2array(results_file_s(1,:));
+            s = max(s,1e-4);
+        
+            results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
+            a = table2array(results_file_a(1:n,2:(n+1)));
+            a = max(a,1e-4);
+        
+            write_gams_param_ii('./export_txt/a_prev.txt', a);
+            write_gams_param1d_full('./export_txt/s_prev.txt', s);
+            write_gams_param1d_full('./export_txt/sh_prev.txt', sh);
+        
+        
+        end
+        
+        results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
+        f = table2array(results_file_f(1:n,2:(n+1)));
+        
+        results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
+        fext = table2array(results_file_fext(1:n,2:(n+1)));
+        
+        
+        T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
+        [iU,~,iIdx] = unique(T.i,'stable');
+        [jU,~,jIdx] = unique(T.j,'stable');
+        [oU,~,oIdx] = unique(T.o,'stable');
+        [dU,~,dIdx] = unique(T.d,'stable');
+        
+        
+        fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
+            [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
+        
+        a(a < 1e-2) = 0;
+        f(f < 1e-2) = 0;
+        fext(fext > 0.99) = 1;
+        fij(fij < 1e-2) = 0;
+        
+        disp('f del sl:');
+        disp(f);
+        
+        
+        
+        
+        [obj_val_ll,pax_obj,op_obj] = get_obj_val(op_link_cost,...
+        prices,a_ll,f_ll,demand);
+        used_budget = get_budget(s,sh,a,n,...
+            station_cost,station_capacity_slope,hub_cost,link_cost,lam);
+        
+        disp(obj_val_ll);
+        
+        f_sl = f;
+        a_sl = a;
+    
+    
+        grad_alfa_f = zeros(n);
+        grad_beta_f = zeros(n);
+        for oo=1:n
+            for dd=1:n
+                grad_alfa_f(oo,dd) = gamma .*( ((demand(oo,dd)*prices(oo,dd)).^(beta_od(oo,dd))) * (logit_coef * prices(oo,dd) * f(oo,dd) + logit_coef * sum(sum(squeeze(fij(:,:,oo,dd)) .* travel_time)) - alt_utility(oo,dd) * fext(oo,dd) + f(oo,dd)*( log(f(oo,dd) + 1e-4) - 1 ) + fext(oo,dd)*( log(fext(oo,dd)/n_airlines + 1e-4)  - 1 ) ) - grad_alfa_v(oo,dd));
+                grad_beta_f(oo,dd) = gamma .*( (alfa_od(oo,dd)+1e-4)*((beta_od(oo,dd)*demand(oo,dd)*prices(oo,dd)).^(beta_od(oo,dd)-1)) * (logit_coef * prices(oo,dd) * f(oo,dd) + logit_coef * sum(sum(squeeze(fij(:,:,oo,dd)) .* travel_time)) - alt_utility(oo,dd) * fext(oo,dd) + f(oo,dd)*( log(f(oo,dd) + 1e-4) - 1 ) + fext(oo,dd)*( log(fext(oo,dd)/n_airlines + 1e-4)  - 1 ) ) - grad_beta_v(oo,dd));
+            end
+        end
+        
+       
+        grad_alfa_f
+    
+        grad_beta_f
+    
+        beta_od = beta_od - mu_beta.*grad_beta_f;
+        alfa_od = alfa_od - mu_alfa.*grad_alfa_f;
+    
+        beta_od = max(1e-4,beta_od);
+        beta_od = min(2.1,beta_od);
+    
+        alfa_od = max(1e-4,alfa_od);
+        alfa_od = min(9,alfa_od);
+    
+        write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
+        write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
+        
+        disp('beta');
+        disp(beta_od);
+        disp('alfa');
+        disp(alfa_od);
+        disp('obj_val');
+        disp(obj_val_ll);
+    
+        obj_hist(bliter) = obj_val_ll;
+    
+        set(h, 'XData', 1:bliter, ...
+               'YData', obj_hist(1:bliter));
+        
+        drawnow;
+        obj_val_prev = obj_val;
+        obj_val = obj_val_ll;
+    end
+
+end
+
+filename = sprintf('./4node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d.mat',budget,lam,alfa);
+save(filename,'s','sh', ...
+    'a','f','fext','fij','comp_time','used_budget', ...
+    'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');
+
 end
 
 
@@ -386,6 +893,8 @@ a_prev = 1e4*ones(n);
 s_prev = 1e4*ones(1,n);
 write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
 write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
+write_gams_param1d_full('./export_txt/sh_prev.txt', s_prev);
+
 
 
 
@@ -434,6 +943,10 @@ fext = table2array(results_file_fext(1:n,2:(n+1)));
 results_file_mipgap = readtable('./output_all.xlsx','Sheet','mip_opt_gap');
 mipgap = table2array(results_file_mipgap);
 
+results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
+sh = table2array(results_file_sh(1,:));
+
+
 T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
 [iU,~,iIdx] = unique(T.i,'stable');
 [jU,~,jIdx] = unique(T.j,'stable');
@@ -448,12 +961,13 @@ results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
 comp_time = table2array(results_file_ctime);
 [obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
 prices,a,f,demand);
-budget = get_budget(s,sh,a,n,...
+
+used_budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam);
 filename = sprintf('./4node_hs_prueba_v0/bud=%d_lam=%d.mat',budget,lam);
 save(filename,'s','sprim','deltas', ...
-    'a','f','fext','fij','comp_time','budget', ...
-    'pax_obj','op_obj','obj_val','mipgap');
+    'a','f','fext','fij','comp_time','used_budget', ...
+    'pax_obj','op_obj','obj_val','mipgap','sh');
 
 end
 
@@ -616,7 +1130,7 @@ link_cost = 10.* distance;
 link_cost(logical(eye(n))) = 1e4; % High cost for self-loops
 link_cost(link_cost == 0) = 1e4; % High cost for missing connections (if any)
 
-station_cost = 2e3.*ones(1,n); %oficinas, tasas del aeropuerto 
+station_cost = 3e3.*ones(1,n); %oficinas, tasas del aeropuerto 
 hub_cost = 5e3.*ones(1,n);
 
 link_capacity_slope = 0.2 .* link_cost;
@@ -670,6 +1184,7 @@ alt_utility(1:n+1:end)  = 0;
 
 
 op_link_cost = 7600 .* travel_time./60; % Proportional to distance
+
 
 a_nom = 171;
 tau = 0.8;

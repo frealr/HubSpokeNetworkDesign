@@ -1,12 +1,5 @@
 * ---------- Conjuntos ----------
-$include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition_cvx.gms";
-
-
-
-Parameters dm_pax,dm_op;
-
-dm_pax = 1.2;
-dm_op = 0.008;
+$include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition_cvx-blo.gms";
 
 
 *---------------------*
@@ -21,7 +14,7 @@ Nonnegative Variable
     fij(i,j,o,d), exceed
     ;
 
-Variable bud, op, pax, obj, ft(o,d),ftext(o,d),fr(o,d),frext(o,d),fy(o,d),fyext(o,d);  
+Variable bud, op, pax, obj, ft(o,d),ftext(o,d),fr(o,d),frext(o,d),fy(o,d),fyext(o,d),ul;  
 
 
 
@@ -33,6 +26,7 @@ Equation
     op_def       "definición de op_obj"
     pax_def      "definición de pax_obj"
     obj_def      "objetivo total"
+    ul_def
     
     def_f_aux
     def_fext_aux
@@ -87,6 +81,10 @@ Equation
 * Definición objetivo *
 *---------------------*
 
+ul_def..
+    ul =e= 1e-2*(-sum((o,d),prices(o,d)*demand(o,d)*f(o,d) ) + sum((i,j), op_link_cost(i,j) * a(i,j))) ;
+
+
 * Presupuesto (bud): costes lineales + (si iter<niters) costes fijos aproximados
 bud_def..
     bud =e= sum(i, station_capacity_slope(i)*(s(i) + sh(i)))
@@ -101,22 +99,22 @@ bud_def..
 
 * Operación (op): coste lineal de operar enlaces
 op_def..
-    op =e= sum((i,j), op_link_cost(i,j) * a(i,j));
+    op =e= 1e-2*sum((i,j), op_link_cost(i,j) * a(i,j));
 
 * Pasajeros (pax): tiempos/precios en ruta y alternativas + entropías
 pax_def..
     pax =e= 1e-2*(
       sum((o,d),
-            (prices(o,d)*demand(o,d))**2 *  
-           ( logit_coef*prices(o,d)*f(o,d) + sum((i,j), (travel_time(i,j))*fij(i,j,o,d)*logit_coef)))
+            alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *  
+           ( logit_coef*prices(o,d)*f(o,d) + sum((i,j), travel_time(i,j)*fij(i,j,o,d)*logit_coef)))
 
-    - sum((o,d), (prices(o,d)*demand(o,d))**2
+    - sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
           * alt_utility(o,d)*fext(o,d))
 
-    + sum((o,d),(prices(o,d)*demand(o,d))**2 * (ft(o,d)))
+    + sum((o,d),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
 *          * (  ( f(o,d)*log(f(o,d)) - f(o,d) ) ))
 
-   + sum((o,d), (prices(o,d)*demand(o,d))**2 *(ftext(o,d)
+   + sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *(ftext(o,d)
    - fext_aux(o,d)*log(n_airlines))) )
    
 
@@ -139,7 +137,7 @@ pax_def..
 
 * Objetivo total
 obj_def..
-    obj =e= alfa*pax  + op  + 1e3*exceed + 1e-2*bud;
+    obj =e= ul + 5e-2*gamma_*(pax + op + 1e3*exceed + 1e-4*bud);
 
 *---------------------*
 * Restricciones       *
@@ -150,8 +148,8 @@ bud_avail..
     bud$(iter < niters) =l= budget;
     
 bud_final..
-    ( sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$((s_prev(i) > 0.1) or (sh_prev(i) > 0.1)), station_cost(i))
-  + sum(i$(sh_prev(i) > 0.1), lam*hub_cost(i)))$(iter = niters) - exceed
+    ( sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$((s_prev(i) > 0.1) or (sh_prev(i) > 0.05)), station_cost(i))
+  + sum(i$(sh_prev(i) > 0.05), lam*hub_cost(i)))$(iter = niters) - exceed
     =l=
     budget
 ;
@@ -224,7 +222,7 @@ candidates_zero(i,j)$(not candidates(i,j))..
 fix_s_at_zero(i)$( (s_prev(i) <= 0.1) and (iter = niters) )..
     s(i) =l= epsi;
     
-fix_sh_at_zero(i)$( (sh_prev(i) <= 0.1) and (iter = niters) )..
+fix_sh_at_zero(i)$( (sh_prev(i) <= 0.05) and (iter = niters) )..
     sh(i) =l= epsi;
     
 
@@ -253,6 +251,7 @@ epigraphfext(o,d)..  ftext(o,d) =g= -frext(o,d)-fext_aux(o,d);
 * Solve               *
 *---------------------*
 Model netplan /
+    ul_def
     bud_def
     op_def  
     pax_def      

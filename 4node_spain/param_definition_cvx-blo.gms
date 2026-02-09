@@ -36,6 +36,16 @@ Parameter link_capacity_slope(i,j)
 $include "%TXTDIR%\link_capacity_slope.txt"
 /;
 
+Parameter alfa_od(o,d)
+/
+$include "%TXTDIR%\alfa_od.txt"
+/;
+
+Parameter beta_od(o,d)
+/
+$include "%TXTDIR%\beta_od.txt"
+/;
+
 Parameter prices(o,d)
 /
 $include "%TXTDIR%\prices.txt"
@@ -116,6 +126,10 @@ $include "%TXTDIR%\current_iter.txt"
 
 Scalar niters /
 $include "%TXTDIR%\niters.txt"
+/;
+
+Scalar gamma_ /
+$include "%TXTDIR%\gamma.txt"
 /;
 
 Scalar logit_coef; logit_coef = 0.02;

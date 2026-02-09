@@ -9,7 +9,7 @@ Sets
 Alias (i,j,o,d,ii,jj);
 
 * Breakpoints para PWL (K puntos => K-1 segmentos)
-Set seg / seg1*seg10 /;
+Set seg / seg1*seg40 /;
 * segmentos entre breakpoints (K=20 => 19 segmentos)
 
 
@@ -105,15 +105,20 @@ $include "%TXTDIR%\congestion_coefs_stations.txt"
 /;
 
 
-*Parameter a_prev(i,j)
-*/
-*$include "%TXTDIR%\a_prev.txt"
-*/;
+Parameter a_prev(i,j)
+/
+$include "%TXTDIR%\a_prev.txt"
+/;
 
-*Parameter s_prev(i)
-*/
-*$include "%TXTDIR%\s_prev.txt"
-*/;
+Parameter s_prev(i)
+/
+$include "%TXTDIR%\s_prev.txt"
+/;
+
+Parameter sh_prev(i)
+/
+$include "%TXTDIR%\sh_prev.txt"
+/;
 
 
 Scalars tau, sigma, a_nom, a_max, M, n_airlines;
