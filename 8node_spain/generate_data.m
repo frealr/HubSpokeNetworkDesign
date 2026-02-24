@@ -17,6 +17,8 @@ if ~exist(basedir,'dir'); mkdir(basedir); end
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
     a_max,candidasourcertes,omega_t,omega_p] = parameters_8node_network();
 
+demand = demand./365;
+
 M = 1e4;
 nreg = 10;
 eps = 1e-3;
@@ -867,6 +869,8 @@ function [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
     load_factor,op_link_cost,congestion_coef_stations,...
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
     a_max,candidates,omega_t,omega_p] = parameters_8node_network()
+% 8 aeropuertos más usados de España: MAD, BCN, PMI, AGP, ALC, LPA, TFS, IBZ
+% Datos reales leídos desde CSVs generados por extract_data.py y extract_demand_8node.py
 
 n = 8;
 n_airlines = 5;
@@ -874,31 +878,28 @@ n_airlines = 5;
 % Candidates: Full connectivity assumption
 candidates = ones(n) - eye(n);
 
-% Distances (km)
+% Distances (km) - generadas por extract_data.py
 distance = readmatrix('distance.csv');
 
-% Prices (Euros)
+% Prices (Euros) - generadas por extract_data.py
 prices = readmatrix('prices.csv');
 
 omega_t = -0.02;
 omega_p = -0.02;
 
-% Heuristics for other parameters
-% Link Cost: proportional to distance (approx 200 for 500km -> factor 0.4?)
-% Original: 1.7 for 0.75 (scaled). Real: 485km.
-% Let's use a fixed cost + variable cost model or just scaled.
-% Assuming link_cost is annualized infrastructure cost.
-link_cost = distance .* 0.5; % Placeholder heuristic
-link_cost(logical(eye(n))) = 1e4; % High cost for self-loops
+% Link Cost: proporcional a la distancia (como en 6node)
+link_cost = 10.* distance;
+link_cost(logical(eye(n))) = 1e4; % Alto coste para self-loops
+link_cost(link_cost == 0) = 1e4; % Alto coste para conexiones sin datos
 
-station_cost = 2 * ones(1, n); % Placeholder
-hub_cost = 100 * ones(1, n); % Placeholder
+station_cost = 3e3.*ones(1,n); % Oficinas, tasas del aeropuerto
+hub_cost = 5e3.*ones(1,n);
 
-link_capacity_slope = 0.04 .* link_cost;
-station_capacity_slope = 0.04 .* station_cost;
+link_capacity_slope = 0.2 .* link_cost;
+station_capacity_slope = (5*5e2 + 4*50*8).*ones(1,n); % 500 e/dia estacionamiento + 50e/hora personal
 
-% Demand: Placeholder 10000
-demand = 1e4 .* (ones(n) - eye(n));
+% Demand: datos reales de pasajeros anuales - generados por extract_demand_8node.py
+demand = readmatrix('demand.csv');
 
 load_factor = 0.25 .* ones(1, n);
 
@@ -909,44 +910,41 @@ landing_time = 20;
 taxi_time = 10;
 cruise_time = 60 .* distance ./ 800;
 
-
-travel_time = cruise_time + takeoff_time + landing_time + taxi_time; % Approx 800 km/h speed -> minutes
+travel_time = cruise_time + takeoff_time + landing_time + taxi_time; % Velocidad crucero ~800 km/h -> minutos
 travel_time(logical(eye(n))) = 0;
 
 rng(123);
 p_escala = 0.4;
 
-alt_utility  = zeros(n);
-
+alt_utility = zeros(n);
 
 for i = 1:n
     for j = i+1:n   % SOLO mitad superior
-        
+
         escala = rand(1, n_airlines) < p_escala;
-        
-        % --- TIEMPO ---
+
+        % --- TIEMPO alternativa ---
         alt_time_vec = travel_time(i,j) .* (1 + 0.5 .* escala) ...
-            + 60 .* escala;
-        
-        
-        % --- PRECIO ---
+                       + 60 .* escala;
+
+        % --- PRECIO alternativa ---
         alt_price_vec = prices(i,j) ...
             + 0.3 .* prices(i,j) .* (rand(1, n_airlines) - 0.5);
-        
-        alt_u = log(sum(exp(omega_p.*alt_price_vec+omega_t*alt_time_vec))) - log(n_airlines);
-        
+
+        alt_u = log(sum(exp(omega_p.*alt_price_vec + omega_t.*alt_time_vec))) - log(n_airlines);
+
         % Asignación simétrica
-        alt_utility(i,j)  = alt_u;
-        alt_utility(j,i)  = alt_u;
+        alt_utility(i,j) = alt_u;
+        alt_utility(j,i) = alt_u;
     end
 end
-alt_utility(1:n+1:end)  = 0;
+alt_utility(1:n+1:end) = 0;
 
-op_link_cost = 7600 .* travel_time./60; % Proportional to distance
+op_link_cost = 7600 .* travel_time./60; % Coste operacional proporcional al tiempo de vuelo
 
 a_nom = 171;
-tau = 0.8;
-eta = 0.25;
+tau = 0.85;
+eta = 0.3;
 a_max = 1e9;
 
 end
