@@ -1,210 +1,355 @@
 * ---------- Conjuntos ----------
-$include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\param_definition.gms";
-
-*$include "/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/param_definition.gms"
-
-* ---------- Variables ----------
-Variables
-    obj, op_obj, pax_obj, xlen(o,d), budvar
-;
-
-Positive Variables
-    s(i), sh(i), a(i,j), f(o,d), fext(o,d), zij(i,j,o,d),
-    delta(seg,o,d), ghat(o,d)
-;
-
-Binary Variables
-    s_bin(i),
-    sh_bin(i),
-    a_bin(i,i),
-    z(i,i),
-    fij(i,i,i,i),
-    alfaseg(seg,o,d)         
-;
+$include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\param_definition_cvx.gms";
 
 
-* Cotas superiores
-f.up(i,j)       = 1;
-f.lo(i,j)       = 0;
-fext.up(i,j)    = 1;
-fext.lo(i,j)    = 0;
-zij.up(i,j,o,d) = 1;
-zij.lo(i,j,o,d) = 0;
 
-* ---------- Ecuaciones ----------
-Equations
-    def_bud, def_op_obj, def_pax_obj, def_obj,
-    bigM_s, bigM_sh, bigM_a, relssh, bud_avail,
-    link_cap, station_cap, hub_connect_cap, hub_direct_cap,
-    tot_links, link_sym,
-    fij_od_flow, fij_do_flow, fij_trans
-    diag_zero_fo, fij_zero_diag, fij_zero_oo, fij_zero_dd
-    split_fd, f_leq_Mz
-    cand_zero
-    zij_bigM_lb, zij_leq_f, zij_leq_Mfij
-    def_xlen, alfaseg_sum, delta_bound,delta_bound_last, xlen_interp, slice_bound, ghat_interp, f_leq_ghat
-;
+Parameters dm_pax,dm_op;
+
+dm_pax = 1.2;
+dm_op = 0.008;
 
 
-def_bud.. budvar =e= sum(i, station_capacity_slope(i)*(s(i)+sh(i)))
-         + sum((i,j),
-                        link_cost(i,j)*a_bin(i,j))
-         + sum(i,
-                        station_cost(i)*s_bin(i))
-         + lam*sum(i,
-                        hub_cost(i)*sh_bin(i));
+*---------------------*
+* Variables           *
+*---------------------*
 
-* ---------- Objetivo ----------
-def_op_obj..
-    op_obj =e=  sum((i,j), op_link_cost(i,j) * a(i,j));
 
-def_pax_obj..
-    pax_obj =e= - sum((o,d), prices(o,d) * demand(o,d) * f(o,d));
+Nonnegative Variable
+    s(i),        s(i),    sh(i),    
+    a(i,j),
+    f(o,d),      fext(o,d), f_aux(o,d), fext_aux(o,d),
+    fij(i,j,o,d), exceed
+    ;
 
-def_obj..
-    obj =e=  pax_obj + op_obj  + 1e-8*sum(i, station_capacity_slope(i)*(s(i)+sh(i)));
-;
+Variable bud, op, pax, obj, ft(o,d),ftext(o,d),fr(o,d),frext(o,d),fy(o,d),fyext(o,d);  
 
+
+
+*---------------------*
+* Ecuaciones          *
+*---------------------*
+Equation
+    bud_def      "definición de bud_obj"
+    op_def       "definición de op_obj"
+    pax_def      "definición de pax_obj"
+    obj_def      "objetivo total"
     
+    def_f_aux
+    def_fext_aux
+
+    link_sym(i,j)
+    prim_s_def(i)
+    prim_a_def(i,j)
+
+    link_cap(i,j)
+    station_cap(i)
+    hub_connect_cap(i)
+    hub_direct_cap(o,d)
+
+    tot_links
+    link_flow_to_f(o,d)
+    
+    profitability(o,d)
+    
+    bud_avail
+    bud_final
+
+    flow_start(o,d)     "conservación en origen o para cada destino d != o"
+    flow_end(o,d)       "conservación en destino d para cada origen o != d"
+    flow_mid(i,o,d)     "conservación en nodos intermedios i != o,d"
+
+    zero_diag_od(o)
+    zero_fij_self(i,o,d)
+    zero_fij_origin(o,i,d)
+    zero_fij_dest(d,i,o)
+    zero_diag_odext
+
+    split_choice(o,d)
+    candidates_zero(i,j)
+
+    fix_s_at_zero(i)
+    fix_sh_at_zero(i)
+    
+    expconef(o,d)
+    exponefext(o,d)
+    epigraphf(o,d)
+    epigraphfext(o,d)
+    
+    def_deltasaux(i)
+    def_deltaaaux(i,j)
+    powercones(i)
+    powerconea(i,j)
+    
+*rescap
+;
+
+*---------------------*
+* Definición objetivo *
+*---------------------*
+
+* Presupuesto (bud): costes lineales + (si iter<niters) costes fijos aproximados
+bud_def..
+    bud =e= sum(i, station_capacity_slope(i)*(s(i) + sh(i)))
+         + sum(i,
+                        station_cost(i)*(s(i)+sh(i))/((s_prev(i)+sh_prev(i))+epsi))
+         + sum(i,
+                        lam*hub_cost(i)*sh(i)/(sh_prev(i)+epsi));
+                        
+
+                        
 
 
-* ---------- Restricciones de infraestructura ----------
-*sprim_link(i)..          s_prim(i)   =e= s(i) + delta_s(i);
-*aprim_link(i,j)..        a_prim(i,j) =e= a(i,j) + delta_a(i,j);
+* Operación (op): coste lineal de operar enlaces
+op_def..
+    op =e= sum((i,j), op_link_cost(i,j) * a(i,j));
 
-bigM_s(i)..              s(i)   =l= M * s_bin(i);
-bigM_sh(i)..             sh(i)  =l= M * sh_bin(i);
-bigM_a(i,j)..            a(i,j) =l= M * a_bin(i,j);
-relssh(i)..              sh_bin(i) =l= s_bin(i);
+* Pasajeros (pax): tiempos/precios en ruta y alternativas + entropías
+pax_def..
+    pax =e= 1e-2*(
+      sum((o,d),
+            (prices(o,d)*demand(o,d))**2 *  
+           ( logit_coef*prices(o,d)*f(o,d) + sum((i,j), (travel_time(i,j))*fij(i,j,o,d)*logit_coef)))
+
+    - sum((o,d), (prices(o,d)*demand(o,d))**2
+          * alt_utility(o,d)*fext(o,d))
+
+    + sum((o,d),(prices(o,d)*demand(o,d))**2 * (ft(o,d)))
+*          * (  ( f(o,d)*log(f(o,d)) - f(o,d) ) ))
+
+   + sum((o,d), (prices(o,d)*demand(o,d))**2 *(ftext(o,d)
+   - fext_aux(o,d)*log(n_airlines))) )
+   
+
+
+
+*          * (  ( fext(o,d)*log(fext(o,d)) - fext(o,d) ) ))
+
+*    + 1e-3*sum((o,d), demand(o,d)
+*          * (  ( f(o,d)*log(f(o,d)) - f(o,d) ) ))
+
+*   + 1e-3*sum((o,d), demand(o,d)
+*          * (  ( fext(o,d)*log(fext(o,d)) - fext(o,d) ) ))
+*    +1e-3*sum(i,deltast(i))
+*  + 1e-3*sum(i,
+*         1/(congestion_coefs_stations(i)*deltas(i) + epsi))
+*    +1e-3*sum((i,j),deltaat(i,j))
+*    + 1e-3*sum((i,j),
+*          1/(congestion_coefs_links(i,j)*deltaa(i,j) + epsi))
+;
+
+* Objetivo total
+obj_def..
+    obj =e= alfa*pax  + op  + 1e3*exceed + 1e-2*bud;
+
+*---------------------*
+* Restricciones       *
+*---------------------*
+
 
 bud_avail..
-    budvar =l= budget;
+    bud$(iter < niters) =l= budget;
+    
+bud_final..
+    ( sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$((s_prev(i) > 0.1) or (sh_prev(i) > 0.1)), station_cost(i))
+  + sum(i$(sh_prev(i) > 0.1), lam*hub_cost(i)))$(iter = niters) - exceed
+    =l=
+    budget
+;
 
+
+profitability(o,d).. demand(o,d)*prices(o,d)*f(o,d) =g= sum((i,j),demand(o,d)*fij(i,j,o,d)*op_link_cost(i,j)/(a_nom*tau));
+
+* Simetría de a_prim
+link_sym(i,j)$(ord(i) ne ord(j))..  a(i,j) =e= a(j,i);
+
+* Capacidad de enlace: sum_{o,d} fij(i,j,o,d)*demand(o,d) <= tau*a(i,j)*a_nom
 link_cap(i,j)..
-     sum((o,d), zij(i,j,o,d) * demand(o,d)) =l= a(i,j) * a_nom * tau;
+    sum((o,d), fij(i,j,o,d)*demand(o,d)) =l= a(i,j)*a_nom*tau;
+    
 
+    
 station_cap(i)..   sigma * (sum(j, a(j,i)) + sum(j, a(i,j))) =l= s(i) + sh(i);
 
 hub_connect_cap(i).. sigma * (sum( (o,d,j)$(ord(o)<>ord(i)),
     demand(o,d) * fij(i,j,o,d) / (a_nom * tau))  + sum( (o,d,j)$(ord(d)<>ord(i)),
     demand(o,d) * fij(j,i,o,d) / (a_nom * tau))) =l= sh(i);
     
+    
 hub_direct_cap(o,d).. sigma * demand(o,d) * fij(o,d,o,d) / (a_nom * tau) =l= sh(o) + sh(d);
 
-tot_links.. sum((i,j), a(i,j)) =l= a_max;
 
-link_sym(i,j).. a(i,j) =e= a(j,i);
+* Límite total de links construidos/operativos
+tot_links..
+    sum((i,j), a(i,j)) =l= a_max;
 
-* ---------- Restricciones de flujo ----------
-fij_od_flow(o,d)$(ord(o)<>ord(d))..
-    sum(j$(ord(j)<>ord(o)), fij(o,j,o,d))
-  - sum(i$(ord(i)<>ord(o)), fij(i,o,o,d))
-  =e= z(o,d);
+* Relación f con flujos saliendo del origen
+link_flow_to_f(o,d)..
+    sum(j, fij(o,j,o,d)) =e= f(o,d);
 
-fij_do_flow(o,d)$(ord(o)<>ord(d))..
-    sum(j$(ord(j)<>ord(d)), fij(d,j,o,d))
-  - sum(i$(ord(i)<>ord(d)), fij(i,d,o,d))
-  =e= -z(o,d);
+* Conservación en nodos de origen (para k!=o): sum_out - sum_in = 1 - fext(o,k)
+flow_start(o,d)$(ord(o) ne ord(d))..
+    ( sum(j, fij(o,j,o,d)) - sum(i, fij(i,o,o,d)) ) =e= 1 - fext(o,d);
 
-fij_trans(i,o,d)$(ord(i)<>ord(o) and ord(i)<>ord(d))..
-    sum(j$(ord(j)<>ord(i)), fij(i,j,o,d))
-  - sum(ii$(ord(ii)<>ord(i)), fij(ii,i,o,d))
-  =e= 0;
+* Conservación en nodos destino (para k!=d): sum_out - sum_in = -1 + fext(k,d)
+flow_end(o,d)$(ord(o) ne ord(d))..
+    ( sum(j, fij(d,j,o,d)) - sum(i, fij(i,d,o,d)) ) =e= -1 + fext(o,d);
 
-diag_zero_fo(o)..            f(o,o) + fext(o,o) =e= 0;
-fij_zero_diag(i,o,d)..       fij(i,i,o,d) =e= 0;
-fij_zero_oo(o,i,d)..         fij(i,o,o,d) =e= 0;
-fij_zero_dd(d,i,o)..         fij(d,i,o,d) =e= 0;
+* Conservación en nodos intermedios i != o,d: sum_out - sum_in = 0
+flow_mid(i,o,d)$( (ord(o) ne ord(i)) and (ord(i) ne ord(d)) )..
+    ( sum(j, fij(i,j,o,d)) - sum(j, fij(j,i,o,d)) ) =e= 0;
 
-split_fd(o,d)$(ord(o)<>ord(d))..  f(o,d) + fext(o,d) =e= 1;
+* Zeros en diagonal y bloques prohibidos (replican fij(:,o,o,:) == 0, etc.)
+zero_diag_od(o)..           f(o,o)    =l= epsi;
+* fext(o,o)=0:
+zero_diag_odext(o)..           fext(o,o)    =l= epsi;
 
-f_leq_Mz(o,d)$(ord(o)<>ord(d))..  f(o,d) =l=  z(o,d);
+* fij(i,i,*,*) = 0
+zero_fij_self(i,o,d)..      fij(i,i,o,d) =l= epsi;
 
-cand_zero(i,j)$(candidates(i,j)=0)..  a(i,j) =e= 0;
+* fij(:,o,o,:) = 0  -> i cualquiera, j=o, o=o, d cualquiera
+zero_fij_origin(o,i,d)..    fij(i,o,o,d) =l= epsi;
 
-zij_bigM_lb(i,j,o,d)..  zij(i,j,o,d) =g= f(o,d) - (1 - fij(i,j,o,d));
-zij_leq_f(i,j,o,d)..    zij(i,j,o,d) =l= f(o,d);
-zij_leq_Mfij(i,j,o,d).. zij(i,j,o,d) =l= fij(i,j,o,d);
+* fij(d,:,:,d) = 0  -> i=d, j cualquiera, o cualquiera, d=d
+zero_fij_dest(d,i,o)..      fij(d,i,o,d) =l= epsi;
 
-* ---------- PWL con convex combination + binarios ----------
-def_xlen(o,d)$(ord(o)<>ord(d))..
-    xlen(o,d) =e= sum((i,j), fij(i,j,o,d) * logit_coef*(-travel_time(i,j))) + z(o,d)*logit_coef*(-prices(o,d));
+* Split: para o!=d, f + fext = 1
+split_choice(o,d)$(ord(o) ne ord(d))..
+    f(o,d) + fext(o,d) =e= 1;
+
+* Enlaces no candidatesidatos forzados a 0: a_prim(i,j)=0 si ~(i,j) en candidates
+candidates_zero(i,j)$(not candidates(i,j))..
+    a(i,j) =e= 0;
+
+* Fijaciones en la iteración final si previos pequeños (replica iter==niters … <=0.1)
+fix_s_at_zero(i)$( (s_prev(i) <= 0.1) and (iter = niters) )..
+    s(i) =l= epsi;
     
-alfaseg_sum(o,d)$(ord(o)<>ord(d)).. sum(seg,alfaseg(seg,o,d)) =e= 1;
+fix_sh_at_zero(i)$( (sh_prev(i) <= 0.1) and (iter = niters) )..
+    sh(i) =l= epsi;
+    
 
-delta_bound(seg,o,d)$((ord(o)<>ord(d)) and (ord(seg) lt card(seg))).. delta(seg,o,d) =l= alfaseg(seg,o,d)*(b(seg+1,o,d)-b(seg,o,d));
+def_f_aux(o,d).. f_aux(o,d) =e= f(o,d) + epsi_f;
+def_fext_aux(o,d).. fext_aux(o,d) =e= fext(o,d) + epsi_f;
 
-delta_bound_last(seg,o,d)$(ord(seg)=card(seg))..  delta(seg,o,d) =l= alfaseg(seg,o,d)*(-b(seg,o,d));
-
-xlen_interp(o,d)$(ord(o)<>ord(d)).. xlen(o,d) =e= sum(seg,alfaseg(seg,o,d)*b(seg,o,d) + delta(seg,o,d));
-
-slice_bound(seg,o,d)$((ord(seg) lt card(seg)) and (ord(o)<>ord(d)) ).. b(seg,o,d) + delta(seg,o,d) =l= b(seg+1,o,d);
-
-ghat_interp(o,d)$(ord(o)<>ord(d)).. ghat(o,d) =e= sum(seg,alfaseg(seg,o,d)*bord(seg,o,d) + mreg(seg,o,d)*delta(seg,o,d));   
-
-f_leq_ghat(o,d)$(ord(o)<>ord(d))..     f(o,d) =l= ghat(o,d);
+    
+expconef(o,d)..  fy(o,d) =g= f_aux(o,d)*exp(fr(o,d)/f_aux(o,d));
 
 
-* ---------- Modelo y resolución ----------
-Model netdesign /
-    def_bud,
-    def_op_obj,
-    def_pax_obj,
-    def_obj,
-    bigM_s,
-    bigM_sh,
-*    bigM_a,
-    relssh,
-    bud_avail,
-    link_cap,
-    station_cap,
-    hub_connect_cap, hub_direct_cap,
-    tot_links,
-    link_sym,
-    fij_od_flow, fij_do_flow, fij_trans
-    diag_zero_fo, fij_zero_diag, fij_zero_oo, fij_zero_dd
-    split_fd, f_leq_Mz
-    cand_zero
-    zij_bigM_lb,
-    zij_leq_f, zij_leq_Mfij 
-    def_xlen
-    alfaseg_sum
-    delta_bound
-    delta_bound_last
-    slice_bound
-    xlen_interp
-    ghat_interp, f_leq_ghat
-/;
+exponefext(o,d)..  fyext(o,d) =g= fext_aux(o,d)*exp(frext(o,d)/fext_aux(o,d));
+
+epigraphf(o,d)..  ft(o,d) =g= -fr(o,d)-f_aux(o,d);
+
+epigraphfext(o,d)..  ftext(o,d) =g= -frext(o,d)-fext_aux(o,d);
+
+*rescap(i,j,o,d).. fij(i,j,o,d) =l= capa(i,j);
+
+*---------------------*
+* Bounds básicas      *
+*---------------------*
+* Ya son positivas; si quieres forzar [0,1] también para f,fext,fij ya está con .up=1
+* Para a, s, etc., sin cota superior explícita (ajústalas si procede)
+
+*---------------------*
+* Solve               *
+*---------------------*
+Model netplan /
+    bud_def
+    op_def  
+    pax_def      
+    obj_def
+    
+    bud_avail
+    bud_final
+    
+    def_f_aux
+    def_fext_aux
+    
+    profitability
+
+    link_sym
+    link_cap
+    station_cap
+    hub_connect_cap
+    hub_direct_cap
+    tot_links
+
+   
+    link_flow_to_f
+    flow_start   
+    flow_end  
+    flow_mid    
+
+    zero_diag_od
+    zero_diag_odext
+    zero_fij_self
+    zero_fij_origin
+    zero_fij_dest
+
+    split_choice
+    candidates_zero
+
+    fix_s_at_zero
+    fix_sh_at_zero
+    
+    expconef
+    exponefext
+    epigraphf
+    epigraphfext
+
+
+  /;
+
+
+*+$ontext
+s.l(i)=0.5;
+a.l(i,j)=0.5;
+
+
+
+f.l(o,d)=0.5;
+fext.l(o,d)=0.5;
+fij.l(i,j,o,d)=0.5;
+
+
+f.lo(o,d)=0;
+
+f_aux.lo(o,d)    = epsi_f;
+fext_aux.lo(o,d) = epsi_f;
+
+f.up(o,d)=1;
+fext.up(o,d)=1;
+
+*$offtext
+
+    
+fy.fx(o,d)=1;
+fyext.fx(o,d)=1;
+
+
+exceed.fx = 0;
 
 
 
 
-option threads = 60;
-option mip     = cplex;
 
-option reslim = 600;
 
-Parameter mipgap;
+option threads = 64;
 
-Solve netdesign using mip minimizing obj;
+option nlp=mosek;
 
-* ---------- Salidas básicas ----------
-*Display f.l, fext.l, fij.l, xlen.l, ghat.l,
-*        obj.l, op_obj.l, pax_obj.l,
-*        s.l, s_bin.l, a.l, a_bin.l, z.l, b;
-
-mipgap = abs(netdesign.objval - netdesign.objest) / (1e-9 + abs(netdesign.objval));
-
+Solve netplan using nlp minimizing obj;
 Parameter solverTime;
 
-solverTime = netdesign.resusd;
+solverTime = netplan.resusd;
 
-Display b,budget,netdesign.objval, netdesign.objest, mipgap;
+display f.l, fext.l, fij.l, a.l, s.l;
+
 
 
 Parameter fnew(o,i,j,d);
 
 fnew(o,i,j,d)=fij.l(i,j,o,d);
+
 execute_unload "resultado.gdx";
 
 
@@ -249,7 +394,6 @@ EmbeddedCode Connect:
       - name: f
       - name: fext
       - name: fnew
-      - name: mipgap
       - name: solverTime
 - Projection:
     name: s.l(i)
@@ -270,20 +414,16 @@ EmbeddedCode Connect:
     name: fnew(o,i,j,d)
     newName: fij_level(o,i,j,d)
 - Projection:
-    name: mipgap
-    newName: mip_opt_gap
-- Projection:
     name: solverTime
     newName: solver_time
 - ExcelWriter:
     file: output_all.xlsx
     symbols:
       - name: s_level
-      - name: sh_level
       - name: a_level
       - name: f_level
       - name: fext_level
       - name: fij_level
-      - name: mip_opt_gap
-      - name: solver_time      
+      - name: solver_time
+      - name: sh_level
 endEmbeddedCode

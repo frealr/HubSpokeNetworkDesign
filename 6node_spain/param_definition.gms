@@ -1,6 +1,6 @@
 
 
-$setglobal TXTDIR "/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/6node_spain/export_txt"
+$setglobal TXTDIR  "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\export_txt"
 
 
 Sets

@@ -1,0 +1,318 @@
+
+--- Job flow_assignment.gms Start 01/29/26 12:48:23 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\50\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\flow_assignment.gms
+    PageSize 0
+    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\225f\
+    SysDir C:\GAMS\50\
+    LogOption 3
+    AppendLog 1
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+Licensee: Luis Cadarso Morga                             G250911+0003Ac-GEN
+          University Rey Juan Carlos                                DCE4613
+          225f\gamslice.dat
+          node:23539203 mem:64 cores:8 ipport:60198 v:2                    
+          Course license for use within the course and related course work
+          The expiration date of time-limited license is Feb 08, 2026
+System information: 8 physical cores and 64 Gb physical memory detected
+GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
+--- Starting compilation
+--- flow_assignment.gms(2) 2 Mb
+--- . param_definition.gms(18) 3 Mb
+--- .. b.txt(320) 3 Mb
+--- . param_definition.gms(24) 3 Mb
+--- .. bord.txt(320) 3 Mb
+--- . param_definition.gms(29) 3 Mb
+--- .. lin_coef.txt(320) 3 Mb
+--- . param_definition.gms(36) 3 Mb
+--- .. demand.txt(16) 3 Mb
+--- . param_definition.gms(42) 3 Mb
+--- .. alt_utility.txt(16) 3 Mb
+--- . param_definition.gms(48) 3 Mb
+--- .. link_cost.txt(16) 3 Mb
+--- . param_definition.gms(53) 3 Mb
+--- .. link_capacity_slope.txt(16) 3 Mb
+--- . param_definition.gms(58) 3 Mb
+--- .. prices.txt(16) 3 Mb
+--- . param_definition.gms(63) 3 Mb
+--- .. op_link_cost.txt(16) 3 Mb
+--- . param_definition.gms(68) 3 Mb
+--- .. congestion_coefs_links.txt(16) 3 Mb
+--- . param_definition.gms(78) 3 Mb
+--- .. candidates.txt(16) 3 Mb
+--- . param_definition.gms(83) 3 Mb
+--- .. travel_time.txt(16) 3 Mb
+--- . param_definition.gms(89) 3 Mb
+--- .. station_cost.txt(4) 3 Mb
+--- . param_definition.gms(94) 3 Mb
+--- .. hub_cost.txt(4) 3 Mb
+--- . param_definition.gms(99) 3 Mb
+--- .. station_capacity_slope.txt(4) 3 Mb
+--- . param_definition.gms(104) 3 Mb
+--- .. congestion_coefs_stations.txt(4) 3 Mb
+--- . param_definition.gms(110) 3 Mb
+--- .. a_prev.txt(16) 3 Mb
+--- . param_definition.gms(115) 3 Mb
+--- .. s_prev.txt(4) 3 Mb
+--- . param_definition.gms(120) 3 Mb
+--- .. sh_prev.txt(4) 3 Mb
+--- . param_definition.gms(137) 3 Mb
+--- .. lam.txt(1) 3 Mb
+--- . param_definition.gms(141) 3 Mb
+--- .. alfa.txt(1) 3 Mb
+--- . param_definition.gms(146) 3 Mb
+--- .. dm_pax.txt(1) 3 Mb
+--- . param_definition.gms(150) 3 Mb
+--- .. dm_op.txt(1) 3 Mb
+--- . param_definition.gms(154) 3 Mb
+--- .. budget.txt(1) 3 Mb
+--- . param_definition.gms(159) 3 Mb
+--- .. budget.txt(1) 3 Mb
+--- . param_definition.gms(167) 3 Mb
+--- flow_assignment.gms(292) 3 Mb
+--- Starting execution: elapsed 0:00:00.029
+--- flow_assignment.gms(1503) 4 Mb
+--- Generating MIP model netdesign
+--- flow_assignment.gms(1508) 5 Mb
+---   1,649 rows  1,116 columns  4,983 non-zeroes
+---   532 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 9.995E-04, 4.000E+04] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E+00, 1.000E+00] - Zero values observed as well
+--- Matrix    [min, max] : [ 1.000E-04, 2.093E+05]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:00.037
+
+IBM ILOG CPLEX   50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+
+--- GAMS/CPLEX licensed for continuous and discrete problems.
+--- GMO setup time: 0.00s
+--- Space for names approximately 0.08 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 0.81 Mb (peak 0.82 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.2.0 link memory 0.04 Mb (peak 0.20 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.2.0 | 2024-11-25 | 0edbb82fd
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 16
+CPXPARAM_Parallel                                1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_TimeLimit                               600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                0
+Generic callback                                 0x50
+Tried aggregator 2 times.
+MIP Presolve eliminated 1048 rows and 464 columns.
+MIP Presolve modified 252 coefficients.
+Aggregator did 17 substitutions.
+Reduced MIP has 583 rows, 635 columns, and 2534 nonzeros.
+Reduced MIP has 332 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (4.26 ticks)
+Found incumbent of value 0.000000 after 0.02 sec. (5.06 ticks)
+Probing fixed 118 vars, tightened 128 bounds.
+Probing time = 0.00 sec. (1.14 ticks)
+Cover probing fixed 0 vars, tightened 32 bounds.
+Tried aggregator 1 time.
+MIP Presolve eliminated 143 rows and 284 columns.
+MIP Presolve modified 290 coefficients.
+Reduced MIP has 440 rows, 351 columns, and 1552 nonzeros.
+Reduced MIP has 178 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (1.35 ticks)
+Probing fixed 8 vars, tightened 13 bounds.
+Probing time = 0.00 sec. (0.43 ticks)
+Cover probing fixed 0 vars, tightened 2 bounds.
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 16 rows and 24 columns.
+MIP Presolve modified 15 coefficients.
+Reduced MIP has 424 rows, 327 columns, and 1464 nonzeros.
+Reduced MIP has 170 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (1.35 ticks)
+Probing fixed 0 vars, tightened 1 bounds.
+Probing time = 0.00 sec. (0.39 ticks)
+Clique table members: 305.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 16 threads.
+Parallel mode: deterministic, using up to 3 threads for parallel tasks at root LP.
+Tried aggregator 1 time.
+Aggregator did 11 substitutions.
+Reduced LP has 413 rows, 316 columns, and 1495 nonzeros.
+Presolve time = 0.00 sec. (0.31 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =        -42238.626330
+Perturbation started.
+Iteration:    51   Dual objective     =        -42238.626330
+Iteration:   113   Dual objective     =        -40793.939745
+Iteration:   175   Dual objective     =        -40766.065730
+Iteration:   189   Dual objective     =        -40765.930310
+Removing perturbation.
+Initializing dual steep norms . . .
+Root relaxation solution time = 0.00 sec. (3.22 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                            0.0000   -42238.6263              --- 
+Found incumbent of value 0.000000 after 0.02 sec. (17.91 ticks)
+      0     0   -40765.9303    70        0.0000   -40765.9303      189     --- 
+*     0+    0                           -3.9465   -40765.9303              --- 
+Found incumbent of value -3.946491 after 0.02 sec. (19.66 ticks)
+      0     0   -40526.4811    63       -3.9465      Cuts: 45      240     --- 
+*     0+    0                       -36348.0375   -40526.4811            11.50%
+Found incumbent of value -36348.037514 after 0.03 sec. (26.61 ticks)
+      0     0   -40389.6878    64   -36348.0375      Cuts: 31      276   11.12%
+Detecting symmetries...
+
+Repeating presolve.
+Tried aggregator 2 times.
+MIP Presolve eliminated 147 rows and 118 columns.
+MIP Presolve modified 21 coefficients.
+Aggregator did 2 substitutions.
+Reduced MIP has 275 rows, 207 columns, and 910 nonzeros.
+Reduced MIP has 110 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (2.11 ticks)
+Probing fixed 0 vars, tightened 4 bounds.
+Probing time = 0.00 sec. (0.26 ticks)
+Cover probing fixed 0 vars, tightened 11 bounds.
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve modified 40 coefficients.
+Reduced MIP has 275 rows, 207 columns, and 910 nonzeros.
+Reduced MIP has 110 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (0.59 ticks)
+Represolve time = 0.02 sec. (3.46 ticks)
+Probing fixed 0 vars, tightened 7 bounds.
+Probing time = 0.00 sec. (0.26 ticks)
+Clique table members: 230.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 16 threads.
+Tried aggregator 1 time.
+LP Presolve eliminated 2 rows and 2 columns.
+Aggregator did 4 substitutions.
+Reduced LP has 301 rows, 201 columns, and 1048 nonzeros.
+Presolve time = 0.00 sec. (0.20 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =        -39623.689241
+Perturbation started.
+Iteration:    51   Dual objective     =        -39623.689241
+Iteration:   113   Dual objective     =        -39562.429957
+Removing perturbation.
+Initializing dual steep norms . . .
+Root relaxation solution time = 0.00 sec. (1.49 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                       -36348.0375   -40389.6878            11.12%
+Found incumbent of value -36348.037514 after 0.06 sec. (36.37 ticks)
+      0     0   -39562.3949    61   -36348.0375   -39562.3949      397    8.84%
+      0     0   -38701.2636    61   -36348.0375      Cuts: 23      450    6.47%
+      0     0   -38174.1372    58   -36348.0375       Cuts: 8      477    5.02%
+      0     0   -38174.1372    58   -36348.0375       Cuts: 2      483    5.02%
+      0     0   -38174.2428    52   -36348.0375    MIRcuts: 1      484    5.02%
+      0     0   -38174.2428    50   -36348.0375       Cuts: 7      498    5.02%
+*     0+    0                       -36350.6237   -38174.1372             5.02%
+Found incumbent of value -36350.623676 after 0.09 sec. (54.22 ticks)
+Detecting symmetries...
+      0     2   -38105.5562    50   -36350.6237   -37317.0871      498    2.66%
+Elapsed time = 0.09 sec. (55.10 ticks, tree = 0.02 MB)
+
+Performing restart 1
+
+Repeating presolve.
+Tried aggregator 2 times.
+MIP Presolve eliminated 2 rows and 2 columns.
+MIP Presolve modified 92 coefficients.
+Aggregator did 8 substitutions.
+Reduced MIP has 265 rows, 197 columns, and 854 nonzeros.
+Reduced MIP has 102 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (0.94 ticks)
+Tried aggregator 1 time.
+MIP Presolve modified 38 coefficients.
+Reduced MIP has 265 rows, 197 columns, and 854 nonzeros.
+Reduced MIP has 102 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (0.57 ticks)
+Represolve time = 0.02 sec. (2.35 ticks)
+Tried aggregator 1 time.
+LP Presolve eliminated 1 rows and 0 columns.
+Aggregator did 3 substitutions.
+Reduced LP has 360 rows, 194 columns, and 1438 nonzeros.
+Presolve time = 0.00 sec. (0.23 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =        -37350.551336
+Iteration:    63   Dual objective     =        -36423.118406
+Iteration:   127   Dual objective     =        -36362.928837
+Iteration:   152   Dual objective     =        -36351.010959
+Initializing dual steep norms . . .
+
+GUB cover cuts applied:  5
+Clique cuts applied:  22
+Cover cuts applied:  28
+Implied bound cuts applied:  34
+Flow cuts applied:  1
+Mixed integer rounding cuts applied:  9
+
+Root node processing (before b&c):
+  Real time             =    0.09 sec. (54.98 ticks)
+Parallel b&c, 16 threads:
+  Real time             =    0.14 sec. (86.84 ticks)
+  Sync time (average)   =    0.04 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.23 sec. (141.82 ticks)
+
+--- MIP status (102): integer optimal, tolerance.
+--- Cplex Time: 0.23sec (det. 141.82 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.2.0 | 2024-11-25 | 0edbb82fd
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 16
+CPXPARAM_Parallel                                1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_TimeLimit                               600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                0
+Tried aggregator 1 time.
+LP Presolve eliminated 1648 rows and 1116 columns.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.74 ticks)
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.00sec (det. 1.32 ticks)
+
+
+Solution satisfies tolerances
+
+--- Reading solution for model netdesign
+--- Executing after solve: elapsed 0:00:00.321
+--- flow_assignment.gms(1527) 5 Mb
+--- GDX File (execute_unload) C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\resultado.gdx
+--- flow_assignment.gms(1537) 7 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- flow_assignment.gms(1550) 7 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- flow_assignment.gms(1563) 8 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- Putfile fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\fij_long.csv
+*** Status: Normal completion
+--- Job flow_assignment.gms Stop 01/29/26 12:48:24 elapsed 0:00:01.028

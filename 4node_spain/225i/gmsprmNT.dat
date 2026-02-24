@@ -1,0 +1,6 @@
+Input=C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\cvx.gms
+ScrDir=225i
+SysDir=C:\GAMS\50
+ScriptNext=225i\gamsnext.cmd
+AppendLog=1
+NetLicense=225i\gamslice.dat

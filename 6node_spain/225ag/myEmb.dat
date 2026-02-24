@@ -1,0 +1,40 @@
+- GAMSReader:
+    symbols:
+      - name: s
+      - name: sh
+      - name: a
+      - name: f
+      - name: fext
+      - name: fnew
+      - name: solverTime
+- Projection:
+    name: s.l(i)
+    newName: s_level(i)
+- Projection:
+    name: sh.l(i)
+    newName: sh_level(i)
+- Projection:
+    name: a.l(i,j)
+    newName: a_level(i,j)
+- Projection:
+    name: f.l(o,d)
+    newName: f_level(o,d)
+- Projection:
+    name: fext.l(o,d)
+    newName: fext_level(o,d)
+- Projection:
+    name: fnew(o,i,j,d)
+    newName: fij_level(o,i,j,d)
+- Projection:
+    name: solverTime
+    newName: solver_time
+- ExcelWriter:
+    file: output_all.xlsx
+    symbols:
+      - name: s_level
+      - name: a_level
+      - name: f_level
+      - name: fext_level
+      - name: fij_level
+      - name: solver_time
+      - name: sh_level

@@ -1,16 +1,15 @@
 
 
-$setglobal TXTDIR "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\export_txt"
-
+$setglobal TXTDIR  "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\export_txt"
 
 
 Sets
-    i   / i1*i8 /
+    i   / i1*i6 /
 ;
 Alias (i,j,o,d,ii,jj);
 
 * Breakpoints para PWL (K puntos => K-1 segmentos)
-Set seg / seg1*seg10 /;
+Set seg / seg1*seg40 /;
 * segmentos entre breakpoints (K=20 => 19 segmentos)
 
 
@@ -116,6 +115,11 @@ Parameter s_prev(i)
 $include "%TXTDIR%\s_prev.txt"
 /;
 
+Parameter sh_prev(i)
+/
+$include "%TXTDIR%\sh_prev.txt"
+/;
+
 
 Scalars tau, sigma, a_nom, a_max, M, n_airlines;
 tau = 0.85;
@@ -137,9 +141,6 @@ Scalar alfa /
 $include "%TXTDIR%\alfa.txt"
 /;
 
-Scalar beta /
-$include "%TXTDIR%\beta.txt"
-/;
 
 Scalar dm_pax /
 $include "%TXTDIR%\dm_pax.txt"

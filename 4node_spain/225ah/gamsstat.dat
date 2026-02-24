@@ -1,0 +1,46 @@
+=0MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+
+=CExtraction of quadratics (ThreePass algorithm): 0.00s
+The A matrix contains a large value of -1.7e+14 in constraint 'pax_def' (3) at variable 'f(i2,i4)' (31).
+ (62)
+The A matrix contains a large value of -3.0e+14 in constraint 'pax_def' (3) at variable 'f(i4,i2)' (37).
+ (62)
+The A matrix contains a large value of -3.8e+14 in constraint 'pax_def' (3) at variable 'fext(i2,i4)' (47).
+ (62)
+The A matrix contains a large value of -6.9e+14 in constraint 'pax_def' (3) at variable 'fext(i4,i2)' (53).
+ (62)
+The A matrix contains a large value of 1.3e+14 in constraint 'pax_def' (3) at variable 'fext_aux(i2,i4)' (79).
+ (62)
+The A matrix contains a large value of 2.4e+14 in constraint 'pax_def' (3) at variable 'fext_aux(i4,i2)' (85).
+ (62)
+The A matrix contains a large value of -1.4e+14 in constraint 'pax_def' (3) at variable 'fij(i1,i2,i2,i4)' (111).
+ (62)
+The A matrix contains a large value of -2.6e+14 in constraint 'pax_def' (3) at variable 'fij(i1,i2,i4,i2)' (117).
+ (62)
+The A matrix contains a large value of -1.5e+14 in constraint 'pax_def' (3) at variable 'fij(i1,i3,i2,i4)' (127).
+ (62)
+The A matrix contains a large value of -2.7e+14 in constraint 'pax_def' (3) at variable 'fij(i1,i3,i4,i2)' (133).
+ (62)
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
+=5 404 div: FUNC SINGULAR: x/y, |y| <= 1e-150 (RETURNED 1E299)
+=5 404 exp: FUNC OVERFLOW: x too large (RETURNED 1E299)
+=5 409 div: FUNC SINGULAR: x/y, |y| <= 1e-150 (RETURNED 1E299)
+=5 409 exp: FUNC OVERFLOW: x too large (RETURNED 1E299)
+=5 414 div: FUNC SINGULAR: x/y, |y| <= 1e-150 (RETURNED 1E299)
+=5 414 exp: FUNC OVERFLOW: x too large (RETURNED 1E299)
+=5 419 div: FUNC SINGULAR: x/y, |y| <= 1e-150 (RETURNED 1E299)
+=5 419 exp: FUNC OVERFLOW: x too large (RETURNED 1E299)
+=5 420 div: FUNC SINGULAR: x/y, |y| <= 1e-150 (RETURNED 1E299)
+=5 420 exp: FUNC OVERFLOW: x too large (RETURNED 1E299)
+=5 425 div: FUNC SINGULAR: x/y, |y| <= 1e-150 (RETURNED 1E299)
+=5 425 exp: FUNC OVERFLOW: x too large (RETURNED 1E299)
+=5 430 div: FUNC SINGULAR: x/y, |y| <= 1e-150 (RETURNED 1E299)
+=5 430 exp: FUNC OVERFLOW: x too large (RETURNED 1E299)
+=5 435 div: FUNC SINGULAR: x/y, |y| <= 1e-150 (RETURNED 1E299)
+=5 435 exp: FUNC OVERFLOW: x too large (RETURNED 1E299)

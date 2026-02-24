@@ -1,0 +1,207 @@
+53
+4 6 0 0 504  0.00000000000000E+0000 5  0.00000000000000E+0000 0 0
+1309 72 0 0 825 388 174 747 0 0 0 0
+1709 144 0 0 0 0 0 0
+8818 144
+1709 0 0 0 0 0 0 1489 0 220
+73 0 0 0 0 0 0
+0 14 0
+576 16 20
+ 1.00000000000000E-0004  0.00000000000000E+0000 0
+0  0.00000000000000E+0000 0  0.00000000000000E+0000
+ 1.00000000000000E+0010 2147483647 0
+11 0
+ 0.00000000000000E+0000 0 0 0  1.00000000000000E+0000 0 64 0 0  1.00000000000000E-0005 0
+1493 100
+0 0 0 0 0
+ 0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ad\gamsmatr.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ad\gamsinst.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ad\gamsstat.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ad\gamssolu.dat
+
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ad\gamsdict.dat
+3
+13:27:52
+02/12/26
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\
+C:\GAMS\50\
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ad\
+32767 2147483647
+0 0 154 46064 45940 62283
+Luis Cadarso Morga                             G250911+0003Ac-GEN0
+University Rey Juan Carlos                                       0
+01COCPMB                                                         0
+0 1 4 0
+225ad\gmsprmNT.dat
+15 45 32
+LP          10 0
+MIP         10 0
+RMIP        10 0
+NLP         5 32
+MCP         36 0
+MPEC        34 0
+RMPEC       34 0
+CNS         5 0
+DNLP        5 0
+RMINLP      5 0
+MINLP       14 0
+QCP         5 0
+MIQCP       40 0
+RMIQCP      5 0
+EMP         24 0
+ALPHAECP    11 5 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0
+gmsecpnt.cmd
+gmsecpnx.exe
+ANTIGONE    2011 5 1 0 0 0 1 0 0 0 1 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+BARON       1001 5 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 0
+gmsba_nt.cmd
+gmsba_nx.exe
+CBC         2011 5 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgennt.cmd
+gmsgennx.exe
+CONOPT      1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgennt.cmd
+gmsgennx.exe
+CONOPT3     1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgennt.cmd
+gmsgennx.exe
+CONOPT4     1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgennt.cmd optconopt.def
+gmsgennx.exe
+CONVERT     103011 5 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+gmsgennt.cmd optconvert.def
+gmsgennx.exe
+COPT        1011 5 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+CPLEX       2011 5 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+DE          102011 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+gmsgennt.cmd
+gmsgennx.exe
+DECISC      2011 5 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+gmsdecnt.cmd optdecis.def
+DECISM      2011 5 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+gmsdemnt.cmd optdecis.def
+DICOPT      1 5 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0
+gmsdi_nt.cmd
+gmsdi_nx.exe
+EXAMINER    103011 5 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+EXAMINER2   103011 5 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 0
+gmsgennt.cmd optexaminer.def
+gmsgennx.exe
+GAMSCHK     103011 5 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 0
+gmsck_nt.cmd
+gmsck_nx.exe
+GLOMIQO     2011 5 1 0 0 0 1 0 0 0 1 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+GUROBI      11 5 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+GUSS        1001 5 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+HIGHS       11 5 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgennt.cmd
+gmsgennx.exe
+IPOPT       11 5 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgennt.cmd
+gmsgennx.exe
+IPOPTH      11 5 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgennt.cmd optipopt.def
+gmsgennx.exe
+JAMS        101011 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+gmsja_nt.cmd
+gmsja_nx.exe
+KESTREL     103010 5 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+gmske_nt.cmd
+KNITRO      103011 5 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+LINDO       1 5 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 1
+gmsgennt.cmd
+gmsgennx.exe
+LINDOGLOBAL 1 5 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+LOGMIP      101011 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+gmsja_nt.cmd optjams.def
+gmsja_nx.exe
+MILES       103001 5 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+gmsmcent.cmd
+gmsmcenx.exe
+MINOS       1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgennt.cmd
+gmsgennx.exe
+MOSEK       11 5 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+MPSGE       100001 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgewnt.cmd
+gmsgewnx.exe
+NLPEC       103001 0 1 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0
+gmscvnnt.cmd
+gmscvnnx.exe
+ODHCPLEX    2011 5 1 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0
+gmsgennt.cmd
+gmsgennx.exe
+PATH        103001 5 1 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0
+gmsgennt.cmd
+gmsgennx.exe
+PATHNLP     11 5 1 1 0 1 1 0 0 0 0 1 1 0 1 0 1 0
+gmsptnnt.cmd
+gmsptnnx.exe
+QUADMINOS   1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgennt.cmd optminos.def
+gmsgennx.exe
+RESHOP      103011 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+gmsgennt.cmd
+gmsgennx.exe
+SBB         11 5 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0
+gmssb_nt.cmd
+gmssb_nx.exe
+SCIP        2001 5 1 0 1 0 1 0 0 0 1 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+SHOT        1001 5 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0
+gmsgennt.cmd
+gmsgennx.exe
+SNOPT       1 0 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 0
+gmsgennt.cmd
+gmsgennx.exe
+SOPLEX      11 5 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0
+gmsgennt.cmd
+gmsgennx.exe
+XPRESS      11 5 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 0
+gmsgennt.cmd
+gmsgennx.exe
+05050505                                                         0
+DCE4613   d7f493a1-703d-423d-96d8-160ee6334eb6 N COURSE          0
+node:23539203 mem:64 cores:8 ipport:52243 v:2                    0
+MEYCIQC7AWuWtRYNvOJ4OPWquGfiLby68rd652pcJIrsp3fvjgIhAMt0FSl0ETYHF0
+XOM91m16yImfC9aX8y1vmiQ31Rx6Kvu                                  0
+0 C:\GAMS\50\gamslice.txt
+1 C:\GAMS\50\gmscmpnt.txt
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.dat
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0  1.00000000000000E+0000 0 8
+0 0 0
+0 0 0 1 0
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\netplan.dll
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ad\sbbinfo.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ad\gamscntr.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\
+dat
+ 1.00000000000000E+0299
+
+
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.gms
+ 8.81800000000000E+0003  1.44000000000000E+0002

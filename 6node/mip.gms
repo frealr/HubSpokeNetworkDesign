@@ -1,7 +1,7 @@
 * ---------- Conjuntos ----------
 *$include "C:\Users\freal\MATLAB\Projects\untitled\code\6node\param_definition.gms";
 
-$include "/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/6node/param_definition.gms"
+$include  "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node\param_definition.gms"
 
 * ---------- Variables ----------
 Variables
@@ -162,7 +162,7 @@ Model netdesign /
 
 
 option threads = 60;
-option mip     = mosek;
+option mip     = cplex;
 
 option reslim = 1800;
 

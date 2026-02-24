@@ -1,6 +1,6 @@
 
 
-$setglobal TXTDIR "/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/6node/export_txt"
+$setglobal TXTDIR  "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node\export_txt"
 
 
 Sets
@@ -125,7 +125,7 @@ $include "%TXTDIR%/s_prev.txt"
 Scalars tau, sigma, a_nom, a_max, M;
 tau = 0.57;
 sigma = 0.25;
-a_nom = 588;
+a_nom = 171;
 a_max = 1e5;
 M = 1e5;
 

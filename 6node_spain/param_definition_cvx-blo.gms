@@ -1,7 +1,7 @@
 
 
 
-$setglobal TXTDIR "/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/6node_spain/export_txt"
+$setglobal TXTDIR "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\export_txt"
 
 
 
@@ -17,6 +17,8 @@ Parameter demand(o,d)
 /
 $include "%TXTDIR%\demand.txt"
 /;
+
+*demand(o,d)=1e-2*demand(o,d);
 
 Parameter alt_utility(o,d)
 
@@ -56,6 +58,7 @@ Parameter op_link_cost(i,j)
 $include "%TXTDIR%\op_link_cost.txt"
 /;
 
+* op_link_cost(i,j)=1e-2* op_link_cost(i,j);
 
 Parameter candidates(i,j)
 /
@@ -88,6 +91,11 @@ Parameter budget
 $include "%TXTDIR%\budget.txt"
 /;
 
+Parameter f_bounds(o,d)
+/
+$include "%TXTDIR%\f_bounds.txt"
+/;
+
 
 Parameter s_prev(i)
 /
@@ -105,7 +113,7 @@ Scalars tau, sigma, a_nom, a_max;
 tau = 0.85;
 sigma = 0.3;
 a_nom = 171;
-a_max = 1e5;
+a_max = 1e7;
 
 Scalar n; n = card(i);
 
@@ -136,9 +144,9 @@ Scalar logit_coef; logit_coef = 0.02;
 
 Scalar n_airlines; n_airlines = 5;
 
-Scalar epsi_f; epsi_f = 1e-4;
+Scalar epsi_f; epsi_f =1e-6;
 
 
 
-display travel_time,link_cost,link_capacity_slope,prices,candidates,station_cost,station_capacity_slope,a_max, iter, niters;
+display travel_time,link_cost,link_capacity_slope,prices,candidates,station_cost,station_capacity_slope,a_max, iter, niters, demand;
 

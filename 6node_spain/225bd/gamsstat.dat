@@ -1,0 +1,10 @@
+=0MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+
+=CExtraction of quadratics (ThreePass algorithm): 0.00s
+
+Return code - 0 [MSK_RES_OK]: No error occurred.

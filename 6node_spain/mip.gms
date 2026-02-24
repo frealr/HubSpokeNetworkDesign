@@ -1,8 +1,6 @@
 * ---------- Conjuntos ----------
 $include "param_definition.gms";
 
-*$include "/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/4node_spain/param_definition.gms"
-
 * ---------- Variables ----------
 Variables
     obj, op_obj, pax_obj, xlen(o,d), budvar
@@ -178,7 +176,7 @@ Model netdesign /
 option threads = 60;
 option mip     = cplex;
 
-option reslim = 600;
+option reslim = 60;
 
 Parameter mipgap;
 
