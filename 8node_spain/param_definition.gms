@@ -4,7 +4,7 @@ $setglobal TXTDIR  "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\exp
 
 
 Sets
-    i   / i1*i6 /
+    i   / i1*i8 /
 ;
 Alias (i,j,o,d,ii,jj);
 

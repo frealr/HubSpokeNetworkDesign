@@ -80,12 +80,21 @@ write_gams_param1d_full('./export_txt/hub_cost.txt', hub_cost);
 write_gams_param1d_full('./export_txt/station_capacity_slope.txt', station_capacity_slope);
 write_gams_param1d_full('./export_txt/congestion_coefs_stations.txt', congestion_coef_stations);
 
+a_prev = 1e4*ones(n);
+s_prev = 1e4*ones(1,n);
+sh_prev = 1e-3*s_prev;
+
+write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
+write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
+write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
+
+
 %% Parameter definition
 
 alfa = 0.5;
 betas = 1;
-budgets = 4e4;
-lam = 5;
+budgets = 5e4;
+lam = 4;
 
 %% run MIP
 
