@@ -1,0 +1,457 @@
+
+--- Job cvx-mip.gms Start 02/26/26 13:26:33 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\50\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-mip.gms
+    PageSize 0
+    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225g\
+    SysDir C:\GAMS\50\
+    LogOption 3
+    AppendLog 1
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+*** Time-limited license expired 18 days ago
+Licensee: Luis Cadarso Morga                             G250911+0003Ac-GEN
+          University Rey Juan Carlos                                DCE4613
+          225g\gamslice.dat
+          node:23539203 mem:64 cores:8 ipport:60076 v:2                    
+          Course license for use within the course and related course work
+System information: 8 physical cores and 64 Gb physical memory detected
+GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
+--- Starting compilation
+--- cvx-mip.gms(2) 2 Mb
+--- . param_definition_cvx-blo.gms(18) 3 Mb
+--- .. demand.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(26) 3 Mb
+--- .. alt_utility.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(33) 3 Mb
+--- .. link_cost.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(38) 3 Mb
+--- .. link_capacity_slope.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(43) 3 Mb
+--- .. alfa_od.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(48) 3 Mb
+--- .. beta_od.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(53) 3 Mb
+--- .. prices.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(58) 3 Mb
+--- .. op_link_cost.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(65) 3 Mb
+--- .. candidates.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(70) 3 Mb
+--- .. travel_time.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(76) 3 Mb
+--- .. station_cost.txt(8) 3 Mb
+--- . param_definition_cvx-blo.gms(81) 3 Mb
+--- .. hub_cost.txt(8) 3 Mb
+--- . param_definition_cvx-blo.gms(86) 3 Mb
+--- .. station_capacity_slope.txt(8) 3 Mb
+--- . param_definition_cvx-blo.gms(91) 3 Mb
+--- .. budget.txt(1) 3 Mb
+--- . param_definition_cvx-blo.gms(96) 3 Mb
+--- .. f_bounds.txt(64) 3 Mb
+--- . param_definition_cvx-blo.gms(102) 3 Mb
+--- .. s_prev.txt(8) 3 Mb
+--- . param_definition_cvx-blo.gms(107) 3 Mb
+--- .. sh_prev.txt(8) 3 Mb
+--- . param_definition_cvx-blo.gms(123) 3 Mb
+--- .. lam.txt(1) 3 Mb
+--- . param_definition_cvx-blo.gms(127) 3 Mb
+--- .. alfa.txt(1) 3 Mb
+--- . param_definition_cvx-blo.gms(132) 3 Mb
+--- .. current_iter.txt(1) 3 Mb
+--- . param_definition_cvx-blo.gms(136) 3 Mb
+--- .. niters.txt(1) 3 Mb
+--- . param_definition_cvx-blo.gms(140) 3 Mb
+--- .. gamma.txt(1) 3 Mb
+--- . param_definition_cvx-blo.gms(152) 3 Mb
+--- cvx-mip.gms(507) 3 Mb
+--- Starting execution: elapsed 0:00:00.013
+--- cvx-mip.gms(1278) 4 Mb
+--- Generating MINLP model netplan
+--- cvx-mip.gms(1294) 9 Mb
+---   2,982 rows  4,838 columns  26,945 non-zeroes
+---   1,024 nl-code  256 nl-non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.000E-06, 1.000E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-06, 1.000E+00] - Zero values observed as well
+--- Matrix    [min, max] : [ 9.613E-05, 2.669E+06]
+--- cvx-mip.gms(1294) 7 Mb
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:00.425
+
+MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+GAMS/MOSEK license detected
+
+Extraction of quadratics (ThreePass algorithm): 0.00s
+Setting up initial integer solution.
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : CONIC (conic optimization problem)
+  Constraints            : 2981            
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 128             
+  Scalar variables       : 4837            
+  Matrix variables       : 0               
+  Integer variables      : 16              
+
+Optimizer started.
+Mixed integer optimizer started.
+Threads used: 16
+Presolve started.
+Presolve terminated. Time = 0.11, probing time =  0.01
+Presolved problem: 1620 variables, 517 constraints, 8016 non-zeros
+Presolved problem: 0 general integer, 16 binary, 1604 continuous
+Presolved problem: 60 cones
+Clique table size: 8
+Removed blocks   : 68
+BRANCHES RELAXS   ACT_NDS  DEPTH    BEST_INT_OBJ         BEST_RELAX_OBJ       REL_GAP(%)  TIME  
+0        68       1        0        NA                   NA                   NA          0.1   
+0        69       1        0        3.3190496134e+04     3.2676554987e+04     1.55        0.2   
+Root cut generation started.
+0        69       1        0        3.3190496134e+04     3.2676539508e+04     1.55        0.3   
+Root cut generation terminated. Time = 0.04
+0        72       1        0        3.3190495280e+04     3.2676543820e+04     1.55        0.4   
+8        83       9        2        3.3190495280e+04     3.2676545901e+04     1.55        0.7   
+22       98       11       3        3.3190495280e+04     3.2676547936e+04     1.55        0.8   
+36       114      23       6        3.3190495280e+04     3.2676547936e+04     1.55        0.9   
+53       135      38       8        3.3190495280e+04     3.2676547936e+04     1.55        1.0   
+75       159      48       9        3.2724218947e+04     3.2676547936e+04     0.15        1.1   
+114      194      45       6        3.2724218947e+04     3.2676555438e+04     0.15        1.2   
+146      218      29       7        3.2724218947e+04     3.2676555438e+04     0.15        1.3   
+170      240      21       6        3.2724218947e+04     3.2676556003e+04     0.15        1.4   
+181      251      24       7        3.2724218947e+04     3.2676556003e+04     0.15        1.4   
+201      271      24       9        3.2681383115e+04     3.2676556003e+04     0.01        1.5   
+227      282      10       8        3.2681383115e+04     3.2676556003e+04     0.01        1.5   
+241      298      12       7        3.2681383115e+04     3.2676556779e+04     0.01        1.7   
+256      313      11       14       3.2681379213e+04     3.2676559927e+04     0.01        1.7   
+265      324      10       13       3.2681379213e+04     3.2676559927e+04     0.01        1.8   
+278      338      15       13       3.2681379213e+04     3.2676559927e+04     0.01        1.9   
+292      352      15       12       3.2681379213e+04     3.2676559927e+04     0.01        2.0   
+304      363      9        14       3.2681379213e+04     3.2676559927e+04     0.01        2.0   
+316      375      3        12       3.2681161535e+04     3.2676611854e+04     0.01        2.1   
+An optimal solution satisfying the relative gap tolerance of 1.00e-02(%) has been located.
+The relative gap is 7.80e-06(%).
+
+Objective of best integer solution : 3.268116153478e+04      
+Best objective bound               : 3.268115898462e+04      
+Initial feasible solution objective: Undefined
+Construct solution objective       : Not employed
+User objective cut value           : Not employed
+Number of cuts generated           : 47
+  Number of CMIR cuts              : 5
+  Number of implied bound cuts     : 42
+Number of branches                 : 320
+Number of relaxations solved       : 379
+Number of interior point iterations: 9933
+Number of simplex iterations       : 0
+Time spend presolving the root     : 0.11
+Time spend optimizing the root     : 0.09
+Mixed integer optimizer terminated. Time: 2.11
+
+Optimizer terminated. Time: 2.12    
+
+
+Integer solution solution summary
+  Problem status  : PRIMAL_FEASIBLE
+  Solution status : INTEGER_OPTIMAL
+  Primal.  obj: 3.2681161535e+04    nrm: 5e+06    Viol.  con: 2e-08    var: 5e-19    cones: 7e-09    itg: 0e+00  
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
+
+Solving fixed problem...
+
+MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+GAMS/MOSEK license detected
+
+Extraction of quadratics (ThreePass algorithm): 0.00s
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : CONIC (conic optimization problem)
+  Constraints            : 2981            
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 128             
+  Scalar variables       : 4837            
+  Matrix variables       : 0               
+  Integer variables      : 0               
+
+Optimizer started.
+Presolve started.
+Linear dependency checker started.
+Linear dependency checker terminated.
+Eliminator started.
+Freed constraints in eliminator : 230
+Eliminator terminated.
+Eliminator started.
+Freed constraints in eliminator : 0
+Eliminator terminated.
+Eliminator - tries                  : 2                 time                   : 0.00            
+Lin. dep.  - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - primal attempts        : 1                 successes              : 1               
+Lin. dep.  - dual attempts          : 0                 successes              : 0               
+Lin. dep.  - primal deps.           : 68                dual deps.             : 0               
+Presolve terminated. Time: 0.00    
+Optimizer  - threads                : 16              
+Optimizer  - solved problem         : the primal      
+Optimizer  - Constraints            : 147             
+Optimizer  - Cones                  : 70              
+Optimizer  - Scalar variables       : 381               conic                  : 210             
+Optimizer  - Semi-definite variables: 0                 scalarized             : 0               
+Factor     - setup time             : 0.00            
+Factor     - dense det. time        : 0.00              GP order time          : 0.00            
+Factor     - nonzeros before factor : 509               after factor           : 523             
+Factor     - dense dim.             : 0                 flops                  : 6.61e+03        
+ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
+0   1.2e+06  6.5e+03  7.2e+03  0.00e+00   4.127242226e+04   4.847806142e+04   1.0e+00  0.01  
+1   5.2e+05  2.7e+03  4.6e+03  -1.00e+00  5.748284365e+04   6.468989611e+04   4.1e-01  0.01  
+2   1.1e+05  5.7e+02  2.1e+03  -1.00e+00  1.723162897e+05   1.795321987e+05   8.8e-02  0.01  
+3   1.8e+04  9.2e+01  8.6e+02  -1.00e+00  9.374557356e+05   9.447298247e+05   1.4e-02  0.01  
+4   7.3e+03  3.8e+01  5.5e+02  -1.00e+00  8.216886710e+05   8.290573381e+05   5.9e-03  0.01  
+5   2.3e+03  1.2e+01  3.1e+02  -9.97e-01  8.685935145e+05   8.762986571e+05   1.8e-03  0.01  
+6   7.3e+02  3.8e+00  1.7e+02  -9.83e-01  8.390191442e+05   8.476410205e+05   5.9e-04  0.01  
+7   3.1e+02  1.6e+00  9.9e+01  -8.85e-01  5.516214616e+05   5.609393027e+05   2.5e-04  0.01  
+8   1.3e+02  6.8e-01  4.1e+01  -4.71e-01  2.136951900e+05   2.205456684e+05   1.1e-04  0.01  
+9   5.0e+01  2.6e-01  7.3e+00  6.50e-01   1.155638574e+05   1.176187902e+05   4.0e-05  0.01  
+10  6.9e+00  3.6e-02  4.2e-01  9.49e-01   4.443339218e+04   4.474031113e+04   5.5e-06  0.01  
+11  1.4e+00  7.4e-03  4.0e-02  1.01e+00   3.507004116e+04   3.513327274e+04   1.1e-06  0.01  
+12  2.0e-01  1.1e-03  2.1e-03  1.02e+00   3.301243450e+04   3.302123781e+04   1.6e-07  0.01  
+13  2.7e-02  1.4e-04  9.9e-05  1.03e+00   3.272648683e+04   3.272762310e+04   2.2e-08  0.01  
+14  4.0e-03  2.1e-05  5.5e-06  1.03e+00   3.268781229e+04   3.268797642e+04   3.2e-09  0.01  
+15  1.2e-03  6.4e-06  9.0e-07  1.07e+00   3.268304717e+04   3.268309447e+04   9.9e-10  0.01  
+16  5.0e-04  2.6e-06  2.1e-07  1.18e+00   3.268179647e+04   3.268181340e+04   4.0e-10  0.01  
+17  2.1e-04  1.1e-06  5.1e-08  1.26e+00   3.268134826e+04   3.268135429e+04   1.6e-10  0.01  
+18  4.8e-05  2.5e-07  5.6e-09  1.19e+00   3.268119959e+04   3.268120088e+04   3.9e-11  0.01  
+19  9.0e-06  4.7e-08  4.4e-10  1.06e+00   3.268116867e+04   3.268116890e+04   7.2e-12  0.01  
+20  1.7e-06  8.7e-09  3.6e-11  1.01e+00   3.268116297e+04   3.268116301e+04   1.3e-12  0.01  
+Optimizer terminated. Time: 0.01    
+
+
+Interior-point solution summary
+  Problem status  : PRIMAL_AND_DUAL_FEASIBLE
+  Solution status : OPTIMAL
+  Primal.  obj: 3.2681162967e+04    nrm: 5e+06    Viol.  con: 4e-02    var: 1e-17    cones: 0e+00  
+  Dual.    obj: 3.2681163011e+04    nrm: 8e+09    Viol.  con: 9e-06    var: 3e-05    cones: 4e-20  
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
+
+MIP Solution:        32681.162967   (9933 iterations, 320 nodes)
+Final Solve:         32681.162967   (20 iterations)
+
+Best possible:       32681.158985
+Absolute gap:            0.003982
+Relative gap:            0.000000
+--- Reading solution for model netplan
+--- Executing after solve: elapsed 0:00:02.662
+--- cvx-mip.gms(1316) 7 Mb
+--- Generating MINLP model netplan
+--- cvx-mip.gms(1320) 9 Mb
+---   2,982 rows  4,838 columns  26,945 non-zeroes
+---   1,024 nl-code  256 nl-non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.000E-06, 1.000E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-06, 1.000E+00] - Zero values observed as well
+--- Matrix    [min, max] : [ 9.613E-05, 1.282E+07]
+--- cvx-mip.gms(1320) 7 Mb
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:02.712
+
+MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+GAMS/MOSEK license detected
+
+Extraction of quadratics (ThreePass algorithm): 0.00s
+Setting up initial integer solution.
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : CONIC (conic optimization problem)
+  Constraints            : 2981            
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 128             
+  Scalar variables       : 4837            
+  Matrix variables       : 0               
+  Integer variables      : 16              
+
+Optimizer started.
+Mixed integer optimizer started.
+Threads used: 16
+Presolve started.
+Presolve terminated. Time = 0.13, probing time =  0.00
+Presolved problem: 689 variables, 286 constraints, 3215 non-zeros
+Presolved problem: 0 general integer, 14 binary, 675 continuous
+Presolved problem: 32 cones
+Clique table size: 7
+Removed blocks   : 96
+BRANCHES RELAXS   ACT_NDS  DEPTH    BEST_INT_OBJ         BEST_RELAX_OBJ       REL_GAP(%)  TIME  
+0        96       1        0        3.2681162177e+04     NA                   NA          0.1   
+Root cut generation started.
+0        97       1        0        3.2681162177e+04     3.2676621443e+04     0.01        0.2   
+0        98       1        0        3.2681162177e+04     3.2676621211e+04     0.01        0.2   
+Root cut generation terminated. Time = 0.04
+6        108      7        3        3.2681162177e+04     3.2676621840e+04     0.01        0.4   
+8        111      7        2        3.2681161453e+04     3.2676621840e+04     0.01        0.4   
+19       123      8        4        3.2681161453e+04     3.2676621840e+04     0.01        0.4   
+30       134      5        8        3.2681161453e+04     3.2676621840e+04     0.01        0.5   
+42       146      5        4        3.2681161453e+04     3.2676622481e+04     0.01        0.5   
+56       160      7        4        3.2681161453e+04     3.2676623231e+04     0.01        0.6   
+68       171      5        12       3.2681161453e+04     3.2676840874e+04     0.01        0.6   
+81       184      8        8        3.2681161453e+04     3.2676841087e+04     0.01        0.6   
+92       195      3        11       3.2681161453e+04     3.2676841087e+04     0.01        0.7   
+An optimal solution satisfying the relative gap tolerance of 1.00e-02(%) has been located.
+The relative gap is 0.00e+00(%).
+An optimal solution satisfying the absolute gap tolerance of 0.00e+00 has been located.
+The absolute gap is 0.00e+00.
+
+Objective of best integer solution : 3.268116145326e+04      
+Best objective bound               : 3.268116145326e+04      
+Initial feasible solution objective: 3.268116296671e+04      
+Construct solution objective       : Not employed
+User objective cut value           : Not employed
+Number of cuts generated           : 37
+  Number of CMIR cuts              : 4
+  Number of implied bound cuts     : 33
+Number of branches                 : 95
+Number of relaxations solved       : 198
+Number of interior point iterations: 2787
+Number of simplex iterations       : 0
+Time spend presolving the root     : 0.13
+Time spend optimizing the root     : 0.03
+Mixed integer optimizer terminated. Time: 0.66
+
+Optimizer terminated. Time: 0.66    
+
+
+Integer solution solution summary
+  Problem status  : PRIMAL_FEASIBLE
+  Solution status : INTEGER_OPTIMAL
+  Primal.  obj: 3.2681161453e+04    nrm: 5e+06    Viol.  con: 1e-08    var: 0e+00    cones: 8e-09    itg: 0e+00  
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
+
+Solving fixed problem...
+
+MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+GAMS/MOSEK license detected
+
+Extraction of quadratics (ThreePass algorithm): 0.00s
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : CONIC (conic optimization problem)
+  Constraints            : 2981            
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 128             
+  Scalar variables       : 4837            
+  Matrix variables       : 0               
+  Integer variables      : 0               
+
+Optimizer started.
+Presolve started.
+Linear dependency checker started.
+Linear dependency checker terminated.
+Eliminator started.
+Freed constraints in eliminator : 93
+Eliminator terminated.
+Eliminator - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - primal attempts        : 1                 successes              : 1               
+Lin. dep.  - dual attempts          : 0                 successes              : 0               
+Lin. dep.  - primal deps.           : 22                dual deps.             : 0               
+Presolve terminated. Time: 0.00    
+Optimizer  - threads                : 16              
+Optimizer  - solved problem         : the primal      
+Optimizer  - Constraints            : 148             
+Optimizer  - Cones                  : 70              
+Optimizer  - Scalar variables       : 382               conic                  : 210             
+Optimizer  - Semi-definite variables: 0                 scalarized             : 0               
+Factor     - setup time             : 0.00            
+Factor     - dense det. time        : 0.00              GP order time          : 0.00            
+Factor     - nonzeros before factor : 501               after factor           : 523             
+Factor     - dense dim.             : 0                 flops                  : 6.41e+03        
+ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
+0   1.2e+06  6.5e+03  6.9e+03  0.00e+00   4.154492911e+04   4.847806142e+04   1.0e+00  0.00  
+1   5.5e+05  2.8e+03  4.6e+03  -1.00e+00  5.609658850e+04   6.303098195e+04   4.4e-01  0.00  
+2   1.2e+05  6.0e+02  2.1e+03  -1.00e+00  1.655525783e+05   1.724954208e+05   9.3e-02  0.00  
+3   1.8e+04  9.4e+01  8.4e+02  -1.00e+00  9.250525386e+05   9.320527404e+05   1.5e-02  0.00  
+4   7.0e+03  3.6e+01  5.2e+02  -1.00e+00  8.636458481e+05   8.707496211e+05   5.6e-03  0.00  
+5   2.3e+03  1.2e+01  3.0e+02  -9.97e-01  8.490923423e+05   8.565236764e+05   1.9e-03  0.01  
+6   7.3e+02  3.8e+00  1.6e+02  -9.83e-01  8.397870860e+05   8.481552243e+05   5.8e-04  0.01  
+7   3.1e+02  1.6e+00  9.5e+01  -8.83e-01  5.502132789e+05   5.592960838e+05   2.5e-04  0.01  
+8   1.3e+02  6.8e-01  3.9e+01  -4.69e-01  2.123613319e+05   2.190510725e+05   1.1e-04  0.01  
+9   4.8e+01  2.5e-01  6.4e+00  6.59e-01   1.128656723e+05   1.147499148e+05   3.9e-05  0.01  
+10  6.4e+00  3.3e-02  3.6e-01  9.55e-01   4.348142226e+04   4.375849753e+04   5.1e-06  0.01  
+11  1.4e+00  7.1e-03  3.6e-02  1.02e+00   3.491875190e+04   3.497783183e+04   1.1e-06  0.01  
+12  1.9e-01  9.6e-04  1.8e-03  1.02e+00   3.297220620e+04   3.298009845e+04   1.5e-07  0.01  
+13  2.6e-02  1.3e-04  8.8e-05  1.03e+00   3.272214846e+04   3.272319927e+04   2.0e-08  0.01  
+14  4.1e-03  2.1e-05  5.6e-06  1.03e+00   3.268770670e+04   3.268787181e+04   3.3e-09  0.01  
+15  1.1e-03  5.7e-06  7.2e-07  1.07e+00   3.268276726e+04   3.268280790e+04   8.8e-10  0.01  
+16  4.6e-04  2.4e-06  1.8e-07  1.20e+00   3.268171081e+04   3.268172560e+04   3.7e-10  0.01  
+17  1.8e-04  9.3e-07  4.1e-08  1.26e+00   3.268132014e+04   3.268132523e+04   1.4e-10  0.01  
+18  3.6e-05  1.9e-07  3.4e-09  1.18e+00   3.268118962e+04   3.268119055e+04   2.9e-11  0.01  
+19  6.9e-06  3.5e-08  2.8e-10  1.05e+00   3.268116691e+04   3.268116708e+04   5.5e-12  0.01  
+20  2.1e-06  1.1e-08  4.7e-11  1.01e+00   3.268116324e+04   3.268116329e+04   1.6e-12  0.01  
+Optimizer terminated. Time: 0.01    
+
+
+Interior-point solution summary
+  Problem status  : PRIMAL_AND_DUAL_FEASIBLE
+  Solution status : OPTIMAL
+  Primal.  obj: 3.2681163243e+04    nrm: 5e+06    Viol.  con: 5e-02    var: 0e+00    cones: 0e+00  
+  Dual.    obj: 3.2681163294e+04    nrm: 2e+10    Viol.  con: 1e-05    var: 3e-05    cones: 7e-20  
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
+
+MIP Solution:        32681.163243   (2787 iterations, 95 nodes)
+Final Solve:         32681.163243   (20 iterations)
+
+Best possible:       32681.161453
+Absolute gap:            0.001790
+Relative gap:            0.000000
+--- Reading solution for model netplan
+--- Executing after solve: elapsed 0:00:03.512
+--- cvx-mip.gms(1333) 7 Mb
+--- GDX File (execute_unload) C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\resultado.gdx
+--- cvx-mip.gms(1342) 9 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- cvx-mip.gms(1355) 9 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- cvx-mip.gms(1368) 10 Mb
+--- Initialize embedded library embconnectcclib64.dll
+--- Execute embedded library embconnectcclib64.dll
+--- Putfile fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\fij_long.csv
+*** Status: Normal completion
+--- Job cvx-mip.gms Stop 02/26/26 13:26:38 elapsed 0:00:04.752

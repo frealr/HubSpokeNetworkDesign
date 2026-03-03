@@ -105,7 +105,8 @@ alfa = 0.5;
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
-budgets = 3e4;
+budgets = [3e4,4e4,5e4,6e4,7e4,8e4,9e4,1e5];
+%budgets = 3e4;
 %budgets = [4e4];
 %budgets = 5e4;
 %budgets = [4e4,5e4,6e4,7e4,8e4,9e4];
@@ -116,13 +117,13 @@ lam = 4;
 
 for bb=1:length(budgets)
     bud = budgets(bb);
-    [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,alfa,n,bud);
+    [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,1,alfa,n,bud);
 end
 %%
 
 for bb=1:length(budgets)
     bud = budgets(bb);
-    filename = sprintf('./8node_hs_prueba_v0/bud=%d_lam=%d',bud,lam);
+    filename = sprintf('./8node_hs_prueba_v0/budget=%d_lam=%d',bud,lam);
     load(filename);
     disp(bud)
     disp(obj_val);
@@ -602,7 +603,14 @@ function [s,sh,a,f,fext,fij] = compute_sim_cvx_blo(lam,alfa,n,budget)
 
 niters = 10;
 
-mu_alfa = 1e-7; mu_beta = 1e-1;
+%mus_alfa = [1e-7,3e-8,1e-8];
+%mus_beta = [1e-1,2e-1,3e-1,5e-1];
+
+% mu_alfa = 1e-7; mu_beta = 1e-1; %mejor para todos salvo 30k
+%mu_alfa = 3e-8; mu_beta = 3e-1; %mejor para 30k
+mu_alfa = 3e-8;
+mu_beta = 2e-1;
+
 
 alfa_od = ones(n);
 beta_od = ones(n);
@@ -896,7 +904,7 @@ for iter=1:niters
             alfa_od = alfa_od - mu_alfa.*grad_alfa_f;
         
             beta_od = max(0.5,beta_od);
-            beta_od = min(2.1,beta_od);
+            beta_od = min(2,beta_od);
             
         
             alfa_od = max(1,alfa_od);
@@ -1039,9 +1047,9 @@ for iter=1:niters
         sh_prev = sh;
 end
 
-s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
+%s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
 
-filename = sprintf('./8node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d.mat',budget,lam,alfa);
+filename = sprintf('./8node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_bet=%d.mat',budget,lam,alfa,mu_alfa,mu_beta);
 save(filename,'s','sh', ...
     'a','f','fext','fij','comp_time','used_budget', ...
     'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');
@@ -1105,14 +1113,14 @@ fclose(fid);
 
 
 
-%cmdpath = "cd C:\GAMS\50";
-cmdpath = "cd /Library/Frameworks/GAMS.framework/Resources"
+cmdpath = "cd C:\GAMS\50";
+%cmdpath = "cd /Library/Frameworks/GAMS.framework/Resources"
 
 system(cmdpath);
 
-gmsFile  = '/Users/fernandorealrojas/Desktop/HubSpokeNetworkDesign/8node_spain/mip.gms';
+gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mip.gms';
 
-gamsExe = '/Library/Frameworks/GAMS.framework/Resources/gams';
+gamsExe = 'C:\GAMS\50\gams.exe'; 
 
 
 
@@ -1163,10 +1171,11 @@ fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
 results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
 comp_time = table2array(results_file_ctime);
 [obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
-    prices,a,f,demand)
+    prices,a,f,demand);
+req_bud = budget;
 budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam);
-filename = sprintf('./8node_hs_prueba_v0/beta=%d_lam=%d.mat',beta,lam);
+filename = sprintf('./8node_hs_prueba_v0/2h_budget=%d_lam=%d.mat',req_bud,lam);
 save(filename,'s','sprim','deltas', ...
     'a','f','fext','fij','comp_time','budget', ...
     'pax_obj','op_obj','obj_val','mipgap');
@@ -1181,7 +1190,7 @@ function [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
     congestion_coef_links,travel_time,alt_time,alt_price,a_nom,tau,eta,...
-    a_max,candidates] = parameters_8node_network()
+    a_max,candidates] = parameters_6node_network()
 
 n = 8;
 
@@ -1284,7 +1293,18 @@ eps = 1e-3;
 end
 
 % parameters_8node_network_rand removed
+function set_max_f(n,fij,n_airlines,travel_time,prices,alt_utility,omega_p,omega_t)
 
+    cotas = zeros(n);    
+    for oo=1:n
+        for dd=1:n 
+            utility = sum(sum(travel_time(fij(:,:,oo,dd) > 1e-3)))*omega_t + prices(oo,dd)*omega_p; 
+            cotas(oo,dd) = exp(utility)./( exp(utility) + n_airlines*exp(alt_utility(oo,dd)) );
+        end
+    end
+    write_gams_param_ii('./export_txt/f_bounds.txt', cotas);
+    
+end
 
 function [lin_coef,bord,b] = get_linearization(n,nreg,alt_utility,vals_regs,n_airlines)
 dmax = zeros(nreg,n,n);

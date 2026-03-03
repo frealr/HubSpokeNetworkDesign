@@ -354,6 +354,18 @@ fyext.fx(o,d)=1;
 exceed.fx = 0;
 
 
+Parameter fnodemand(o,d);
+fnodemand(o,d)=0;
+
+
+loop((o,d)$(demand(o,d) lt 1e-3),
+
+fnodemand(o,d)=1;
+
+);
+
+
+f.fx(o,d)$(fnodemand(o,d)=1)=0;
 
 
 
@@ -374,7 +386,8 @@ option minlp=mosek;
 
 *sbin.fx('i4') = 1;
 
-shbin.fx('i2') = 0;
+*shbin.fx('i2') = 0;
+
 
 Solve netplan using minlp minimizing obj;
 Parameter solverTime;
@@ -397,12 +410,12 @@ sfix(i)=1;
 
 );
 
-*f.fx(o,d)$(ffix(o,d)=1)=0;
-*sbin.fx(i)$(sfix(i)=1)=0;
+f.fx(o,d)$(ffix(o,d)=1)=0;
+sbin.fx(i)$(sfix(i)=1)=0;
 
 
 
-*Solve netplan using minlp minimizing obj;
+Solve netplan using minlp minimizing obj;
 
 
 solverTime = netplan.resusd;

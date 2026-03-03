@@ -335,6 +335,18 @@ fyext.fx(o,d)=1;
 exceed.fx = 0;
 
 
+Parameter fnodemand(o,d);
+fnodemand(o,d)=0;
+
+
+loop((o,d)$(demand(o,d) lt 1e-3),
+
+fnodemand(o,d)=1;
+
+);
+
+
+f.fx(o,d)$(fnodemand(o,d)=1)=0;
 
 
 

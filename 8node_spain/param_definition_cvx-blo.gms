@@ -6,7 +6,7 @@ $setglobal TXTDIR "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\expo
 
 
 
-Set i "nodos" /i1*i6/;
+Set i "nodos" /i1*i8/;
 Alias (i,j,o,d);
 * === Auxiliares (decláralos UNA sola vez en tu código) ===
 *

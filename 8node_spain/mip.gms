@@ -171,12 +171,24 @@ Model netdesign /
 /;
 
 
+Parameter fnodemand(o,d);
+fnodemand(o,d)=0;
+
+
+loop((o,d)$(demand(o,d) lt 1e-3),
+
+fnodemand(o,d)=1;
+
+);
+
+
+f.fx(o,d)$(fnodemand(o,d)=1)=0;
 
 
 option threads = 60;
 option mip     = cplex;
 
-option reslim = 600;
+option reslim = 7200;
 
 Parameter mipgap;
 
