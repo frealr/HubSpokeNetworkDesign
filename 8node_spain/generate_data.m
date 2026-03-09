@@ -17,7 +17,7 @@ if ~exist(basedir,'dir'); mkdir(basedir); end
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
     a_max,candidasourcertes,omega_t,omega_p] = parameters_8node_network();
 
-demand = demand./365;
+%demand = demand./365;
 
 M = 1e4;
 nreg = 10;
@@ -106,7 +106,9 @@ budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
 budgets = [3e4,4e4,5e4,6e4,7e4,8e4,9e4,1e5];
-%budgets = 3e4;
+budgets = 3e4;
+
+
 %budgets = [4e4];
 %budgets = 5e4;
 %budgets = [4e4,5e4,6e4,7e4,8e4,9e4];
@@ -171,19 +173,27 @@ used_bud = best_alfa;
 
 %%
 
+mu_beta = 5e-2;
+mu_alfa = 1e-8;
+budgets = [3e4,4e4,5e4,6e4,7e4,8e4,9e4,1e5];
+
 for bb=1:length(budgets)
     bud = budgets(bb);
     for al=1:length(alfas)
         alfa = alfas(al);
-        filename = sprintf('./8node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d',bud,lam,alfa);
+        filename_MIP = sprintf('./8node_hs_prueba_v0/2h_budget=%d_lam=%d',bud,lam);
+        load(filename_MIP);
+        f_MIP = f;
+        a_MIP = a;
+        filename = sprintf('./8node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_bet=%d',bud,lam,alfa,mu_alfa,mu_beta);
         load(filename);
-        obj_val_ll
-        used_bud
-        if obj_val_ll < best_obj(bb)
-                best_obj(bb) = obj_val_ll;
-                best_alfa(bb) = alfa;
-                used_bud(bb) = used_budget;
-        end
+        disp(bud);
+        fprintf('mipgap = %d',100*mipgap);
+        obj_MIP = sum(sum( f_MIP.*demand.*prices )) - sum(sum( op_link_cost.*a_MIP ));
+        obj = sum(sum( f.*demand.*prices )) - sum(sum( op_link_cost.*a ));
+
+        gap = 100*(obj_MIP - obj)/obj_MIP;
+       
     end
 end
 %% dibujar la red
@@ -403,11 +413,6 @@ for i=1:n
     if sh(i) > 1e-2
         budget = budget + lam*hub_cost(i);
     end
-    for j=1:n
-        if a(i,j) > 1e-2
-            budget = budget + link_cost(i,j);
-        end
-    end
 end
 end
 
@@ -434,13 +439,9 @@ pax_obj = 0;
 op_obj = 0;
 
 
-op_obj = op_obj + (sum(sum(op_link_cost.*a))); %operational costs
-for o=1:n
-    for d=1:n
-        pax_obj = pax_obj - prices(o,d)*demand(o,d).*f(o,d);
-    end
-end
-obj_val = pax_obj + op_obj;
+op_obj = sum(sum(op_link_cost.*a)); %operational costs
+pax_obj = sum(sum(prices.*demand.*f));
+obj_val = - pax_obj + op_obj;
 end
 
 
@@ -598,19 +599,26 @@ function [s,sh,a,f,fext,fij] = compute_sim_cvx_blo(lam,alfa,n,budget)
     load_factor,op_link_cost,congestion_coef_stations,...
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
     a_max,candidasourcertes,omega_t,omega_p] = parameters_8node_network();
+% 
+% demand = demand./365;
 
 
 
-niters = 10;
+niters = 20;
 
 %mus_alfa = [1e-7,3e-8,1e-8];
 %mus_beta = [1e-1,2e-1,3e-1,5e-1];
 
 % mu_alfa = 1e-7; mu_beta = 1e-1; %mejor para todos salvo 30k
 %mu_alfa = 3e-8; mu_beta = 3e-1; %mejor para 30k
-mu_alfa = 3e-8;
+mu_alfa = 1e-7;
 mu_beta = 2e-1;
 
+mu_alfa = 1e-8; %funcionan para cvx blo
+mu_beta = 5e-2; %funcionan para cvx blo
+
+mu_alfa = 1e-7;
+mu_beta = 2e-1;
 
 alfa_od = ones(n);
 beta_od = ones(n);
@@ -665,8 +673,8 @@ comp_time = 0;
 
 obj_val = 0;
 obj_val_prev = 1e3;
-
-for iter=1:niters
+iter = 1;
+while iter <= niters
     % alfa_od = ones(n);
     % beta_od = ones(n);
     write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
@@ -674,7 +682,7 @@ for iter=1:niters
     stop = 0;
     for bliter=1:bliters
     
-        if (abs((obj_val-obj_val_prev)./obj_val) <= 1e-3) && (bliter > 1)
+        if (abs((obj_val-obj_val_prev)./obj_val) <= 1e-3) && (bliter > 1) 
             stop = 1;
         elseif (stop == 0)
         
@@ -696,7 +704,7 @@ for iter=1:niters
             
             cmd = sprintf('%s %s ', ...
                 gamsExe, gmsFile);
-            iter = 1;
+          
             
     
             fid = fopen("./export_txt/current_iter.txt",'w');
@@ -932,19 +940,24 @@ for iter=1:niters
     
     end
     if ((used_budget - budget)/budget) < 0.05
-        disp('cumplo presupuesto');
-        break;
+        
+        if iter < (niters -1)
+          %  iter = niters-1; 
+            disp('cumplo presupuesto');
+        end
+        %break;
     end
     s_prev = s_ll;
     sh_prev = sh_ll;
     a_prev = a_ll;
     stop = 0;
-
+    
+    iter = iter+1;
 end
 
-a_prev = 1e4*ones(n);
-s_prev = 0.1*ones(1,n);
-sh_prev = s_prev;
+% a_prev = 1e4*ones(n);
+% s_prev = 0.1*ones(1,n);
+% sh_prev = s_prev;
 
 cmdpath = "cd C:\GAMS\50";
 
@@ -957,95 +970,105 @@ gamsExe = 'C:\GAMS\50\gams.exe';
 cmd = sprintf('%s %s ', ...
     gamsExe, gmsFile);
 
-for iter=1:niters
+niters = 30;
 
-        write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
-        write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
-        write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
+fid = fopen("./export_txt/niters.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', niters);
+fclose(fid);
 
+%niters = 1;
+% 
 
-        %cmdpath = "cd C:\GAMS\50";
-        cmdpath = "cd C:\GAMS\50";
-
-        system(cmdpath);
-        gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-mip.gms';
-
-        gamsExe = 'C:\GAMS\50\gams.exe'; 
-
-
-        cmd = sprintf('%s %s ', ...
-            gamsExe, gmsFile);
-
-
-        fid = fopen("./export_txt/current_iter.txt",'w');
-        if fid < 0, error('No puedo abrir %s', fid); end
-        fprintf(fid, '%d', iter);
-        fclose(fid);
-        [status,out] = system(cmd);
-        % disp(out);
-
-        results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
-        comp_time = comp_time + table2array(results_file_ctime);
-
-        results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
-        sh = table2array(results_file_sh(1,:));
-        sh = max(sh,1e-4);
-
-
-
-
-
-        results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
-        s = table2array(results_file_s(1,:));
-        s = max(s,1e-4);
-
-        s
-        sh
-
-        results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-        f = table2array(results_file_f(1:n,2:(n+1)));
-        f
-
-
-
-
-        results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
-        a = table2array(results_file_a(1:n,2:(n+1)));
-        a = max(a,1e-4);
-
-        % 
-        % write_gams_param_ii('./export_txt/a_prev.txt', a);
-        % write_gams_param1d_full('./export_txt/s_prev.txt', s);
-        % write_gams_param1d_full('./export_txt/sh_prev.txt', sh);
-
-
-
-        results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-        f = table2array(results_file_f(1:n,2:(n+1)));
-
-
-        results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-        fext = table2array(results_file_fext(1:n,2:(n+1)));
-
-
-        T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
-        [iU,~,iIdx] = unique(T.i,'stable');
-        [jU,~,jIdx] = unique(T.j,'stable');
-        [oU,~,oIdx] = unique(T.o,'stable');
-        [dU,~,dIdx] = unique(T.d,'stable');
-
-
-        fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
-            [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
-
-        a(a < 1e-2) = 0;
-        f(f < 1e-2) = 0;
-        fij(fij < 1e-2) = 0;
-        fext(fext > 0.99) = 1;
-        a_prev = a;
-        s_prev = s;
-        sh_prev = sh;
-end
+a_prev = 1e4*ones(n);
+s_prev = 1e4*ones(1,n);
+sh_prev = s_prev;
+% for iter=1:niters
+% 
+%         write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
+%         write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
+%         write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
+% 
+% 
+%         %cmdpath = "cd C:\GAMS\50";
+%         cmdpath = "cd C:\GAMS\50";
+% 
+%         system(cmdpath);
+%         gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-ll.gms';
+% 
+%         gamsExe = 'C:\GAMS\50\gams.exe'; 
+% 
+% 
+%         cmd = sprintf('%s %s ', ...
+%             gamsExe, gmsFile);
+% 
+% 
+%         fid = fopen("./export_txt/current_iter.txt",'w');
+%         if fid < 0, error('No puedo abrir %s', fid); end
+%         fprintf(fid, '%d', iter);
+%         fclose(fid);
+%         [status,out] = system(cmd);
+%          disp(out);
+% 
+%         results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
+%         comp_time = comp_time + table2array(results_file_ctime);
+% 
+%         results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
+%         sh = table2array(results_file_sh(1,:));
+%         sh = max(sh,1e-4);
+% 
+% 
+% 
+% 
+% 
+%         results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
+%         s = table2array(results_file_s(1,:));
+%         s = max(s,1e-4);
+% 
+%         results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
+%         f = table2array(results_file_f(1:n,2:(n+1)));
+% 
+% 
+% 
+% 
+% 
+%         results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
+%         a = table2array(results_file_a(1:n,2:(n+1)));
+%         a = max(a,1e-4);
+% 
+%         % 
+%         % write_gams_param_ii('./export_txt/a_prev.txt', a);
+%         % write_gams_param1d_full('./export_txt/s_prev.txt', s);
+%         % write_gams_param1d_full('./export_txt/sh_prev.txt', sh);
+% 
+% 
+% 
+%         results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
+%         f = table2array(results_file_f(1:n,2:(n+1)));
+% 
+% 
+%         results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
+%         fext = table2array(results_file_fext(1:n,2:(n+1)));
+% 
+% 
+%         T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
+%         [iU,~,iIdx] = unique(T.i,'stable');
+%         [jU,~,jIdx] = unique(T.j,'stable');
+%         [oU,~,oIdx] = unique(T.o,'stable');
+%         [dU,~,dIdx] = unique(T.d,'stable');
+% 
+% 
+%         fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
+%             [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
+% 
+%         a(a < 1e-2) = 0;
+%         f(f < 1e-2) = 0;
+%         fij(fij < 1e-2) = 0;
+%         fext(fext > 0.99) = 1;
+%         a_prev = a;
+%         s_prev = s;
+%         sh_prev = sh;
+% end
 
 %s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
 
@@ -1471,6 +1494,7 @@ station_capacity_slope = (5*5e2 + 4*50*8).*ones(1,n); % 500 e/dia estacionamient
 
 % Demand: datos reales de pasajeros anuales - generados por extract_demand_8node.py
 demand = readmatrix('demand.csv');
+demand = demand./365;
 
 load_factor = 0.25 .* ones(1, n);
 

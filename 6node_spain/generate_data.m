@@ -113,7 +113,8 @@ alfa = 0.5;
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
-budgets = 3e4;
+budgets = [3e4,4e4,5e4,6e4,7e4,8e4];
+%budgets = 3e4;
 %budgets = [4e4];
 %budgets = 5e4;
 %budgets = [4e4,5e4,6e4,7e4,8e4,9e4];
@@ -1143,7 +1144,7 @@ prices,a,f,demand);
 
 used_budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam);
-filename = sprintf('./6node_hs_prueba_v0/bud=%d_lam=%d.mat',budget,lam);
+filename = sprintf('./6node_hs_prueba_v0/2h_bud=%d_lam=%d.mat',budget,lam);
 save(filename,'s','sprim','deltas', ...
     'a','f','fext','fij','comp_time','used_budget', ...
     'pax_obj','op_obj','obj_val','mipgap','sh');

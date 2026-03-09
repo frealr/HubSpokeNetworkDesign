@@ -1,0 +1,10 @@
+- GAMSReader:
+    symbols:
+      - name: a
+- Projection:
+    name: a.l(i,j)
+    newName: a_level(i,j)
+- ExcelWriter:
+    file: output_a.xlsx
+    symbols:
+      - name: a_level

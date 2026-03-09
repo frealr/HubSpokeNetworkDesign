@@ -359,31 +359,7 @@ loop((i,j,o,d),
     put i.tl ',' j.tl ',' o.tl ',' d.tl ',' fij.l(i,j,o,d):0:15 / );
 putclose fijx;
 
-EmbeddedCode Connect:
-- GAMSReader:
-    symbols:
-      - name: a
-- Projection:
-    name: a.l(i,j)
-    newName: a_level(i,j)
-- ExcelWriter:
-    file: output_a.xlsx
-    symbols:
-      - name: a_level
-endEmbeddedCode
-
-EmbeddedCode Connect:
-- GAMSReader:
-    symbols:
-      - name: s
-- Projection:
-    name: s.l(i)
-    newName: s_level(i)
-- ExcelWriter:
-    file: output_s.xlsx
-    symbols:
-      - name: s_level
-endEmbeddedCode
+* Removed obsolete output_a and output_s writers
 
 EmbeddedCode Connect:
 - GAMSReader:
@@ -416,8 +392,10 @@ EmbeddedCode Connect:
 - Projection:
     name: solverTime
     newName: solver_time
-- ExcelWriter:
-    file: output_all.xlsx
+- CSVWriter:
+    file: output_all.csv
+    name: output_all
+    header: True
     symbols:
       - name: s_level
       - name: a_level

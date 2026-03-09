@@ -3,7 +3,8 @@ clear all;
 clc;
 
 % === 1) RUTA de tu GAMS ===
-gamsHome = 'C:\GAMS\50';  % <-- CAMBIA esto  % <-- CAMBIA esto
+% === 1) RUTA de tu GAMS ===
+gamsHome = 'C:\GAMS\50';  % <-- CAMBIA esto
 
 [basedir,~,~] = fileparts(mfilename('fullpath'));
 basedir = fullfile(basedir, 'export_csv');   % subcarpeta de exportación
@@ -15,15 +16,15 @@ if ~exist(basedir,'dir'); mkdir(basedir); end
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
-    a_max,candidasourcertes,omega_t,omega_p] = parameters_8node_network();
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_6node_network();
 
 demand = demand./365;
 
 M = 1e4;
-nreg = 10;
+nreg = 40;
 eps = 1e-3;
-vals_regs = linspace(0.005,0.995,nreg-1);
 n_airlines = 5;
+vals_regs = linspace(0.005,0.995,nreg-1);
 [lin_coef,bord,b] = get_linearization(n,nreg,alt_utility,vals_regs,n_airlines);
 
 candidates = zeros(n);
@@ -52,9 +53,15 @@ write_scalar_csv_append = @(name, val, fn) ( ...
     'VariableNames', {'name','value'} ), ...
     fullfile(basedir, fn), 'WriteMode','append') ...
     );
+
+
 % Initialize alfa_od and beta_od, gamma
 alfa_od = ones(n);
 beta_od = ones(n);
+% beta_od(3,4) = 1.3;
+% beta_od(4,3) = beta_od(3,4);
+% beta_od(2,6) = 0.7;
+% beta_od(6,2) = 0.7;
 gamma = 20;
 
 write_gams_param_iii('./export_txt/lin_coef.txt', lin_coef);
@@ -84,6 +91,8 @@ fprintf(fid, '%d', gamma);
 fclose(fid);
 
 
+
+
 % === 1D vectores ===
 write_gams_param1d_full('./export_txt/station_cost.txt', station_cost);
 write_gams_param1d_full('./export_txt/hub_cost.txt', hub_cost);
@@ -98,31 +107,32 @@ write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
 write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
 write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
 
-
 %% Parameter definition
 
 alfa = 0.5;
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
-budgets = [3e4,4e4,5e4,6e4,7e4,8e4,9e4,1e5];
+budgets = [3e4,4e4,5e4,6e4,7e4,8e4];
+%budgets = 3e4;
 %budgets = [4e4];
 %budgets = 5e4;
 %budgets = [4e4,5e4,6e4,7e4,8e4,9e4];
 
 
 lam = 4;
+
 %% run MIP
 
 for bb=1:length(budgets)
     bud = budgets(bb);
-    [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,1,alfa,n,bud);
+    [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,alfa,n,bud);
 end
 %%
 
 for bb=1:length(budgets)
     bud = budgets(bb);
-    filename = sprintf('./8node_hs_prueba_v0/bud=%d_lam=%d',bud,lam);
+    filename = sprintf('./6node_hs_prueba_v0/bud=%d_lam=%d',bud,lam);
     load(filename);
     disp(bud)
     disp(obj_val);
@@ -161,7 +171,6 @@ for bb=1:length(budgets)
     end
 end
 
-
 % check solutions quality 
 
 best_obj = 1e3*ones(1,length(budgets));
@@ -174,7 +183,7 @@ for bb=1:length(budgets)
     bud = budgets(bb);
     for al=1:length(alfas)
         alfa = alfas(al);
-        filename = sprintf('./8node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d',bud,lam,alfa);
+        filename = sprintf('./6node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d',bud,lam,alfa);
         load(filename);
         obj_val_ll
         used_bud
@@ -185,8 +194,6 @@ for bb=1:length(budgets)
         end
     end
 end
-%% dibujar la red
-
 
 
 
@@ -386,7 +393,7 @@ legend([h1,h2], {'MIP 30 min','MIP 10 min'}, 'Interpreter','latex','Location','b
 xlim([1 8]);
 
 
-saveas(gcf, './8node_random_results.png');
+saveas(gcf, './6node_random_results.png');
 
 %% Functions
 
@@ -395,17 +402,13 @@ function budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam)
 budget = 0;
 for i=1:n
-    if s(i) > 1e-2
+    if (s(i) > 5e-2) && (sh(i) < 5e-2)
         budget = budget + station_cost(i)+ ...
-            station_capacity_slope(i)*(s(i) + sh(i));
+            station_capacity_slope(i)*(s(i));
     end
-    if sh(i) > 1e-2
-        budget = budget + lam*hub_cost(i);
-    end
-    for j=1:n
-        if a(i,j) > 1e-2
-            budget = budget + link_cost(i,j);
-        end
+    if (sh(i) > 5e-2)
+        budget = budget + station_cost(i) + lam*hub_cost(i) + ...
+            station_capacity_slope(i)*(sh(i)+s(i));
     end
 end
 end
@@ -428,112 +431,126 @@ end
 
 function [obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
     prices,a,f,demand)
-n = size(a,1);
-pax_obj = 0;
-op_obj = 0;
 
-
-op_obj = op_obj + (sum(sum(op_link_cost.*a))); %operational costs
-for o=1:n
-    for d=1:n
-        pax_obj = pax_obj - prices(o,d)*demand(o,d).*f(o,d);
+    n = size(a,1);
+    pax_obj = 0;
+    op_obj = 0;
+    
+    
+    op_obj = op_obj + (sum(sum(op_link_cost.*a))); %operational costs
+    for o=1:n
+        for d=1:n
+            pax_obj = pax_obj - prices(o,d)*demand(o,d)*f(o,d);
+        end
     end
+    obj_val = pax_obj + op_obj;
 end
-obj_val = pax_obj + op_obj;
-end
 
 
 
-function [sprim,s,deltas,aprim,a,deltaa,f,fext,fij,comp_time] = compute_sim_MIP_entr(lam,beta,alfa,n,budget)
+
+function [s,sh,a,f,fext,fij] = compute_sim_cvx(lam,alfa,n,budget)
+
+
+[n,link_cost,station_cost,hub_cost,link_capacity_slope,...
+    station_capacity_slope,demand,prices,...
+    load_factor,op_link_cost,congestion_coef_stations,...
+    congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_6node_network();
 
 tic;
+
+niters = 30;
+
+fid = fopen("./export_txt/niters.txt",'w');
+if fid < 0, error('No puedo abrir %s', fid); end
+fprintf(fid, '%d', niters);
+fclose(fid);
+
 fid = fopen("./export_txt/lam.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
+if fid < 0, error('No puedo abrir %s', fid); end
 fprintf(fid, '%d', lam);
 fclose(fid);
 
 fid = fopen("./export_txt/alfa.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
+if fid < 0, error('No puedo abrir %s', fid); end
 fprintf(fid, '%d', alfa);
 fclose(fid);
 
-fid = fopen("./export_txt/beta.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', beta);
-fclose(fid);
-
-
-a_prev = 1e4*ones(n);
-s_prev = 1e4*ones(1,n);
-write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
-write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
-
-dm_pax = 0.01;
-dm_op = 0.008;
-
-fid = fopen("./export_txt/dm_pax.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', dm_pax);
-fclose(fid);
-
-fid = fopen("./export_txt/dm_op.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
-fprintf(fid, '%d', dm_op);
-fclose(fid);
-
 fid = fopen("./export_txt/budget.txt",'w');
-if fid < 0, error('No puedo abrir %s', filename); end
+if fid < 0, error('No puedo abrir %s', fid); end
 fprintf(fid, '%d', budget);
 fclose(fid);
 
-% fid = fopen("./export_txt/niters.txt",'w');
-% if fid < 0, error('No puedo abrir %s', filename); end
-%     fprintf(fid, '%d', niters);
-% fclose(fid);
+disp(budget);
+
+a_prev = 1e4*ones(n);
+s_prev = 1e4*ones(1,n);
+sh_prev = s_prev;
+sh_prev(2) = sh_prev(2)*0.9;
+write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
+write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
+write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
 
 
+
+
+
+%cmdpath = "cd C:\GAMS\50";
 cmdpath = "cd C:\GAMS\50";
 
 system(cmdpath);
+gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx.gms';
 
-gmsFile  = 'C:\Users\freal\MATLAB\Projects\untitled\code\8node\mipreg_mosek.gms';
-
-gamsExe = 'C:\GAMS\50\gams.exe';
-
+gamsExe = 'C:\GAMS\50\gams.exe'; 
 
 
 cmd = sprintf('%s %s ', ...
     gamsExe, gmsFile);
-[status,out] = system(cmd);
-disp(out);
 
-results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
-comp_time = table2array(results_file_ctime);
+comp_time = 0;
+
+for iter=1:niters
+    fid = fopen("./export_txt/current_iter.txt",'w');
+    if fid < 0, error('No puedo abrir %s', fid); end
+    fprintf(fid, '%d', iter);
+    fclose(fid);
+    [status,out] = system(cmd);
+    %disp(out);
+
+    results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
+    comp_time = comp_time + table2array(results_file_ctime);
+
+    results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
+    sh = table2array(results_file_sh(1,:));
+    sh = max(sh,1e-4);
 
 
-results_file_sprim = readtable('./output_all.xlsx','Sheet','sprim_level');
-sprim = table2array(results_file_sprim(1,:));
+    results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
+    s = table2array(results_file_s(1,:));
+    s = max(s,1e-4);
+    s+sh
 
-results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
-s = table2array(results_file_s(1,:));
+    results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
+    a = table2array(results_file_a(1:n,2:(n+1)));
+    a = max(a,1e-4);
 
-results_file_deltas = readtable('./output_all.xlsx','Sheet','deltas_level');
-deltas = table2array(results_file_deltas(1,:));
+    write_gams_param_ii('./export_txt/a_prev.txt', a);
+    write_gams_param1d_full('./export_txt/s_prev.txt', s);
+    write_gams_param1d_full('./export_txt/sh_prev.txt', sh);
 
-results_file_aprim = readtable('./output_all.xlsx','Sheet','aprim_level');
-aprim = table2array(results_file_aprim(1:n,2:(n+1)));
 
-results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
-a = table2array(results_file_a(1:n,2:(n+1)));
+end
 
-results_file_deltaa = readtable('./output_all.xlsx','Sheet','deltaa_level');
-deltaa = table2array(results_file_deltaa(1:n,2:(n+1)));
+ gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\flow_assignment.gms';
+ [status,out] = system(cmd);
 
 results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
 f = table2array(results_file_f(1:n,2:(n+1)));
 
 results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
 fext = table2array(results_file_fext(1:n,2:(n+1)));
+
 
 T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
 [iU,~,iIdx] = unique(T.i,'stable');
@@ -545,46 +562,18 @@ T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/núme
 fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
     [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
 
-a_bin = zeros(n);
-a_bin(aprim > 1e-2) = 1;
-
-s_bin = zeros(n,1);
-s_bin(sprim > 1e-2) = 1;
-
-write_gams_param_ii('./export_txt/a_bin_mipreg.txt', a_bin);
-write_gams_param_ii('./export_txt/a_prim_mipreg.txt', max(0,aprim));
-write_gams_param1d_full('./export_txt/s_bin_mipreg.txt', s_bin);
-write_gams_param1d_full('./export_txt/s_prim_mipreg.txt', max(0,sprim));
-
-gmsFile  = 'C:\Users\freal\MATLAB\Projects\untitled\code\8node\flow_assignment.gms';
-
-gamsExe = 'C:\GAMS\50\gams.exe';
+a(a < 1e-2) = 0;
+f(f < 1e-2) = 0;
 
 
-
-cmd = sprintf('%s %s ', ...
-    gamsExe, gmsFile);
-[status,out] = system(cmd);
-disp(out);
-
-
-results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-f = table2array(results_file_f(1:n,2:(n+1)));
-
-results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-fext = table2array(results_file_fext(1:n,2:(n+1)));
-
-T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
-[iU,~,iIdx] = unique(T.i,'stable');
-[jU,~,jIdx] = unique(T.j,'stable');
-[oU,~,oIdx] = unique(T.o,'stable');
-[dU,~,dIdx] = unique(T.d,'stable');
-
-
-fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
-    [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
-
-
+[obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
+prices,a,f,demand);
+used_budget = get_budget(s,sh,a,n,...
+    station_cost,station_capacity_slope,hub_cost,link_cost,lam);
+filename = sprintf('./6node_hs_prueba_v0_cvx/bud=%d_lam=%d_alfa=%d.mat',budget,lam,alfa);
+save(filename,'s','sh', ...
+    'a','f','fext','fij','comp_time','used_budget', ...
+    'pax_obj','op_obj','obj_val');
 
 end
 
@@ -596,7 +585,7 @@ function [s,sh,a,f,fext,fij] = compute_sim_cvx_blo(lam,alfa,n,budget)
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
-    a_max,candidasourcertes,omega_t,omega_p] = parameters_8node_network();
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_6node_network();
 
 
 
@@ -681,7 +670,7 @@ for iter=1:niters
             cmdpath = "cd C:\GAMS\50";
             
             system(cmdpath);
-            gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-ll.gms';
+            gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.gms';
             
             gamsExe = 'C:\GAMS\50\gams.exe'; 
             
@@ -802,7 +791,7 @@ for iter=1:niters
             set_max_f(n,fij,n_airlines,travel_time,prices,alt_utility,omega_p,omega_t);
                
             
-            gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-sl.gms';
+            gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-sl.gms';
             
             gamsExe = 'C:\GAMS\50\gams.exe'; 
             
@@ -896,7 +885,7 @@ for iter=1:niters
             alfa_od = alfa_od - mu_alfa.*grad_alfa_f;
         
             beta_od = max(0.5,beta_od);
-            beta_od = min(2,beta_od);
+            beta_od = min(2.1,beta_od);
             
         
             alfa_od = max(1,alfa_od);
@@ -941,7 +930,7 @@ sh_prev = s_prev;
 cmdpath = "cd C:\GAMS\50";
 
 system(cmdpath);
-gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-ll.gms';
+gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.gms';
 
 gamsExe = 'C:\GAMS\50\gams.exe'; 
 
@@ -960,7 +949,7 @@ for iter=1:niters
         cmdpath = "cd C:\GAMS\50";
 
         system(cmdpath);
-        gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-mip.gms';
+        gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-mip.gms';
 
         gamsExe = 'C:\GAMS\50\gams.exe'; 
 
@@ -1039,9 +1028,9 @@ for iter=1:niters
         sh_prev = sh;
 end
 
-%s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
+s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
 
-filename = sprintf('./8node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d.mat',budget,lam,alfa);
+filename = sprintf('./6node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d.mat',budget,lam,alfa);
 save(filename,'s','sh', ...
     'a','f','fext','fij','comp_time','used_budget', ...
     'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');
@@ -1049,20 +1038,17 @@ save(filename,'s','sh', ...
 end
 
 
+function [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,alfa,n,budget)
 
-
-function [s,sh,a,f,fext,fij] = compute_sim_MIP(lam,beta,alfa,n,budget)
 
 [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
-    congestion_coef_links,travel_time,alt_time,alt_price,a_nom,tau,eta,...
-    a_max,candidasourcertes] = parameters_8node_network();
+    congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_6node_network();
 
 tic;
 
-dm_pax = 0.01;
-dm_op = 0.008;
 
 fid = fopen("./export_txt/lam.txt",'w');
 if fid < 0, error('No puedo abrir %s', fid); end
@@ -1074,11 +1060,6 @@ if fid < 0, error('No puedo abrir %s', fid); end
 fprintf(fid, '%d', alfa);
 fclose(fid);
 
-fid = fopen("./export_txt/beta.txt",'w');
-if fid < 0, error('No puedo abrir %s', fid); end
-fprintf(fid, '%d', beta);
-fclose(fid);
-
 fid = fopen("./export_txt/budget.txt",'w');
 if fid < 0, error('No puedo abrir %s', fid); end
 fprintf(fid, '%d', budget);
@@ -1088,29 +1069,21 @@ disp(budget);
 
 a_prev = 1e4*ones(n);
 s_prev = 1e4*ones(1,n);
+sh_prev = s_prev;
+sh_prev(2) = sh_prev(2)*0.5;
 write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
 write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
-
-
-fid = fopen("./export_txt/dm_pax.txt",'w');
-if fid < 0, error('No puedo abrir %s', fid); end
-fprintf(fid, '%d', dm_pax);
-fclose(fid);
-
-fid = fopen("./export_txt/dm_op.txt",'w');
-if fid < 0, error('No puedo abrir %s', fid); end
-fprintf(fid, '%d', dm_op);
-fclose(fid);
+write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
 
 
 
 
+
+%cmdpath = "cd C:\GAMS\50";
 cmdpath = "cd C:\GAMS\50";
-%cmdpath = "cd /Library/Frameworks/GAMS.framework/Resources"
 
 system(cmdpath);
-
-gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mip.gms';
+gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mip.gms';
 
 gamsExe = 'C:\GAMS\50\gams.exe'; 
 
@@ -1124,10 +1097,10 @@ disp(out);
 results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
 sh = table2array(results_file_sh(1,:));
 
+
 results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
 s = table2array(results_file_s(1,:));
 sprim = s;
-
 %results_file_deltas = readtable('./output_all.xlsx','Sheet','deltas_level');
 %deltas = table2array(results_file_deltas(1,:));
 deltas = zeros(1,n);
@@ -1150,6 +1123,10 @@ fext = table2array(results_file_fext(1:n,2:(n+1)));
 results_file_mipgap = readtable('./output_all.xlsx','Sheet','mip_opt_gap');
 mipgap = table2array(results_file_mipgap);
 
+results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
+sh = table2array(results_file_sh(1,:));
+
+
 T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
 [iU,~,iIdx] = unique(T.i,'stable');
 [jU,~,jIdx] = unique(T.j,'stable');
@@ -1163,127 +1140,17 @@ fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
 results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
 comp_time = table2array(results_file_ctime);
 [obj_val,pax_obj,op_obj] = get_obj_val(op_link_cost,...
-    prices,a,f,demand)
-budget = get_budget(s,sh,a,n,...
+prices,a,f,demand);
+
+used_budget = get_budget(s,sh,a,n,...
     station_cost,station_capacity_slope,hub_cost,link_cost,lam);
-filename = sprintf('./8node_hs_prueba_v0/beta=%d_lam=%d.mat',budget,lam);
+filename = sprintf('./6node_hs_prueba_v0/2h_bud=%d_lam=%d.mat',budget,lam);
 save(filename,'s','sprim','deltas', ...
-    'a','f','fext','fij','comp_time','budget', ...
-    'pax_obj','op_obj','obj_val','mipgap');
+    'a','f','fext','fij','comp_time','used_budget', ...
+    'pax_obj','op_obj','obj_val','mipgap','sh');
 
 end
 
-% compute_sim_MIP_rand removed
-
-
-
-function [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
-    station_capacity_slope,demand,prices,...
-    load_factor,op_link_cost,congestion_coef_stations,...
-    congestion_coef_links,travel_time,alt_time,alt_price,a_nom,tau,eta,...
-    a_max,candidates] = parameters_6node_network()
-
-n = 8;
-
-%candidates to construct a link for each neighbor
-candidates = {[2,3],[1,3,4],[1,2,4,5],[2,3,5,6],[3,4,6],[4,5]};
-
-%cost of using the alternative network for each o-d pair
-alt_cost = [0,1.6,0.8,2,1.6,2.5;
-    2,0,0.9,1.2,1.5,2.5;
-    1.5,1.4,0,1.3,0.9,2;
-    1.9,2,1.9,0,1.8,2;
-    3,1.5,2,2,0,1.5;
-    2.1,2.7,2.2,1,1.5,0];
-
-%fixed cost for constructing links
-link_cost = (1e6/(25*365.25)).*[0,1.7,2.7,0,0,0;
-    1.7,0,2.1,3,0,0;
-    2.7,2.1,0,2.6,1.7,0;
-    0,3,2.6,0,2.8,2.4;
-    0,0,1.7,2.8,0,1.9;
-    0,0,0,2.4,1.9,0];
-link_cost (link_cost ==0) = 1e4;
-
-
-%fixed cost for constructing stations
-station_cost = (1e6/(25*365.25)).*[2, 3, 2.2, 3, 2.5, 1.3];
-
-hub_cost = (1e6/(25*365.25)).*[200, 100, 2, 300, 200, 100];
-
-link_capacity_slope = 0.04.*link_cost;
-station_capacity_slope = 0.04.*station_cost;
-
-%demand between od pairs
-demand = 1e3.*[0,9,26,19,13,12;
-    11,0,14,26,7,18;
-    30,19,0,30,24,8;
-    21,9,11,0,22,16;
-    14,14,8,9,0,20;
-    26,1,22,24,13,0];
-
-distance = 1e4 * ones(n); % Distances between arcs
-
-for i = 1:n
-    distance(i, i) = 0;
-end
-
-distance(1, 2) = 0.75;
-distance(1, 3) = 0.7;
-
-
-distance(2, 3) = 0.6;
-distance(2, 4) = 1.1;
-
-distance(3, 4) = 1.1;
-distance(3, 5) = 0.5;
-
-
-distance(4,5) = 0.8;
-distance(4,6) = 0.7;
-
-
-distance(5,6) = 0.5;
-
-
-for i = 1:n
-    for j = i+1:n
-        distance(j, i) = distance(i, j); % Distances are symmetric
-    end
-end
-
-%Load factor on stations
-load_factor = 0.25 .* ones(1, n);
-
-% Op Link Cost
-op_link_cost = 4.*distance;
-
-% Congestion Coefficients
-congestion_coef_stations = 0.1 .* ones(1, n);
-congestion_coef_links = 0.1 .* ones(n);
-
-% Prices
-prices = (distance).^(0.7);
-prices(prices > 10) = 1.2;
-%prices = zeros(n);
-
-% Travel Time
-travel_time = 60 .* distance ./ 30; % Time in minutes
-
-% Alt Time
-alt_time = 60 .* alt_cost ./ 30; % Time in minutes
-
-alt_price = (alt_cost).^(0.7); %price
-
-a_nom = 588;
-
-tau = 0.57;
-eta = 0.25;
-a_max = 1e9;
-eps = 1e-3;
-end
-
-% parameters_8node_network_rand removed
 function set_max_f(n,fij,n_airlines,travel_time,prices,alt_utility,omega_p,omega_t)
 
     cotas = zeros(n);    
@@ -1296,6 +1163,8 @@ function set_max_f(n,fij,n_airlines,travel_time,prices,alt_utility,omega_p,omega
     write_gams_param_ii('./export_txt/f_bounds.txt', cotas);
     
 end
+
+
 
 function [lin_coef,bord,b] = get_linearization(n,nreg,alt_utility,vals_regs,n_airlines)
 dmax = zeros(nreg,n,n);
@@ -1430,37 +1299,37 @@ function [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
-    a_max,candidates,omega_t,omega_p] = parameters_8node_network()
-% 8 aeropuertos más usados de España: MAD, BCN, PMI, AGP, ALC, LPA, TFS, IBZ
-% Datos reales leídos desde CSVs generados por extract_data.py y extract_demand_8node.py
+    a_max,candidates,omega_t,omega_p] = parameters_4node_network()
 
-n = 8;
+n = 4;
 n_airlines = 5;
 
 % Candidates: Full connectivity assumption
 candidates = ones(n) - eye(n);
 
-% Distances (km) - generadas por extract_data.py
+% Distances (km)
 distance = readmatrix('distance.csv');
 
-% Prices (Euros) - generadas por extract_data.py
+% Prices (Euros)
 prices = readmatrix('prices.csv');
 
 omega_t = -0.02;
 omega_p = -0.02;
 
-% Link Cost: proporcional a la distancia (como en 8node)
-link_cost = 10.* distance;
-link_cost(logical(eye(n))) = 1e4; % Alto coste para self-loops
-link_cost(link_cost == 0) = 1e4; % Alto coste para conexiones sin datos
 
-station_cost = 3e3.*ones(1,n); % Oficinas, tasas del aeropuerto
+
+% Heuristics for other parameters
+% Link Cost: proportional to distance
+link_cost = 10.* distance;
+link_cost(logical(eye(n))) = 1e4; % High cost for self-loops
+link_cost(link_cost == 0) = 1e4; % High cost for missing connections (if any)
+
+station_cost = 3e3.*ones(1,n); %oficinas, tasas del aeropuerto 
 hub_cost = 5e3.*ones(1,n);
 
 link_capacity_slope = 0.2 .* link_cost;
-station_capacity_slope = (5*5e2 + 4*50*8).*ones(1,n); % 500 e/dia estacionamiento + 50e/hora personal
-
-% Demand: datos reales de pasajeros anuales - generados por extract_demand_8node.py
+station_capacity_slope = (5*5e2 + 4*50*8).*ones(1,n); %500 e dia por estacionamiento aeronaves + 50e/hora personal*4pax
+% Demand: Placeholder 10000
 demand = readmatrix('demand.csv');
 
 load_factor = 0.25 .* ones(1, n);
@@ -1472,37 +1341,137 @@ landing_time = 20;
 taxi_time = 10;
 cruise_time = 60 .* distance ./ 800;
 
-travel_time = cruise_time + takeoff_time + landing_time + taxi_time; % Velocidad crucero ~800 km/h -> minutos
+
+travel_time = cruise_time + takeoff_time + landing_time + taxi_time; % Approx 800 km/h speed -> minutes
 travel_time(logical(eye(n))) = 0;
+
 
 rng(123);
 p_escala = 0.4;
 
-alt_utility = zeros(n);
+alt_utility  = zeros(n);
+
 
 for i = 1:n
     for j = i+1:n   % SOLO mitad superior
-
+        
         escala = rand(1, n_airlines) < p_escala;
 
-        % --- TIEMPO alternativa ---
+        % --- TIEMPO ---
         alt_time_vec = travel_time(i,j) .* (1 + 0.5 .* escala) ...
                        + 60 .* escala;
 
-        % --- PRECIO alternativa ---
+
+        % --- PRECIO ---
         alt_price_vec = prices(i,j) ...
             + 0.3 .* prices(i,j) .* (rand(1, n_airlines) - 0.5);
 
-        alt_u = log(sum(exp(omega_p.*alt_price_vec + omega_t.*alt_time_vec))) - log(n_airlines);
+        alt_u = log(sum(exp(omega_p.*alt_price_vec+omega_t*alt_time_vec))) - log(n_airlines);
 
         % Asignación simétrica
-        alt_utility(i,j) = alt_u;
-        alt_utility(j,i) = alt_u;
+        alt_utility(i,j)  = alt_u;
+        alt_utility(j,i)  = alt_u;
     end
 end
-alt_utility(1:n+1:end) = 0;
+alt_utility(1:n+1:end)  = 0;
 
-op_link_cost = 7600 .* travel_time./60; % Coste operacional proporcional al tiempo de vuelo
+
+
+op_link_cost = 7600 .* travel_time./60; % Proportional to distance
+
+
+a_nom = 171;
+tau = 0.85;
+eta = 0.3;
+a_max = 1e9;
+
+end
+
+
+function [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
+    station_capacity_slope,demand,prices,...
+    load_factor,op_link_cost,congestion_coef_stations,...
+    congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
+    a_max,candidates,omega_t,omega_p] = parameters_6node_network()
+
+n = 6;
+n_airlines = 5;
+
+% Candidates: Full connectivity assumption
+candidates = ones(n) - eye(n);
+
+% Distances (km)
+distance = readmatrix('distance.csv');
+
+% Prices (Euros)
+prices = readmatrix('prices.csv');
+
+omega_t = -0.02;
+omega_p = -0.02;
+
+
+
+% Heuristics for other parameters
+% Link Cost: proportional to distance
+link_cost = 10.* distance;
+link_cost(logical(eye(n))) = 1e4; % High cost for self-loops
+link_cost(link_cost == 0) = 1e4; % High cost for missing connections (if any)
+
+station_cost = 3e3.*ones(1,n); %oficinas, tasas del aeropuerto 
+hub_cost = 5e3.*ones(1,n);
+
+link_capacity_slope = 0.2 .* link_cost;
+station_capacity_slope = (5*5e2 + 4*50*8).*ones(1,n); %500 e dia por estacionamiento aeronaves + 50e/hora personal*4pax
+% Demand: Placeholder 10000
+demand = readmatrix('demand.csv');
+
+load_factor = 0.25 .* ones(1, n);
+
+congestion_coef_stations = 0.1 .* ones(1, n);
+congestion_coef_links = 0.1 .* ones(n);
+takeoff_time = 20;
+landing_time = 20;
+taxi_time = 10;
+cruise_time = 60 .* distance ./ 800;
+
+
+travel_time = cruise_time + takeoff_time + landing_time + taxi_time; % Approx 800 km/h speed -> minutes
+travel_time(logical(eye(n))) = 0;
+
+
+rng(123);
+p_escala = 0.4;
+
+alt_utility  = zeros(n);
+
+
+for i = 1:n
+    for j = i+1:n   % SOLO mitad superior
+        
+        escala = rand(1, n_airlines) < p_escala;
+
+        % --- TIEMPO ---
+        alt_time_vec = travel_time(i,j) .* (1 + 0.5 .* escala) ...
+                       + 60 .* escala;
+
+
+        % --- PRECIO ---
+        alt_price_vec = prices(i,j) ...
+            + 0.3 .* prices(i,j) .* (rand(1, n_airlines) - 0.5);
+
+        alt_u = log(sum(exp(omega_p.*alt_price_vec+omega_t*alt_time_vec))) - log(n_airlines);
+
+        % Asignación simétrica
+        alt_utility(i,j)  = alt_u;
+        alt_utility(j,i)  = alt_u;
+    end
+end
+alt_utility(1:n+1:end)  = 0;
+
+
+
+op_link_cost = 7600 .* travel_time./60; % Proportional to distance
+
 
 a_nom = 171;
 tau = 0.85;

@@ -142,7 +142,7 @@ utility_def..
 
 * Objetivo total
 obj_def..
-    obj =e= pax + op + ut + 1e3*exceed + 1e-6*bud;
+    obj =e= pax + op + ut + 1e6*exceed + 1e-6*bud;
 
 *---------------------*
 * Restricciones       *
@@ -150,11 +150,11 @@ obj_def..
 
 
 bud_avail..
-    bud =l= budget;
+    bud$(iter <= niters) =l= budget;
     
 bud_final..
     ( sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$((s_prev(i) > 0.01) or (sh_prev(i) > 0.01)), station_cost(i))
-  + sum(i$(sh_prev(i) > 0.01), lam*hub_cost(i)))$(iter = niters) - exceed
+  + sum(i$(sh_prev(i) > 0.01), lam*hub_cost(i)))$(iter = niters) 
     =l=
     budget
 ;
@@ -269,7 +269,7 @@ Model netplan /
     obj_def
     
     bud_avail
-*    bud_final
+    bud_final
     
     def_f_aux
     def_f_aux2
@@ -362,7 +362,6 @@ f.fx(o,d)$(fnodemand(o,d)=1)=0;
 
 
 
-Solve netplan using minlp minimizing obj;
 
 
 option threads = 64;

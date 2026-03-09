@@ -1,0 +1,37 @@
+=0MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+=CGAMS/MOSEK license detected
+=CReading parameter(s) from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mosek.opt"
+=C>>  MSK_DPAR_INTPNT_TOL_REL_GAP   1e-14
+=C>>  MSK_DPAR_INTPNT_TOL_PFEAS     1e-14
+=C>>  MSK_DPAR_INTPNT_TOL_DFEAS     1e-14
+=C>>  MSK_DPAR_BASIS_REL_TOL_S      1e-14
+=CFinished reading from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mosek.opt"
+
+=CExtraction of quadratics (ThreePass algorithm): 0.00s
+The A matrix contains a large value of -1.7e+10 in constraint 'utility_def' (2956) at variable 'f(i2,i6)' (93).
+ (62)
+The A matrix contains a large value of -1.7e+10 in constraint 'utility_def' (2956) at variable 'f(i6,i2)' (121).
+ (62)
+The A matrix contains a large value of -3.5e+10 in constraint 'utility_def' (2956) at variable 'fext(i2,i6)' (157).
+ (62)
+The A matrix contains a large value of -3.5e+10 in constraint 'utility_def' (2956) at variable 'fext(i6,i2)' (185).
+ (62)
+The A matrix contains a large value of -1.2e+10 in constraint 'utility_def' (2956) at variable 'fij(i1,i6,i2,i6)' (669).
+ (62)
+The A matrix contains a large value of -1.2e+10 in constraint 'utility_def' (2956) at variable 'fij(i1,i6,i6,i2)' (697).
+ (62)
+The A matrix contains a large value of -1.2e+10 in constraint 'utility_def' (2956) at variable 'fij(i1,i7,i2,i6)' (733).
+ (62)
+The A matrix contains a large value of -1.2e+10 in constraint 'utility_def' (2956) at variable 'fij(i1,i7,i6,i2)' (761).
+ (62)
+The A matrix contains a large value of -1.4e+10 in constraint 'utility_def' (2956) at variable 'fij(i2,i6,i2,i6)' (1181).
+ (62)
+The A matrix contains a large value of -1.4e+10 in constraint 'utility_def' (2956) at variable 'fij(i2,i6,i6,i2)' (1209).
+ (62)
+
+Return code - 0 [MSK_RES_OK]: No error occurred.
