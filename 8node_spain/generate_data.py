@@ -114,6 +114,7 @@ def parameters_8node_network():
     station_capacity_slope = (5 * 5e2 + 4 * 50 * 8) * np.ones(n)
     
     demand = pd.read_csv('demand.csv', header=None).values
+    demand = demand / 365  # Convertir a demanda diaria
     
     load_factor = 0.25 * np.ones(n)
     
@@ -253,13 +254,10 @@ def get_entr_val(travel_time, prices, alt_time, alt_price, a_prim, delta_a,
     return 1e6 * pax_obj
 
 def get_obj_val(op_link_cost, prices, a, f, demand):
-    n = a.shape[0]
-    pax_obj = 0
-    op_obj = np.sum(op_link_cost * a)
-    for o in range(n):
-        for d in range(n):
-            pax_obj -= prices[o, d] * demand[o, d] * f[o, d]
-    return pax_obj + op_obj, pax_obj, op_obj
+    op_obj = np.sum(op_link_cost * a)          # costes operacionales
+    pax_obj = np.sum(prices * demand * f)      # ingresos de pasajeros
+    obj_val = -pax_obj + op_obj                # minimizar: -ingresos + costes
+    return obj_val, pax_obj, op_obj
 
 def get_linearization(n, nreg, alt_utility, vals_regs, n_airlines):
     dmax = np.zeros((nreg, n, n))
@@ -311,6 +309,22 @@ def write_txt_param(name, val):
     with open(f"./export_txt/{name}.txt", 'w') as f:
         f.write(str(val))
 
+def parse_matrix(output_csv, name, n):
+    """Lee una matriz (n x n) desde el CSV de outputs de GAMS."""
+    m_df = read_gams_csv_robust(output_csv, symbol_name=name)
+    if len(m_df) == 0:
+        return np.zeros((n, n))
+    m_df = m_df.copy()
+    m_df.columns = ['i', 'j', 'value']
+    try:
+        m_df['i_idx'] = m_df['i'].str.extract(r'(\d+)').astype(int) - 1
+        m_df['j_idx'] = m_df['j'].str.extract(r'(\d+)').astype(int) - 1
+        m = np.zeros((n, n))
+        m[m_df['i_idx'].values, m_df['j_idx'].values] = m_df['value'].values
+        return m
+    except Exception:
+        return np.zeros((n, n))
+
 def compute_sim_MIP_entr(lam, beta, alfa, n, budget):
     # This was present but perhaps unused in primary loop; mapping for completeness
     pass
@@ -321,7 +335,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
      congestion_coef_stations, congestion_coef_links, travel_time,
      alt_utility, a_nom, tau, eta, a_max, candidasourcertes, omega_t, omega_p) = parameters_8node_network()
      
-    niters = 10
+    niters = 20
     mu_alfa = 1e-7
     mu_beta = 2e-1
     
@@ -353,13 +367,13 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
     obj_val = 0
     obj_val_prev = 1e3
     
-    for _iter in range(1, niters + 1):
+    for _iter in range(niters):
         write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od)
         write_gams_param_ii('./export_txt/beta_od.txt', beta_od)
         stop = 0
         
-        for bliter in range(1, bliters + 1):
-            if abs((obj_val - obj_val_prev) / (obj_val + 1e-12)) <= 1e-3 and bliter > 1:
+        for bliter in range(bliters):
+            if abs((obj_val - obj_val_prev) / (obj_val + 1e-12)) <= 1e-3 and bliter > 0:
                 stop = 1
             elif stop == 0:
                 write_gams_param_ii('./export_txt/a_prev.txt', a_prev)
@@ -370,7 +384,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 gamsExe = r'C:\GAMS\50\gams.exe'
                 cmd = f'"{gamsExe}" "{gmsFile}"'
                 
-                write_txt_param('current_iter', 1)
+                write_txt_param('current_iter', _iter)  # iter exterior, igual que MATLAB
                 subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain')
                 
                 # Reading results
@@ -384,26 +398,9 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                     s_df = read_gams_csv_robust('./output_all.csv', symbol_name='s_level')
                     s = np.maximum(s_df.iloc[:, -1].values.flatten() if len(s_df)>0 else np.zeros(n), 1e-4)
                     
-                    # For matrices, the CSV is in long format: i, j, value. We need to pivot or reshape
-                    # But Python expects a full (n,n) array. We can use pivot to guarantee shape
-                    def parse_matrix(name, n):
-                        m_df = read_gams_csv_robust('./output_all.csv', symbol_name=name)
-                        if len(m_df) == 0: return np.zeros((n,n))
-                        # m_df columns: [dim1, dim2, value]
-                        m_df.columns = ['i', 'j', 'value']
-                        # map 'i1' back to 0-indexed int
-                        try:
-                            m_df['i_idx'] = m_df['i'].str.extract(r'(\d+)').astype(int) - 1
-                            m_df['j_idx'] = m_df['j'].str.extract(r'(\d+)').astype(int) - 1
-                            m = np.zeros((n,n))
-                            m[m_df['i_idx'].values, m_df['j_idx'].values] = m_df['value'].values
-                            return m
-                        except:
-                            return np.zeros((n,n))
-                            
-                    f = parse_matrix('f_level', n)
-                    a = np.maximum(parse_matrix('a_level', n), 1e-4)
-                    fext = parse_matrix('fext_level', n)
+                    f = parse_matrix('./output_all.csv', 'f_level', n)
+                    a = np.maximum(parse_matrix('./output_all.csv', 'a_level', n), 1e-4)
+                    fext = parse_matrix('./output_all.csv', 'fext_level', n)
                 else:
                     # fallback if file doesn't exist
                     sh = np.ones(n)*1e-4; s = np.ones(n)*1e-4; f = np.zeros((n,n)); a = np.ones((n,n))*1e-4; fext = np.zeros((n,n))
@@ -430,16 +427,18 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 
                 for oo in range(n):
                     for dd in range(n):
-                        if demand[oo, dd] < 1e-3 or prices[oo, dd] < 1e-3: continue
-                        propio = ((prices[oo, dd] * demand[oo, dd] + 1e-4) ** beta_od[oo, dd]) * (logit_coef * prices[oo, dd] * f[oo, dd] + logit_coef * np.sum(fij[:, :, oo, dd] * travel_time))
-                        externo = -((prices[oo, dd] * demand[oo, dd] + 1e-4) ** beta_od[oo, dd]) * (alt_utility[oo, dd] * fext[oo, dd])
-                        log_propio = ((prices[oo, dd] * demand[oo, dd] + 1e-4) ** beta_od[oo, dd]) * (f[oo, dd] * (np.log(max(0, f[oo, dd]) + 1e-12) - 1))
-                        log_ext = ((prices[oo, dd] * demand[oo, dd] + 1e-4) ** beta_od[oo, dd]) * (fext[oo, dd] * (np.log(max(0, fext[oo, dd]) / n_airlines + 1e-12) - 1))
+                        # Igual que MATLAB: (prices*demand)^beta_od, sin +1e-4
+                        base = (prices[oo, dd] * demand[oo, dd]) ** beta_od[oo, dd]
+                        term_fij = logit_coef * prices[oo, dd] * f[oo, dd] + logit_coef * np.sum(fij[:, :, oo, dd] * travel_time)
+                        propio    = base * term_fij
+                        externo   = -base * (alt_utility[oo, dd] * fext[oo, dd])
+                        log_propio = base * (f[oo, dd] * (np.log(max(0, f[oo, dd]) + 1e-12) - 1))
+                        log_ext    = base * (fext[oo, dd] * (np.log(max(0, fext[oo, dd]) / n_airlines + 1e-12) - 1))
                         
                         grad_alfa_v[oo, dd] = propio + externo + log_propio + log_ext
-                        grad_beta_v[oo, dd] = (alfa_od[oo, dd] + 1e-4) * ((beta_od[oo, dd] * demand[oo, dd] * prices[oo, dd] + 1e-4) ** (beta_od[oo, dd] - 1)) * \
-                                              (logit_coef * prices[oo, dd] * f[oo, dd] + logit_coef * np.sum(fij[:, :, oo, dd] * travel_time) - \
-                                              alt_utility[oo, dd] * fext[oo, dd] + f[oo, dd] * (np.log(max(0, f[oo, dd]) + 1e-12) - 1) + \
+                        base_beta = (alfa_od[oo, dd] + 1e-4) * ((beta_od[oo, dd] * demand[oo, dd] * prices[oo, dd]) ** (beta_od[oo, dd] - 1))
+                        grad_beta_v[oo, dd] = base_beta * (term_fij - alt_utility[oo, dd] * fext[oo, dd] + \
+                                              f[oo, dd] * (np.log(max(0, f[oo, dd]) + 1e-12) - 1) + \
                                               fext[oo, dd] * (np.log(max(0, fext[oo, dd]) / n_airlines + 1e-12) - 1))
                 
                 used_budget = get_budget(s, sh, a, n, station_cost, station_capacity_slope, hub_cost, link_cost, lam)
@@ -460,9 +459,9 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                     s_df = read_gams_csv_robust('./output_all.csv', symbol_name='s_level')
                     s = np.maximum(s_df.iloc[:, -1].values.flatten() if len(s_df)>0 else np.zeros(n), 1e-4)
                     
-                    f = parse_matrix('f_level', n)
-                    a = np.maximum(parse_matrix('a_level', n), 1e-4)
-                    fext = parse_matrix('fext_level', n)
+                    f = parse_matrix('./output_all.csv', 'f_level', n)
+                    a = np.maximum(parse_matrix('./output_all.csv', 'a_level', n), 1e-4)
+                    fext = parse_matrix('./output_all.csv', 'fext_level', n)
                 
                 if os.path.exists('fij_long.csv'):
                     T = pd.read_csv('fij_long.csv')
@@ -487,13 +486,13 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 grad_beta_f = np.zeros((n, n))
                 for oo in range(n):
                     for dd in range(n):
-                        if demand[oo, dd] < 1e-3 or prices[oo, dd] < 1e-3: continue
+                        # Igual que MATLAB: (demand*prices)^beta_od, sin +1e-4
                         term_f = (logit_coef * prices[oo, dd] * f[oo, dd] + logit_coef * np.sum(fij[:, :, oo, dd] * travel_time) - \
                                   alt_utility[oo, dd] * fext[oo, dd] + f[oo, dd] * (np.log(f[oo, dd] + 1e-12) - 1) + \
                                   fext[oo, dd] * (np.log(fext[oo, dd] / n_airlines + 1e-12) - 1))
-                                  
-                        grad_alfa_f[oo, dd] = gamma * (((demand[oo, dd] * prices[oo, dd] + 1e-4) ** beta_od[oo, dd]) * term_f - grad_alfa_v[oo, dd])
-                        grad_beta_f[oo, dd] = gamma * ((alfa_od[oo, dd] + 1e-4) * ((beta_od[oo, dd] * demand[oo, dd] * prices[oo, dd] + 1e-4) ** (beta_od[oo, dd] - 1)) * term_f - grad_beta_v[oo, dd])
+                        
+                        grad_alfa_f[oo, dd] = gamma * ((demand[oo, dd] * prices[oo, dd]) ** beta_od[oo, dd] * term_f - grad_alfa_v[oo, dd])
+                        grad_beta_f[oo, dd] = gamma * ((alfa_od[oo, dd] + 1e-4) * (beta_od[oo, dd] * demand[oo, dd] * prices[oo, dd]) ** (beta_od[oo, dd] - 1) * term_f - grad_beta_v[oo, dd])
                 
                 beta_od = beta_od - mu_beta * grad_beta_f
                 alfa_od = alfa_od - mu_alfa * grad_alfa_f
@@ -512,59 +511,26 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 obj_val_prev = obj_val
                 obj_val = obj_val_ll
                 
-        if abs(used_budget - budget) / budget < 0.05:
+        if (used_budget - budget) / budget < 0.05:
+            # En MATLAB el break está comentado — solo se imprime el mensaje
             print('cumplo presupuesto')
-            break
             
         s_prev = s_ll
         sh_prev = sh_ll
         a_prev = a_ll
         stop = 0
 
+    # Igual que MATLAB: tras el while, lanzar cvx-ll una vez más con niters=30
+    # (el bucle for iter=1:niters está comentado en MATLAB, solo se resetean prevs)
+    niters_final = 30
+    write_txt_param('niters', niters_final)
+    
     a_prev = 1e4 * np.ones((n, n))
-    s_prev = 0.1 * np.ones(n)
+    s_prev = 1e4 * np.ones(n)
     sh_prev = s_prev.copy()
     
-    gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-mip.gms'
-    gamsExe = r'C:\GAMS\50\gams.exe'
-    cmd = f'"{gamsExe}" "{gmsFile}"'
-    
-    for _iter in range(1, niters + 1):
-        write_gams_param_ii('./export_txt/a_prev.txt', a_prev)
-        write_gams_param1d_full('./export_txt/s_prev.txt', s_prev)
-        write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev)
-        write_txt_param('current_iter', _iter)
-        
-        subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain')
-        
-        if os.path.exists('./output_all.csv'):
-            ctime_vals = read_gams_csv_robust('./output_all.csv', symbol_name='solver_time').values.flatten()
-            if len(ctime_vals) > 0: comp_time += ctime_vals[-1]
-            
-            sh_df = read_gams_csv_robust('./output_all.csv', symbol_name='sh_level')
-            sh = np.maximum(sh_df.iloc[:, -1].values.flatten() if len(sh_df)>0 else np.zeros(n), 1e-4)
-            
-            s_df = read_gams_csv_robust('./output_all.csv', symbol_name='s_level')
-            s = np.maximum(s_df.iloc[:, -1].values.flatten() if len(s_df)>0 else np.zeros(n), 1e-4)
-            
-            f = parse_matrix('f_level', n)
-            a = np.maximum(parse_matrix('a_level', n), 1e-4)
-            fext = parse_matrix('fext_level', n)
-        
-        if os.path.exists('fij_long.csv'):
-            T = pd.read_csv('fij_long.csv')
-            iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
-            fij = split_and_accumarray(T, iU, jU, oU, dU)
-        else:
-            fij = np.zeros((n, n, n, n))
-            
-        a[a < 1e-2] = 0
-        f[f < 1e-2] = 0
-        fij[fij < 1e-2] = 0
-        fext[fext > 0.99] = 1
-        a_prev = a.copy()
-        s_prev = s.copy()
-        sh_prev = sh.copy()
+    # El bucle post-while estaba comentado en MATLAB — no se ejecuta
+    # Solo se guarda el resultado final del while
         
     filename = f'./8node_hs_prueba_v0_blo/bud={budget}_lam={lam}_alfa={alfa}_mu_al={mu_alfa}_mu_bet={mu_beta}_python.mat'
     if not os.path.exists('./8node_hs_prueba_v0_blo'):
@@ -613,9 +579,9 @@ def compute_sim_MIP(lam, beta, alfa, n, budget):
         s = s_df.iloc[:, -1].values.flatten() if len(s_df)>0 else np.zeros(n)
         sprim = s.copy()
         deltas = np.zeros(n)
-        a = parse_matrix('a_level', n)
-        f = parse_matrix('f_level', n)
-        fext = parse_matrix('fext_level', n)
+        a = parse_matrix('./output_all.csv', 'a_level', n)
+        f = parse_matrix('./output_all.csv', 'f_level', n)
+        fext = parse_matrix('./output_all.csv', 'fext_level', n)
         
         mipgap_df = read_gams_csv_robust('./output_all.csv', symbol_name='mip_opt_gap')
         mipgap = mipgap_df.iloc[:, -1].values.flatten() if len(mipgap_df)>0 else [0]
@@ -659,7 +625,7 @@ if __name__ == '__main__':
      congestion_coef_stations, congestion_coef_links, travel_time, alt_utility,
      a_nom, tau, eta, a_max, candidasourcertes, omega_t, omega_p) = parameters_8node_network()
      
-    demand = demand / 365
+    # demand ya viene dividida por 365 desde parameters_8node_network()
     M = 1e4
     nreg = 10
     eps = 1e-3
@@ -668,9 +634,9 @@ if __name__ == '__main__':
     
     lin_coef, bord, b = get_linearization(n, nreg, alt_utility, vals_regs, n_airlines)
     
+    # candidasourcertes ya es una matriz (n x n) de 0s y 1s desde parameters_8node_network()
     candidates = np.zeros((n, n))
-    for i in range(n):
-        candidates[i, candidasourcertes[i, :] > 0] = 1
+    candidates[candidasourcertes > 0] = 1
         
     alfa_od = np.ones((n, n))
     beta_od = np.ones((n, n))

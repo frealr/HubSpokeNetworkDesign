@@ -1,4 +1,6 @@
 {
+    "dynamicMainFile": false,
+    "expand": "1",
     "file": "mip.gms",
     "name": "HubSpokeNetDesign6node",
     "nodes": [
@@ -27,8 +29,10 @@
     "options": [
         ""
     ],
+    "ownBaseDir": false,
     "path": ".",
     "pf": "",
     "projectType": 1,
+    "timestamp": "2026-03-06T22:06:43.993",
     "workDir": "."
 }
