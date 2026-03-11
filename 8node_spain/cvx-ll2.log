@@ -1,11 +1,11 @@
 
---- Job cvx-ll.gms Start 03/04/26 12:46:02 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
+--- Job cvx-ll.gms Start 03/10/26 19:15:47 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\50\gmsprmNT.txt
 --- GAMS Parameters defined
     Input C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-ll.gms
     PageSize 0
-    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225l\
+    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bk\
     SysDir C:\GAMS\50\
     LogOption 3
     AppendLog 1
@@ -13,12 +13,12 @@
     ErrorLog 99
     IDE 1
     LstTitleLeftAligned 1
-*** Time-limited license expired 24 days ago
-Licensee: Luis Cadarso Morga                             G250911+0003Ac-GEN
+Licensee: Luis Cadarso Morga                             G260211+0003Ac-GEN
           University Rey Juan Carlos                                DCE4613
-          225l\gamslice.dat
-          node:23539203 mem:64 cores:8 ipport:59463 v:2                    
+          225bk\gamslice.dat
+          node:23539203 mem:64 cores:8 ipport:51551 v:2                    
           Course license for use within the course and related course work
+          The expiration date of time-limited license is Aug 10, 2026
 System information: 8 physical cores and 64 Gb physical memory detected
 GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
 --- Starting compilation
@@ -68,39 +68,21 @@ GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
 --- . param_definition_cvx-blo.gms(140) 3 Mb
 --- .. gamma.txt(1) 3 Mb
 --- . param_definition_cvx-blo.gms(152) 3 Mb
---- cvx-ll.gms(373) 3 Mb
+--- cvx-ll.gms(372) 3 Mb
 --- $echo File C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mosek.opt
---- cvx-ll.gms(473) 3 Mb
+--- cvx-ll.gms(474) 3 Mb
 --- Starting execution: elapsed 0:00:00.016
---- cvx-ll.gms(1263) 4 Mb
---- Generating MINLP model netplan
---- cvx-ll.gms(1267) 8 Mb
----   2,958 rows  4,822 columns  26,890 non-zeroes
----   1,024 nl-code  256 nl-non-zeroes
---- Range statistics (absolute non-zero finite values)
---- RHS       [min, max] : [ 1.000E-06, 1.000E+07] - Zero values observed as well
---- Bound     [min, max] : [ 1.000E-06, 1.000E+00] - Zero values observed as well
---- Matrix    [min, max] : [ 1.000E-06, 1.000E+06]
---- cvx-ll.gms(1267) 6 Mb
---- Executing DICOPT (Solvelink=2): elapsed 0:00:00.079
--------------------------------------------------------------------------------
-Dicopt 2         50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
--------------------------------------------------------------------------------
-*** Dicopt 2 is not included in your license, and the model size exceeds the community license limits.
-*** To update your license, please contact your distributor.
---- Reading solution for model netplan
---- Executing after solve: elapsed 0:00:00.111
---- cvx-ll.gms(1282) 6 Mb
+--- cvx-ll.gms(1281) 4 Mb
 --- Generating NLP model netplan
---- cvx-ll.gms(1286) 8 Mb
----   2,958 rows  4,822 columns  26,890 non-zeroes
+--- cvx-ll.gms(1285) 8 Mb
+---   2,957 rows  4,822 columns  26,889 non-zeroes
 ---   1,024 nl-code  256 nl-non-zeroes
 --- Range statistics (absolute non-zero finite values)
 --- RHS       [min, max] : [ 1.000E-06, 1.000E+07] - Zero values observed as well
 --- Bound     [min, max] : [ 1.000E-06, 1.000E+00] - Zero values observed as well
 --- Matrix    [min, max] : [ 1.000E-06, 1.000E+06]
---- cvx-ll.gms(1286) 6 Mb
---- Executing MOSEK (Solvelink=2): elapsed 0:00:00.155
+--- cvx-ll.gms(1285) 6 Mb
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:00.076
 
 MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
 
@@ -122,7 +104,7 @@ Problem
   Name                   :                 
   Objective sense        : minimize        
   Type                   : CONIC (conic optimization problem)
-  Constraints            : 2957            
+  Constraints            : 2956            
   Affine conic cons.     : 0               
   Disjunctive cons.      : 0               
   Cones                  : 128             
@@ -142,7 +124,7 @@ Lin. dep.  - tries                  : 1                 time                   :
 Lin. dep.  - primal attempts        : 1                 successes              : 1               
 Lin. dep.  - dual attempts          : 0                 successes              : 0               
 Lin. dep.  - primal deps.           : 54                dual deps.             : 0               
-Presolve terminated. Time: 0.00    
+Presolve terminated. Time: 0.01    
 Optimizer  - threads                : 16              
 Optimizer  - solved problem         : the primal      
 Optimizer  - Constraints            : 822             
@@ -154,75 +136,74 @@ Factor     - dense det. time        : 0.00              GP order time          :
 Factor     - nonzeros before factor : 1.64e+04          after factor           : 3.05e+04        
 Factor     - dense dim.             : 8                 flops                  : 1.85e+06        
 ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
-0   2.5e+06  3.1e+05  1.8e+05  0.00e+00   1.188921766e+06   1.370530101e+06   1.0e+00  0.02  
-1   1.6e+06  1.9e+05  1.4e+05  -1.00e+00  1.725079960e+06   1.906688924e+06   6.4e-01  0.02  
-2   5.4e+05  6.5e+04  8.4e+04  -1.00e+00  2.692984838e+06   2.874596381e+06   2.1e-01  0.02  
-3   1.5e+05  1.9e+04  4.5e+04  -1.00e+00  3.509238619e+06   3.690856626e+06   6.1e-02  0.02  
-4   4.3e+04  5.3e+03  2.4e+04  -1.00e+00  3.161438510e+06   3.343056984e+06   1.7e-02  0.03  
-5   7.8e+03  9.6e+02  1.0e+04  -9.99e-01  3.270794978e+06   3.452302742e+06   3.1e-03  0.03  
-6   1.0e+03  1.2e+02  3.6e+03  -9.94e-01  2.666591669e+06   2.846216416e+06   4.0e-04  0.03  
-7   1.1e+02  1.4e+01  1.0e+03  -9.45e-01  -1.657564511e+06  -1.497706295e+06  4.5e-05  0.03  
-8   4.6e+01  5.6e+00  3.8e+02  -3.20e-01  -2.742198673e+06  -2.647288048e+06  1.8e-05  0.03  
-9   2.8e+01  3.5e+00  1.4e+02  1.13e+00   -6.724997534e+05  -6.259763452e+05  1.1e-05  0.03  
-10  1.3e+01  1.6e+00  3.7e+01  1.16e+00   3.141954587e+05   3.328860064e+05   5.1e-06  0.04  
-11  5.5e+00  6.7e-01  1.0e+01  1.07e+00   6.695511224e+05   6.774205874e+05   2.2e-06  0.04  
-12  2.4e+00  2.9e-01  2.6e+00  1.17e+00   8.135226099e+05   8.165295344e+05   9.5e-07  0.04  
-13  1.9e+00  2.3e-01  1.7e+00  1.38e+00   8.444238625e+05   8.466008990e+05   7.4e-07  0.04  
-14  9.2e-01  1.1e-01  5.3e-01  1.40e+00   8.917745845e+05   8.926715507e+05   3.7e-07  0.04  
-15  5.4e-01  6.6e-02  2.1e-01  1.39e+00   9.108240402e+05   9.112807684e+05   2.1e-07  0.05  
-16  3.5e-01  4.2e-02  1.1e-01  1.33e+00   9.187408701e+05   9.190125440e+05   1.4e-07  0.05  
-17  2.2e-01  2.6e-02  5.1e-02  1.24e+00   9.233447539e+05   9.235065792e+05   8.7e-08  0.05  
-18  1.1e-01  1.3e-02  1.8e-02  1.13e+00   9.270840661e+05   9.271633203e+05   4.3e-08  0.05  
-19  7.2e-02  8.8e-03  1.0e-02  9.59e-01   9.283059054e+05   9.283616972e+05   2.9e-08  0.05  
-20  5.7e-02  7.0e-03  7.3e-03  8.59e-01   9.288776220e+05   9.289240117e+05   2.3e-08  0.05  
-21  5.1e-02  6.2e-03  5.9e-03  8.76e-01   9.291794747e+05   9.292194507e+05   2.0e-08  0.06  
-22  3.5e-02  4.3e-03  3.5e-03  8.85e-01   9.298153893e+05   9.298442015e+05   1.4e-08  0.06  
-23  3.1e-02  3.8e-03  3.0e-03  8.24e-01   9.299954730e+05   9.300217672e+05   1.3e-08  0.06  
-24  1.3e-02  1.6e-03  8.5e-04  8.47e-01   9.308617736e+05   9.308737042e+05   5.3e-09  0.06  
-25  9.2e-03  1.1e-03  5.3e-04  7.71e-01   9.310547221e+05   9.310637412e+05   3.7e-09  0.06  
-26  3.9e-03  4.7e-04  1.6e-04  7.75e-01   9.313812221e+05   9.313855704e+05   1.5e-09  0.06  
-27  3.0e-03  3.6e-04  1.2e-04  5.06e-01   9.314543164e+05   9.314581560e+05   1.2e-09  0.07  
-28  2.7e-03  3.3e-04  1.1e-04  3.90e-01   9.314860984e+05   9.314897069e+05   1.1e-09  0.07  
-29  2.3e-03  2.9e-04  9.7e-05  2.97e-01   9.315157311e+05   9.315193339e+05   9.3e-10  0.07  
-30  2.1e-03  2.6e-04  7.8e-05  3.75e-01   9.315497328e+05   9.315528321e+05   8.4e-10  0.07  
-31  1.2e-03  1.5e-04  4.9e-05  3.13e-01   9.316746560e+05   9.316773034e+05   5.0e-10  0.07  
-32  8.4e-04  1.0e-04  2.8e-05  3.62e-01   9.317692933e+05   9.317712270e+05   3.3e-10  0.07  
-33  7.0e-04  8.6e-05  2.2e-05  3.37e-01   9.318097671e+05   9.318114894e+05   2.8e-10  0.08  
-34  4.7e-04  5.8e-05  1.5e-05  2.66e-01   9.318837980e+05   9.318853070e+05   1.9e-10  0.08  
-35  3.8e-04  4.6e-05  1.0e-05  3.63e-01   9.319289127e+05   9.319300559e+05   1.5e-10  0.08  
-36  1.4e-04  1.7e-05  3.5e-06  3.15e-01   9.321037857e+05   9.321044544e+05   5.5e-11  0.08  
-37  4.8e-05  5.8e-06  8.1e-07  4.90e-01   9.322247850e+05   9.322250629e+05   1.9e-11  0.08  
-38  3.0e-05  3.7e-06  5.9e-07  2.70e-01   9.322630219e+05   9.322633022e+05   1.2e-11  0.08  
-39  1.2e-05  1.5e-06  1.7e-07  6.78e-01   9.323304369e+05   9.323305629e+05   4.9e-12  0.08  
-40  6.0e-06  7.3e-07  6.3e-08  7.12e-01   9.323601314e+05   9.323602013e+05   2.4e-12  0.09  
-41  4.1e-06  5.0e-07  3.7e-08  7.43e-01   9.323712877e+05   9.323713390e+05   1.6e-12  0.09  
-42  1.2e-06  1.4e-07  7.1e-09  7.54e-01   9.323913759e+05   9.323913943e+05   4.7e-13  0.09  
-43  5.4e-07  6.6e-08  2.5e-09  7.31e-01   9.323979525e+05   9.323979624e+05   2.2e-13  0.09  
-44  2.7e-07  3.3e-08  9.4e-10  7.87e-01   9.324013012e+05   9.324013067e+05   1.1e-13  0.09  
-45  8.1e-08  9.9e-09  1.8e-10  7.80e-01   9.324040167e+05   9.324040187e+05   3.2e-14  0.09  
-Optimizer terminated. Time: 0.10    
+0   2.5e+06  1.3e+04  4.1e+04  0.00e+00   1.328396500e+05   1.740732470e+05   1.0e+00  0.02  
+1   1.6e+06  8.1e+03  3.3e+04  -1.00e+00  1.573611386e+05   1.985953468e+05   6.3e-01  0.02  
+2   5.3e+05  2.7e+03  1.9e+04  -1.00e+00  3.535855677e+05   3.948228440e+05   2.1e-01  0.02  
+3   9.9e+04  5.1e+02  8.2e+03  -1.00e+00  2.018180826e+06   2.059438166e+06   4.0e-02  0.03  
+4   6.1e+04  3.1e+02  6.4e+03  -1.00e+00  2.572964821e+06   2.614231189e+06   2.4e-02  0.03  
+5   2.6e+04  1.3e+02  4.2e+03  -9.98e-01  1.575669693e+06   1.616920684e+06   1.0e-02  0.03  
+6   4.3e+03  2.2e+01  1.7e+03  -9.95e-01  1.760631028e+06   1.801734816e+06   1.7e-03  0.03  
+7   5.4e+02  2.8e+00  5.5e+02  -9.58e-01  9.025976948e+05   9.414157909e+05   2.2e-04  0.03  
+8   2.1e+02  1.1e+00  2.2e+02  -5.05e-01  7.109251015e+04   9.688922776e+04   8.4e-05  0.03  
+9   9.4e+01  4.8e-01  3.2e+01  1.09e+00   1.218294149e+05   1.296481166e+05   3.8e-05  0.04  
+10  2.7e+01  1.4e-01  4.7e+00  1.08e+00   8.948570593e+04   9.160689501e+04   1.1e-05  0.04  
+11  1.2e+01  6.2e-02  1.5e+00  1.05e+00   8.007980148e+04   8.099732716e+04   4.8e-06  0.04  
+12  5.9e+00  3.0e-02  4.7e-01  1.24e+00   7.981839740e+04   8.021468801e+04   2.4e-06  0.04  
+13  3.5e+00  1.8e-02  2.2e-01  1.20e+00   8.117743909e+04   8.140409118e+04   1.4e-06  0.04  
+14  2.9e+00  1.5e-02  1.7e-01  1.16e+00   8.175261557e+04   8.193687726e+04   1.2e-06  0.04  
+15  1.7e+00  8.9e-03  7.4e-02  1.20e+00   8.256561263e+04   8.266799631e+04   6.9e-07  0.05  
+16  8.0e-01  4.1e-03  2.3e-02  1.16e+00   8.336893706e+04   8.341388230e+04   3.2e-07  0.05  
+17  5.1e-01  2.6e-03  1.2e-02  1.08e+00   8.377511422e+04   8.380430067e+04   2.1e-07  0.05  
+18  4.1e-01  2.1e-03  8.9e-03  9.93e-01   8.395680878e+04   8.398057565e+04   1.6e-07  0.05  
+19  3.5e-01  1.8e-03  7.3e-03  9.33e-01   8.406424535e+04   8.408518242e+04   1.4e-07  0.05  
+20  2.3e-01  1.2e-03  3.8e-03  9.42e-01   8.430575576e+04   8.431954114e+04   9.1e-08  0.05  
+21  1.8e-01  9.3e-04  2.9e-03  7.39e-01   8.441911788e+04   8.443124097e+04   7.2e-08  0.06  
+22  1.5e-01  7.5e-04  2.2e-03  6.74e-01   8.452291397e+04   8.453335178e+04   5.9e-08  0.06  
+23  1.1e-01  5.7e-04  1.5e-03  6.93e-01   8.464972641e+04   8.465804668e+04   4.4e-08  0.06  
+24  8.5e-02  4.4e-04  1.1e-03  6.19e-01   8.474340668e+04   8.475054332e+04   3.4e-08  0.06  
+25  4.5e-02  2.3e-04  4.7e-04  6.33e-01   8.494636315e+04   8.495056715e+04   1.8e-08  0.06  
+26  2.7e-02  1.4e-04  2.5e-04  5.95e-01   8.506705966e+04   8.507003359e+04   1.1e-08  0.07  
+27  1.7e-02  8.5e-05  1.3e-04  6.00e-01   8.516799187e+04   8.517005169e+04   6.6e-09  0.07  
+28  1.1e-02  5.4e-05  7.4e-05  6.10e-01   8.524130856e+04   8.524278252e+04   4.2e-09  0.07  
+29  6.7e-03  3.4e-05  4.4e-05  5.09e-01   8.530361214e+04   8.530475916e+04   2.7e-09  0.07  
+30  5.3e-03  2.7e-05  3.4e-05  3.80e-01   8.534059249e+04   8.534162904e+04   2.1e-09  0.07  
+31  4.1e-03  2.1e-05  2.7e-05  2.59e-01   8.538494719e+04   8.538589228e+04   1.6e-09  0.07  
+32  3.6e-03  1.8e-05  2.3e-05  2.42e-01   8.540652281e+04   8.540739371e+04   1.4e-09  0.08  
+33  3.3e-03  1.7e-05  2.2e-05  9.12e-02   8.541678355e+04   8.541768288e+04   1.3e-09  0.08  
+34  3.0e-03  1.5e-05  1.9e-05  2.02e-01   8.543622566e+04   8.543707421e+04   1.2e-09  0.08  
+35  1.8e-03  9.4e-06  1.1e-05  1.89e-01   8.551596613e+04   8.551662319e+04   7.3e-10  0.08  
+36  1.6e-03  8.3e-06  1.1e-05  2.11e-02   8.553377407e+04   8.553448576e+04   6.4e-10  0.08  
+37  9.0e-04  4.6e-06  5.2e-06  2.20e-01   8.562819808e+04   8.562867609e+04   3.6e-10  0.08  
+38  7.4e-04  3.8e-06  4.4e-06  9.80e-02   8.566185982e+04   8.566232070e+04   2.9e-10  0.09  
+39  5.3e-04  2.8e-06  2.9e-06  2.33e-01   8.571441299e+04   8.571478408e+04   2.1e-10  0.09  
+40  3.2e-04  1.7e-06  2.0e-06  1.30e-01   8.578825148e+04   8.578861067e+04   1.3e-10  0.09  
+41  2.0e-04  1.0e-06  8.8e-07  3.49e-01   8.585500761e+04   8.585521881e+04   7.8e-11  0.09  
+42  4.7e-05  2.4e-07  1.9e-07  2.89e-01   8.602520124e+04   8.602531268e+04   1.9e-11  0.09  
+43  1.5e-05  7.5e-08  4.2e-08  4.44e-01   8.610631522e+04   8.610636662e+04   5.9e-12  0.10  
+44  4.6e-06  2.4e-08  9.6e-09  6.34e-01   8.614886355e+04   8.614888737e+04   1.9e-12  0.10  
+45  2.4e-06  1.2e-08  4.1e-09  6.66e-01   8.616315737e+04   8.616317307e+04   9.5e-13  0.10  
+46  8.4e-07  4.3e-09  9.7e-10  7.73e-01   8.617506106e+04   8.617506784e+04   3.4e-13  0.10  
+47  3.9e-07  2.0e-09  3.4e-10  7.59e-01   8.617978131e+04   8.617978512e+04   1.5e-13  0.10  
+48  1.3e-07  6.9e-10  7.9e-11  7.82e-01   8.618304423e+04   8.618304590e+04   5.3e-14  0.11  
+49  7.2e-08  3.7e-10  3.4e-11  7.73e-01   8.618402475e+04   8.618402579e+04   2.9e-14  0.11  
+50  2.3e-08  1.2e-10  6.8e-12  8.15e-01   8.618493442e+04   8.618493483e+04   9.1e-15  0.11  
+Optimizer terminated. Time: 0.11    
 
 
 Interior-point solution summary
   Problem status  : PRIMAL_AND_DUAL_FEASIBLE
   Solution status : OPTIMAL
-  Primal.  obj: 9.3240401668e+05    nrm: 1e+06    Viol.  con: 6e-02    var: 6e-09    cones: 0e+00  
-  Dual.    obj: 9.3240401872e+05    nrm: 5e+08    Viol.  con: 1e-04    var: 2e-03    cones: 0e+00  
+  Primal.  obj: 8.6184934423e+04    nrm: 2e+05    Viol.  con: 2e-02    var: 2e-09    cones: 0e+00  
+  Dual.    obj: 8.6184934827e+04    nrm: 5e+08    Viol.  con: 1e-06    var: 2e-05    cones: 0e+00  
 
 Return code - 0 [MSK_RES_OK]: No error occurred.
 --- Reading solution for model netplan
---- Executing after solve: elapsed 0:00:00.330
---- cvx-ll.gms(1299) 6 Mb
+--- Executing after solve: elapsed 0:00:00.268
+--- cvx-ll.gms(1298) 6 Mb
 --- GDX File (execute_unload) C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\resultado.gdx
---- cvx-ll.gms(1308) 8 Mb
---- Initialize embedded library embconnectcclib64.dll
---- Execute embedded library embconnectcclib64.dll
---- cvx-ll.gms(1321) 8 Mb
---- Initialize embedded library embconnectcclib64.dll
---- Execute embedded library embconnectcclib64.dll
---- cvx-ll.gms(1334) 9 Mb
+--- cvx-ll.gms(1335) 9 Mb
 --- Initialize embedded library embconnectcclib64.dll
 --- Execute embedded library embconnectcclib64.dll
 --- Putfile fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\fij_long.csv
 *** Status: Normal completion
---- Job cvx-ll.gms Stop 03/04/26 12:46:03 elapsed 0:00:01.130
+--- Job cvx-ll.gms Stop 03/10/26 19:15:48 elapsed 0:00:01.026

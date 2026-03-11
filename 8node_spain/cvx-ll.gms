@@ -107,7 +107,7 @@ op_def..
 pax_def..
     pax =e= 1e-2*(
 
-    + sum((o,d),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
+    + sum((o,d)$(ord(o) ne ord(d)),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
 *          * (  ( f(o,d)*log(f(o,d)) - f(o,d) ) ))
 
    + sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *(ftext(o,d)
@@ -120,7 +120,7 @@ utility_def..
             alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *  
            ( logit_coef*prices(o,d)*f(o,d) + sum((i,j), (travel_time(i,j))*fij(i,j,o,d)*logit_coef)))
 
-    - sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
+    - sum((o,d)$(ord(o) ne ord(d)), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
           * alt_utility(o,d)*fext(o,d)) );
 
 
@@ -402,6 +402,8 @@ loop((i,j,o,d),
     put i.tl ',' j.tl ',' o.tl ',' d.tl ',' fij.l(i,j,o,d):0:15 / );
 putclose fijx;
 
+
+$onText
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:
@@ -427,7 +429,7 @@ EmbeddedCode Connect:
     symbols:
       - name: s_level
 endEmbeddedCode
-
+$offText
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:

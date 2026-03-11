@@ -10,19 +10,10 @@ import time
 def read_gams_csv_robust(file_path, symbol_name, max_retries=5, delay=1.0):
     for attempt in range(max_retries):
         try:
-            df = pd.read_csv(file_path)
-            # Find the rows associated with the symbol. The symbol name is usually in the first column or 'Dim1' if header
-            # Or GAMS CSV writes them concatenated. The format usually has the Symbol name in the first column.
-            # Let's inspect typical structure or filter the first column blindly if it equals the symbol.
-            # actually if header=True was used, columns are ['name', 'dim1', ..., 'value']
-            # if name is not there, check first col.
-            if 'name' in df.columns:
-                sub_df = df[df['name'] == symbol_name]
-            else:
-                sub_df = df[df.iloc[:, 0] == symbol_name]
-            
-            # Values are in the rest
-            return sub_df.iloc[:, 1:]
+            # The file is an Excel file with a sheet for each symbol
+            with pd.ExcelFile(file_path) as xls:
+                df = pd.read_excel(xls, sheet_name=symbol_name)
+            return df
         except Exception as e:
             if attempt == max_retries - 1:
                 return pd.DataFrame()
@@ -77,18 +68,22 @@ def write_gams_param1d_full(filename, v):
         for k in range(len(v)):
             fid.write(f'i{k+1} {v[k]:.12g}\n')
 
-def split_and_accumarray(fij_df, iU, jU, oU, dU):
+def split_and_accumarray(T, iU, jU, oU, dU):
+
     fij = np.zeros((len(iU), len(jU), len(oU), len(dU)))
-    i_map = {val: idx for idx, val in enumerate(iU)}
-    j_map = {val: idx for idx, val in enumerate(jU)}
-    o_map = {val: idx for idx, val in enumerate(oU)}
-    d_map = {val: idx for idx, val in enumerate(dU)}
-    for _, row in fij_df.iterrows():
-        i_idx = i_map[row['i']]
-        j_idx = j_map[row['j']]
-        o_idx = o_map[row['o']]
-        d_idx = d_map[row['d']]
-        fij[i_idx, j_idx, o_idx, d_idx] += row['value']
+
+    i_map = {v: k for k, v in enumerate(iU)}
+    j_map = {v: k for k, v in enumerate(jU)}
+    o_map = {v: k for k, v in enumerate(oU)}
+    d_map = {v: k for k, v in enumerate(dU)}
+
+    i_idx = T['i'].map(i_map).to_numpy()
+    j_idx = T['j'].map(j_map).to_numpy()
+    o_idx = T['o'].map(o_map).to_numpy()
+    d_idx = T['d'].map(d_map).to_numpy()
+
+    np.add.at(fij, (i_idx, j_idx, o_idx, d_idx), T['value'].to_numpy())
+
     return fij
 
 def parameters_8node_network():
@@ -114,7 +109,8 @@ def parameters_8node_network():
     station_capacity_slope = (5 * 5e2 + 4 * 50 * 8) * np.ones(n)
     
     demand = pd.read_csv('demand.csv', header=None).values
-    demand = demand / 365  # Convertir a demanda diaria
+
+    demand = demand/365
     
     load_factor = 0.25 * np.ones(n)
     
@@ -232,9 +228,6 @@ def get_budget(s, sh, a, n, station_cost, station_capacity_slope, hub_cost, link
             budget += station_cost[i] + station_capacity_slope[i] * (s[i] + sh[i])
         if sh[i] > 1e-2:
             budget += lam * hub_cost[i]
-        for j in range(n):
-            if a[i, j] > 1e-2:
-                budget += link_cost[i, j]
     return budget
 
 def get_entr_val(travel_time, prices, alt_time, alt_price, a_prim, delta_a,
@@ -310,19 +303,39 @@ def write_txt_param(name, val):
         f.write(str(val))
 
 def parse_matrix(output_csv, name, n):
-    """Lee una matriz (n x n) desde el CSV de outputs de GAMS."""
+    """Lee una matriz (n x n) desde el CSV/Excel de outputs de GAMS."""
     m_df = read_gams_csv_robust(output_csv, symbol_name=name)
-    if len(m_df) == 0:
+    if m_df is None or len(m_df) == 0:
         return np.zeros((n, n))
-    m_df = m_df.copy()
-    m_df.columns = ['i', 'j', 'value']
-    try:
-        m_df['i_idx'] = m_df['i'].str.extract(r'(\d+)').astype(int) - 1
-        m_df['j_idx'] = m_df['j'].str.extract(r'(\d+)').astype(int) - 1
+    
+    # If the dataframe has n rows and n+1 columns (first col is label), it's wide format
+    if m_df.shape[1] >= n and m_df.shape[0] >= n:
+        # Assuming first column is the row index (e.g., 'i1', 'i2', etc.)
+        # and the next n columns are the values for j1, j2...
+        # We can just extract the numeric values:
+        m_vals = m_df.iloc[:, 1:n+1].values
+        
+        # Safely pad or crop to exactly (n, n)
         m = np.zeros((n, n))
-        m[m_df['i_idx'].values, m_df['j_idx'].values] = m_df['value'].values
+        rows = min(n, m_vals.shape[0])
+        cols = min(n, m_vals.shape[1])
+        m[:rows, :cols] = m_vals[:rows, :cols]
         return m
-    except Exception:
+    else:
+        # Fallback to long format (i, j, value) in case we ever get that
+        m_df = m_df.copy()
+        if m_df.shape[1] >= 3:
+            m_df.columns = ['i', 'j', 'value'] + list(m_df.columns[3:])
+            try:
+                m_df['i_idx'] = m_df['i'].astype(str).str.extract(r'(\d+)').astype(int) - 1
+                m_df['j_idx'] = m_df['j'].astype(str).str.extract(r'(\d+)').astype(int) - 1
+                m = np.zeros((n, n))
+                valid_rows = (m_df['i_idx'] >= 0) & (m_df['i_idx'] < n) & (m_df['j_idx'] >= 0) & (m_df['j_idx'] < n)
+                m[m_df.loc[valid_rows, 'i_idx'].values, m_df.loc[valid_rows, 'j_idx'].values] = m_df.loc[valid_rows, 'value'].values
+                return m
+            except Exception:
+                return np.zeros((n, n))
+            
         return np.zeros((n, n))
 
 def compute_sim_MIP_entr(lam, beta, alfa, n, budget):
@@ -330,14 +343,18 @@ def compute_sim_MIP_entr(lam, beta, alfa, n, budget):
     pass
 
 def compute_sim_cvx_blo(lam, alfa, n, budget):
+    #revisar vs matlab
     (n, link_cost, station_cost, hub_cost, link_capacity_slope,
      station_capacity_slope, demand, prices, load_factor, op_link_cost,
      congestion_coef_stations, congestion_coef_links, travel_time,
      alt_utility, a_nom, tau, eta, a_max, candidasourcertes, omega_t, omega_p) = parameters_8node_network()
      
+    #ok desde aqui
     niters = 20
     mu_alfa = 1e-7
     mu_beta = 2e-1
+
+    debug = []
     
     alfa_od = np.ones((n, n))
     beta_od = np.ones((n, n))
@@ -348,6 +365,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
     
     logit_coef = 0.02
     n_airlines = 5
+    #ok hasta aqui
     
     write_txt_param('niters', niters)
     write_txt_param('lam', lam)
@@ -361,19 +379,21 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
     
     a_prev = 1e4 * np.ones((n, n))
     s_prev = 1e4 * np.ones(n)
-    sh_prev = s_prev.copy()
+    sh_prev = 1e4 * np.ones(n)
     
     comp_time = 0
     obj_val = 0
     obj_val_prev = 1e3
     
-    for _iter in range(niters):
+    _iter = 1
+    while _iter <= niters:
+        # alfa_od = ones(n);
+        # beta_od = ones(n);
         write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od)
         write_gams_param_ii('./export_txt/beta_od.txt', beta_od)
         stop = 0
-        
-        for bliter in range(bliters):
-            if abs((obj_val - obj_val_prev) / (obj_val + 1e-12)) <= 1e-3 and bliter > 0:
+        for bliter in range(1, bliters + 1):
+            if (abs((obj_val - obj_val_prev) / obj_val) <= 1e-3 if obj_val != 0 else False) and (bliter > 1):
                 stop = 1
             elif stop == 0:
                 write_gams_param_ii('./export_txt/a_prev.txt', a_prev)
@@ -384,33 +404,36 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 gamsExe = r'C:\GAMS\50\gams.exe'
                 cmd = f'"{gamsExe}" "{gmsFile}"'
                 
-                write_txt_param('current_iter', _iter)  # iter exterior, igual que MATLAB
-                subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain')
+                write_txt_param('current_iter', _iter)
+                subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain',stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL)
                 
-                # Reading results
-                if os.path.exists('./output_all.csv'):
-                    ctime_vals = read_gams_csv_robust('./output_all.csv', symbol_name='solver_time').values.flatten()
-                    if len(ctime_vals) > 0: comp_time += ctime_vals[-1] # Usually last column is value
-                    
-                    sh_df = read_gams_csv_robust('./output_all.csv', symbol_name='sh_level')
-                    sh = np.maximum(sh_df.iloc[:, -1].values.flatten() if len(sh_df)>0 else np.zeros(n), 1e-4)
-                    
-                    s_df = read_gams_csv_robust('./output_all.csv', symbol_name='s_level')
-                    s = np.maximum(s_df.iloc[:, -1].values.flatten() if len(s_df)>0 else np.zeros(n), 1e-4)
-                    
-                    f = parse_matrix('./output_all.csv', 'f_level', n)
-                    a = np.maximum(parse_matrix('./output_all.csv', 'a_level', n), 1e-4)
-                    fext = parse_matrix('./output_all.csv', 'fext_level', n)
-                else:
-                    # fallback if file doesn't exist
-                    sh = np.ones(n)*1e-4; s = np.ones(n)*1e-4; f = np.zeros((n,n)); a = np.ones((n,n))*1e-4; fext = np.zeros((n,n))
-                    
-                if os.path.exists('fij_long.csv'):
-                    T = pd.read_csv('fij_long.csv')
-                    iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
-                    fij = split_and_accumarray(T, iU, jU, oU, dU)
-                else:
-                    fij = np.zeros((n, n, n, n))
+                ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
+                if len(ctime_vals) > 0:
+                    comp_time += ctime_vals.to_numpy().flatten()[-1]
+                
+                sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
+                sh = sh_df.to_numpy().flatten() if len(sh_df) > 0 else np.zeros(n)
+                sh = np.maximum(sh, 1e-4)
+                
+                s_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='s_level')
+                s = s_df.to_numpy().flatten() if len(s_df) > 0 else np.zeros(n)
+                s = np.maximum(s, 1e-4)
+
+                
+                f = parse_matrix('./output_all.xlsx', 'f_level', n)
+                print(f"f vale")
+                print(f)
+                
+                a = parse_matrix('./output_all.xlsx', 'a_level', n)
+                a = np.maximum(a, 1e-4)
+                
+                f = parse_matrix('./output_all.xlsx', 'f_level', n)
+                fext = parse_matrix('./output_all.xlsx', 'fext_level', n)
+                
+                T = pd.read_csv('fij_long.csv')
+                iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
+                fij = split_and_accumarray(T, iU, jU, oU, dU)
                 
                 a[a < 1e-2] = 0
                 f[f < 1e-2] = 0
@@ -424,52 +447,51 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 
                 grad_alfa_v = np.zeros((n, n))
                 grad_beta_v = np.zeros((n, n))
-                
                 for oo in range(n):
                     for dd in range(n):
-                        # Igual que MATLAB: (prices*demand)^beta_od, sin +1e-4
-                        base = (prices[oo, dd] * demand[oo, dd]) ** beta_od[oo, dd]
-                        term_fij = logit_coef * prices[oo, dd] * f[oo, dd] + logit_coef * np.sum(fij[:, :, oo, dd] * travel_time)
-                        propio    = base * term_fij
-                        externo   = -base * (alt_utility[oo, dd] * fext[oo, dd])
-                        log_propio = base * (f[oo, dd] * (np.log(max(0, f[oo, dd]) + 1e-12) - 1))
-                        log_ext    = base * (fext[oo, dd] * (np.log(max(0, fext[oo, dd]) / n_airlines + 1e-12) - 1))
-                        
+                        propio = ((prices[oo, dd] * demand[oo, dd]) ** beta_od[oo, dd]) * (logit_coef * prices[oo, dd] * f[oo, dd] + logit_coef * np.sum(fij[:, :, oo, dd] * travel_time))
+                        externo = -((prices[oo, dd] * demand[oo, dd]) ** beta_od[oo, dd]) * (alt_utility[oo, dd] * fext[oo, dd])
+                        log_propio = ((prices[oo, dd] * demand[oo, dd]) ** beta_od[oo, dd]) * (f[oo, dd] * (np.log(np.maximum(0, f[oo, dd]) + 1e-12) - 1))
+                        log_ext = ((prices[oo, dd] * demand[oo, dd]) ** beta_od[oo, dd]) * (fext[oo, dd] * (np.log(np.maximum(0, fext[oo, dd]) / n_airlines + 1e-12) - 1))
+            
                         grad_alfa_v[oo, dd] = propio + externo + log_propio + log_ext
-                        base_beta = (alfa_od[oo, dd] + 1e-4) * ((beta_od[oo, dd] * demand[oo, dd] * prices[oo, dd]) ** (beta_od[oo, dd] - 1))
-                        grad_beta_v[oo, dd] = base_beta * (term_fij - alt_utility[oo, dd] * fext[oo, dd] + \
-                                              f[oo, dd] * (np.log(max(0, f[oo, dd]) + 1e-12) - 1) + \
-                                              fext[oo, dd] * (np.log(max(0, fext[oo, dd]) / n_airlines + 1e-12) - 1))
-                
+                        grad_beta_v[oo, dd] = (alfa_od[oo, dd] + 1e-4) * ((beta_od[oo, dd] * demand[oo, dd] * prices[oo, dd]) ** (beta_od[oo, dd] - 1)) * \
+                                              (logit_coef * prices[oo, dd] * f[oo, dd] + logit_coef * np.sum(fij[:, :, oo, dd] * travel_time) - \
+                                              alt_utility[oo, dd] * fext[oo, dd] + f[oo, dd] * (np.log(np.maximum(0, f[oo, dd]) + 1e-12) - 1) + \
+                                              fext[oo, dd] * (np.log(np.maximum(0, fext[oo, dd]) / n_airlines + 1e-12) - 1))
+                                              
                 used_budget = get_budget(s, sh, a, n, station_cost, station_capacity_slope, hub_cost, link_cost, lam)
+                
                 set_max_f(n, fij, n_airlines, travel_time, prices, alt_utility, omega_p, omega_t)
                 
                 gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-sl.gms'
+                gamsExe = r'C:\GAMS\50\gams.exe'
                 cmd = f'"{gamsExe}" "{gmsFile}"'
-                subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain')
+                subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain',stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL)
                 
-                # Reading sl results
-                if os.path.exists('./output_all.csv'):
-                    ctime_vals = read_gams_csv_robust('./output_all.csv', symbol_name='solver_time').values.flatten()
-                    if len(ctime_vals) > 0: comp_time += ctime_vals[-1]
-                    
-                    sh_df = read_gams_csv_robust('./output_all.csv', symbol_name='sh_level')
-                    sh = np.maximum(sh_df.iloc[:, -1].values.flatten() if len(sh_df)>0 else np.zeros(n), 1e-4)
-                    
-                    s_df = read_gams_csv_robust('./output_all.csv', symbol_name='s_level')
-                    s = np.maximum(s_df.iloc[:, -1].values.flatten() if len(s_df)>0 else np.zeros(n), 1e-4)
-                    
-                    f = parse_matrix('./output_all.csv', 'f_level', n)
-                    a = np.maximum(parse_matrix('./output_all.csv', 'a_level', n), 1e-4)
-                    fext = parse_matrix('./output_all.csv', 'fext_level', n)
+                ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
+                if len(ctime_vals) > 0:
+                    comp_time += ctime_vals.to_numpy().flatten()[-1]
                 
-                if os.path.exists('fij_long.csv'):
-                    T = pd.read_csv('fij_long.csv')
-                    iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
-                    fij = split_and_accumarray(T, iU, jU, oU, dU)
-                else:
-                    fij = np.zeros((n, n, n, n))
-                    
+                sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
+                sh = sh_df.to_numpy().flatten() if len(sh_df) > 0 else np.zeros(n)
+                sh = np.maximum(sh, 1e-4)
+                
+                s_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='s_level')
+                s = s_df.to_numpy().flatten() if len(s_df) > 0 else np.zeros(n)
+                s = np.maximum(s, 1e-4)
+                
+                a = parse_matrix('./output_all.xlsx', 'a_level', n)
+                a = np.maximum(a, 1e-4)
+                
+                f = parse_matrix('./output_all.xlsx', 'f_level', n)
+                fext = parse_matrix('./output_all.xlsx', 'fext_level', n)
+                
+                T = pd.read_csv('fij_long.csv')
+                iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
+                fij = split_and_accumarray(T, iU, jU, oU, dU)
+                
                 a[a < 1e-2] = 0
                 f[f < 1e-2] = 0
                 fext[fext > 0.99] = 1
@@ -479,6 +501,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 used_budget = get_budget(s, sh, a, n, station_cost, station_capacity_slope, hub_cost, link_cost, lam)
                 
                 print(obj_val_ll)
+                
                 f_sl = f.copy()
                 a_sl = a.copy()
                 
@@ -486,51 +509,67 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 grad_beta_f = np.zeros((n, n))
                 for oo in range(n):
                     for dd in range(n):
-                        # Igual que MATLAB: (demand*prices)^beta_od, sin +1e-4
                         term_f = (logit_coef * prices[oo, dd] * f[oo, dd] + logit_coef * np.sum(fij[:, :, oo, dd] * travel_time) - \
                                   alt_utility[oo, dd] * fext[oo, dd] + f[oo, dd] * (np.log(f[oo, dd] + 1e-12) - 1) + \
                                   fext[oo, dd] * (np.log(fext[oo, dd] / n_airlines + 1e-12) - 1))
-                        
-                        grad_alfa_f[oo, dd] = gamma * ((demand[oo, dd] * prices[oo, dd]) ** beta_od[oo, dd] * term_f - grad_alfa_v[oo, dd])
-                        grad_beta_f[oo, dd] = gamma * ((alfa_od[oo, dd] + 1e-4) * (beta_od[oo, dd] * demand[oo, dd] * prices[oo, dd]) ** (beta_od[oo, dd] - 1) * term_f - grad_beta_v[oo, dd])
+                                  
+                        grad_alfa_f[oo, dd] = gamma * (((demand[oo, dd] * prices[oo, dd]) ** beta_od[oo, dd]) * term_f - grad_alfa_v[oo, dd])
+                        grad_beta_f[oo, dd] = gamma * ((alfa_od[oo, dd] + 1e-4) * ((beta_od[oo, dd] * demand[oo, dd] * prices[oo, dd]) ** (beta_od[oo, dd] - 1)) * term_f - grad_beta_v[oo, dd])
                 
                 beta_od = beta_od - mu_beta * grad_beta_f
                 alfa_od = alfa_od - mu_alfa * grad_alfa_f
                 
-                beta_od = np.clip(beta_od, 0.5, 2)
-                alfa_od = np.clip(alfa_od, 1, 9)
+                beta_od = np.maximum(0.5, beta_od)
+                beta_od = np.minimum(2, beta_od)
+                
+                alfa_od = np.maximum(1, alfa_od)
+                alfa_od = np.minimum(9, alfa_od)
+
+                np.fill_diagonal(beta_od, 1)
+                np.fill_diagonal(alfa_od, 1)
                 
                 write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od)
                 write_gams_param_ii('./export_txt/beta_od.txt', beta_od)
                 
-                print('beta', beta_od)
-                print('alfa', alfa_od)
-                print('obj_val', obj_val_ll)
+                print('beta')
+                print(beta_od)
+                print('alfa')
+                print(alfa_od)
+                print('obj_val')
+                print(obj_val_ll)
                 
                 obj_hist[bliter - 1] = obj_val_ll
+                
                 obj_val_prev = obj_val
                 obj_val = obj_val_ll
+
+                debug.append({
+                    "iter": _iter,
+                    "bliter": bliter,
+                    "a": a.copy(),
+                    "f": f.copy(),
+                    "fext": fext.copy(),
+                    "fij": fij.copy(),
+                    "grad_alfa_v": grad_alfa_v.copy(),
+                    "grad_beta_v": grad_beta_v.copy(),
+                    "grad_alfa_f": grad_alfa_f.copy(),
+                    "grad_beta_f": grad_beta_f.copy(),
+                    "alfa_od": alfa_od.copy(),
+                    "beta_od": beta_od.copy()
+                })
                 
         if (used_budget - budget) / budget < 0.05:
-            # En MATLAB el break está comentado — solo se imprime el mensaje
-            print('cumplo presupuesto')
+            if _iter < (niters - 1):
+                print('cumplo presupuesto')
+            # break
             
-        s_prev = s_ll
-        sh_prev = sh_ll
-        a_prev = a_ll
+        s_prev = s_ll.copy()
+        sh_prev = sh_ll.copy()
+        a_prev = a_ll.copy()
         stop = 0
+        
+        _iter += 1
 
-    # Igual que MATLAB: tras el while, lanzar cvx-ll una vez más con niters=30
-    # (el bucle for iter=1:niters está comentado en MATLAB, solo se resetean prevs)
-    niters_final = 30
-    write_txt_param('niters', niters_final)
-    
-    a_prev = 1e4 * np.ones((n, n))
-    s_prev = 1e4 * np.ones(n)
-    sh_prev = s_prev.copy()
-    
-    # El bucle post-while estaba comentado en MATLAB — no se ejecuta
-    # Solo se guarda el resultado final del while
         
     filename = f'./8node_hs_prueba_v0_blo/bud={budget}_lam={lam}_alfa={alfa}_mu_al={mu_alfa}_mu_bet={mu_beta}_python.mat'
     if not os.path.exists('./8node_hs_prueba_v0_blo'):
@@ -539,6 +578,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                            'comp_time': comp_time, 'used_budget': used_budget,
                            'pax_obj': pax_obj, 'op_obj': op_obj, 'obj_val_ll': obj_val_ll,
                            'alfa_od': alfa_od, 'beta_od': beta_od, 'obj_hist': obj_hist})
+    sio.savemat("debug_python.mat", {"debug": debug})
     return s, sh, a, f, fext, fij
 
 
@@ -568,25 +608,26 @@ def compute_sim_MIP(lam, beta, alfa, n, budget):
     gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mip.gms'
     gamsExe = r'C:\GAMS\50\gams.exe'
     cmd = f'"{gamsExe}" "{gmsFile}"'
-    subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain')
+    subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain',stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL)
     
     # Read outputs
-    if os.path.exists('./output_all.csv'):
-        sh_df = read_gams_csv_robust('./output_all.csv', symbol_name='sh_level')
+    if os.path.exists('./output_all.xlsx'):
+        sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
         sh = sh_df.iloc[:, -1].values.flatten() if len(sh_df)>0 else np.zeros(n)
         
-        s_df = read_gams_csv_robust('./output_all.csv', symbol_name='s_level')
+        s_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='s_level')
         s = s_df.iloc[:, -1].values.flatten() if len(s_df)>0 else np.zeros(n)
         sprim = s.copy()
         deltas = np.zeros(n)
-        a = parse_matrix('./output_all.csv', 'a_level', n)
-        f = parse_matrix('./output_all.csv', 'f_level', n)
-        fext = parse_matrix('./output_all.csv', 'fext_level', n)
+        a = parse_matrix('./output_all.xlsx', 'a_level', n)
+        f = parse_matrix('./output_all.xlsx', 'f_level', n)
+        fext = parse_matrix('./output_all.xlsx', 'fext_level', n)
         
-        mipgap_df = read_gams_csv_robust('./output_all.csv', symbol_name='mip_opt_gap')
+        mipgap_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='mip_opt_gap')
         mipgap = mipgap_df.iloc[:, -1].values.flatten() if len(mipgap_df)>0 else [0]
         
-        ctime_vals = read_gams_csv_robust('./output_all.csv', symbol_name='solver_time').values.flatten()
+        ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time').values.flatten()
         comp_time = ctime_vals[-1] if len(ctime_vals) > 0 else 0
     else:
         sh = np.zeros(n); s = np.zeros(n); sprim = np.zeros(n); deltas = np.zeros(n); a = np.zeros((n,n)); f = np.zeros((n,n)); fext = np.zeros((n,n)); mipgap = [0]; comp_time = 0
@@ -676,7 +717,6 @@ if __name__ == '__main__':
     # Run the configurations
     alfa = 0.5
     budgets = [3e4, 4e4, 5e4, 6e4, 7e4, 8e4, 9e4, 1e5]
-    budgets = [3e4]
     lam = 4
     
     #for bud in budgets:

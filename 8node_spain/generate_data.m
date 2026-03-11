@@ -106,7 +106,6 @@ budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
 budgets = [3e4,4e4,5e4,6e4,7e4,8e4,9e4,1e5];
-budgets = 3e4;
 
 
 %budgets = [4e4];
@@ -173,8 +172,8 @@ used_bud = best_alfa;
 
 %%
 
-mu_beta = 5e-2;
-mu_alfa = 1e-8;
+mu_beta = 2e-1;
+mu_alfa = 1e-7;
 budgets = [3e4,4e4,5e4,6e4,7e4,8e4,9e4,1e5];
 
 for bb=1:length(budgets)
@@ -598,11 +597,13 @@ function [s,sh,a,f,fext,fij] = compute_sim_cvx_blo(lam,alfa,n,budget)
     station_capacity_slope,demand,prices,...
     load_factor,op_link_cost,congestion_coef_stations,...
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
-    a_max,candidasourcertes,omega_t,omega_p] = parameters_8node_network();
-% 
-% demand = demand./365;
+    a_max,candidasourcertes,omega_t,omega_p] = parameters_8node_network(); 
 
 
+debug = struct('a',{},'f',{},'fext',{},'fij',{}, ...
+               'grad_alfa_v',{},'grad_beta_v',{}, ...
+               'grad_alfa_f',{},'grad_beta_f',{}, ...
+               'alfa_od',{},'beta_od',{});
 
 niters = 20;
 
@@ -625,10 +626,6 @@ beta_od = ones(n);
 
 write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
 write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
-% beta_od(3,4) = 1.3;
-% beta_od(4,3) = beta_od(3,4);
-% beta_od(2,6) = 0.7;
-% beta_od(6,2) = 0.7;
 gamma = 20;
 
 logit_coef = 0.02; n_airlines = 5;
@@ -666,7 +663,6 @@ bliters = 30;
 
 a_prev = 1e4*ones(n);
 s_prev = 1e4*ones(1,n);
-
 sh_prev = s_prev;
 
 comp_time = 0;
@@ -917,6 +913,8 @@ while iter <= niters
         
             alfa_od = max(1,alfa_od);
             alfa_od = min(9,alfa_od);
+            alfa_od(1:n+1:end) = 1;
+            beta_od(1:n+1:end) = 1;
         
             write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
             write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
@@ -936,7 +934,20 @@ while iter <= niters
             drawnow;
             obj_val_prev = obj_val;
             obj_val = obj_val_ll;
+
+            debug(iter,bliter).a = a;
+            debug(iter,bliter).f = f;
+            debug(iter,bliter).fext = fext;
+            debug(iter,bliter).fij = fij;
+            debug(iter,bliter).grad_alfa_v = grad_alfa_v;
+            debug(iter,bliter).grad_beta_v = grad_beta_v;
+            debug(iter,bliter).grad_alfa_f = grad_alfa_f;
+            debug(iter,bliter).grad_beta_f = grad_beta_f;
+            debug(iter,bliter).alfa_od = alfa_od;
+            debug(iter,bliter).beta_od = beta_od;
         end
+
+
     
     end
     if ((used_budget - budget)/budget) < 0.05
@@ -1076,6 +1087,8 @@ filename = sprintf('./8node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_b
 save(filename,'s','sh', ...
     'a','f','fext','fij','comp_time','used_budget', ...
     'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');
+
+save('debug_matlab.mat','debug')
 
 end
 

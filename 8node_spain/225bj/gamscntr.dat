@@ -1,45 +1,45 @@
 53
-2 46 0 0 504  0.00000000000000E+0000 5  0.00000000000000E+0000 0 0
-7518 0 0 0 2404 1054 1296 5168 0 0 0 0
-5260 0 0 0 0 0 0 0
-25495 0
-2686 2574 0 0 0 0 0 2652 0 34
-0 0 0 0 0 0 0
-0 76 0
-0 0 20
+4 8 0 0 504  0.00000000000000E+0000 5  0.00000000000000E+0000 0 0
+2893 128 0 0 1914 821 310 1762 0 0 0 0
+4822 256 0 0 0 0 0 0
+26807 256
+4822 0 0 0 0 0 0 4433 0 389
+139 0 0 0 0 0 0
+0 18 0
+1024 16 20
  1.00000000000000E-0004  0.00000000000000E+0000 0
 0  0.00000000000000E+0000 0  0.00000000000000E+0000
- 7.20000000000000E+0003 2147483647 0
-2011 0
- 0.00000000000000E+0000 0 0 0  1.00000000000000E+0000 0 60 0 0  1.00000000000000E-0005 0
-1 100
+ 1.00000000000000E+0010 2147483647 0
+11 0
+ 0.00000000000000E+0000 0 0 0  1.00000000000000E+0000 0 64 0 0  1.00000000000000E-0005 0
+4437 100
 0 0 0 0 0
  0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000  0.00000000000000E+0000
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225bh\gamsmatr.dat
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225bh\gamsinst.dat
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cplex.opt
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225bh\gamsstat.dat
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225bh\gamssolu.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bj\gamsmatr.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bj\gamsinst.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mosek.opt
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bj\gamsstat.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bj\gamssolu.dat
 
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225bh\gamsdict.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bj\gamsdict.dat
 3
-09:23:32
+12:48:55
 03/09/26
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\
 C:\GAMS\50\
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225bh\
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bj\
 32767 2147483647
-0 0 179 46089 45940 62326
+0 0 179 46089 45940 62288
 Luis Cadarso Morga                             G250911+0003Ac-GEN0
 University Rey Juan Carlos                                       0
 01COCPMB                                                         0
-0 1 4 0
-225bh\gmsprmNT.dat
-15 45 10
+0 1 5 0
+225bj\gmsprmNT.dat
+15 45 32
 LP          10 0
-MIP         10 10
+MIP         10 0
 RMIP        10 0
-NLP         5 0
+NLP         5 32
 MCP         36 0
 MPEC        34 0
 RMPEC       34 0
@@ -185,23 +185,23 @@ gmsgennt.cmd
 gmsgennx.exe
 05050505                                                         0
 DCE4613   d7f493a1-703d-423d-96d8-160ee6334eb6 N COURSE          0
-node:23539203 mem:64 cores:8 ipport:52254 v:2                    0
-MEYCIQDCEn5/bYTRdcTWI5IL1jJj/2taFcNxNzMa9Cvli0aBWAIhAOa9gsio8onLi0
-Q9Nca24VFsthUeasbUkQD2QCvZYnKvC                                  0
+node:23539203 mem:64 cores:8 ipport:53201 v:2                    0
+MEUCIQCLrJgnVPVhpMzFlHESauMOaLDp0PSyuoARBrv8G9RsugIgE4112HcZu9mEu0
+b75PSKnFNEEuSiMF5sS1EjXqPiFzDI=                                  0
 0 C:\GAMS\50\gamslice.txt
 1 C:\GAMS\50\gmscmpnt.txt
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mip.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-sl.dat
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0  1.00000000000000E+0000 0 0
+0 0  1.00000000000000E+0000 0 8
 0 0 0
 0 0 0 1 0
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\netdesign.dll
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225bh\sbbinfo.dat
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225bh\gamscntr.dat
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\netplan.dll
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bj\sbbinfo.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\225bj\gamscntr.dat
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\
 dat
  1.00000000000000E+0299
 
 
-C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mip.gms
- 2.54950000000000E+0004  0.00000000000000E+0000
+C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-sl.gms
+ 2.68070000000000E+0004  2.56000000000000E+0002
