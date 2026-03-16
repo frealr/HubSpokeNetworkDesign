@@ -1,26 +1,37 @@
 \section{Single-Level Multiobjective Formulation}
-The starting point of the methodology is a continuous single-level model that balances passenger-attraction and operational efficiency. At a high level, the objective can be written as
+The single-level formulation used in this project should be read as a specialization of the framework introduced in Chapters 2 and 3 of the TFG. In the general public-network setting, the model is posed as a continuous optimization problem that minimizes a weighted combination of passenger cost and operator cost,
 \begin{equation}
-\min \; \gamma \, \Phi^{\mathrm{LL}}(x; \alpha,\beta) + \Psi^{\mathrm{UL}}(x),
+\min \; \alpha \, PAX + (1-\alpha)\, OP,
 \end{equation}
-where $x$ collects the network design and flow variables, $\Phi^{\mathrm{LL}}$ denotes the lower-level multiobjective surrogate, $(\alpha,\beta)$ are market-specific weights, and $\Psi^{\mathrm{UL}}$ is a scaled version of the true economic objective used to stabilize the combined formulation.
+where the scalar parameter $\alpha \in (0,1)$ balances the two objectives. The passenger term $PAX$ contains the negative utilities, the entropy regularizers that generate the logit split, and the congestion surrogates, whereas the operator term $OP$ contains the operating cost of the designed network. Fixed deployment costs are first expressed through indicator functions in a budget constraint and are then incorporated into the objective through a Lagrange multiplier $\beta$ together with a reweighted $\ell_1$ approximation.
 
-In the implementation, the lower-level surrogate contains three components. The first is a passenger utility term that penalizes generalized travel disutility on the designed network and compares it against an outside option utility. The second is an entropy contribution for the internal market share and the external market share. These terms generate the smooth logit-type demand split seen in the code through epigraph and exponential-cone constraints. The third is an operating-cost term that accounts for the capacity installed on active links.
-
-The passenger-attraction component is market dependent. For each market $(o,d)$, its contribution is scaled by coefficients of the form
+The TFG also shows that this leads to a penalized objective of the form
 \begin{equation}
-w_{od} = \alpha_{od}\bigl(p_{od} q_{od}\bigr)^{\beta_{od}},
+\alpha\,PAX + (1-\alpha)\,OP + \beta\,\Phi_{\mathrm{deploy}}^{\mathrm{rw}},
 \end{equation}
-where $p_{od}$ is the fare and $q_{od}$ is demand. These coefficients determine how strongly a market influences the lower-level design. When the weights are fixed, the optimization chooses capacities, flows, and market shares that satisfy:
+where $\Phi_{\mathrm{deploy}}^{\mathrm{rw}}$ is the MM-based reweighted approximation of the fixed and linear deployment costs. This is the continuous single-level template on top of which the airline model is built.
 
+For the airline application, the objective changes in an important way. Since the operator is private, the model is no longer written as a social compromise between passengers and operator. Instead, the single-level airline objective combines:
 \begin{itemize}
-\item demand splitting between the internal network and the external alternative;
-\item flow conservation for every origin-destination market;
-\item link-capacity restrictions based on aircraft productivity and load factor;
-\item station and hub-capacity restrictions that support transfer activity;
-\item candidate-link restrictions and budget feasibility.
+\item operating costs on active flight legs;
+\item reweighted deployment costs associated with airport capacity, hub capacity, and, in the original TFG formulation, also link activation;
+\item passenger-utility terms on the new airline network;
+\item passenger-utility terms on the external competing alternative;
+\item entropy terms that recover a logit market split;
+\item congestion penalties associated with airport slack variables.
 \end{itemize}
 
-The budget equation combines linear capacity costs with a reweighted approximation of fixed station and hub costs. This turns the full model into a smooth or nearly smooth continuous problem that can be handled with conic optimization tools while still reflecting the economic pressure to concentrate capacity on a limited number of nodes and connections.
+The most characteristic modification of the airline model, emphasized in Chapter 5, is that utility and entropy terms are multiplied by market prices. This is done so that the lower-level problem is no longer merely attracted to large-demand markets, but instead gives more importance to markets with greater revenue potential. In other words, the entropic logit structure is preserved, but it is embedded into a profit-oriented design model.
 
-An important additional constraint enforces market profitability at the route level by requiring market revenue to dominate the operating cost of the assigned itinerary. This acts as a safeguard against unrealistic demand capture patterns in which traffic would be attracted to economically unsustainable services.
+The continuous airline formulation is completed with the main operational constraints already reflected in the code:
+\begin{itemize}
+\item link-capacity constraints tying passenger flows to flight frequencies through nominal aircraft capacity and load factor;
+\item airport-capacity constraints for departures and arrivals;
+\item hub-capacity constraints for transfer traffic;
+\item symmetry constraints on operated links;
+\item flow-conservation constraints for every market;
+\item market-share constraints $f_{od}+f^{\mathrm{ext}}_{od}=1$;
+\item profitability constraints ensuring that captured markets are economically viable.
+\end{itemize}
+
+This is the true single-level basis of the present work. The bilevel scheme introduced later does not replace this model; it modifies the way market importance is encoded inside its passenger-related terms.

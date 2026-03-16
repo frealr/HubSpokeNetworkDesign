@@ -1,15 +1,19 @@
 \section{Problem Setting}
-We consider a set of airports indexed by $i,j \in N$ and a set of origin-destination markets indexed by $(o,d) \in N \times N$ with $o \neq d$. For each market, the airline can either capture a fraction of demand through itineraries operated on its own network or lose that demand to an external alternative. The main continuous design variables are:
+We consider a set of candidate airports indexed by $i,j \in \mathcal{S}$ and a set of origin-destination markets indexed by $(o,d) \in \mathcal{K}$, with $o \neq d$. For each market, the new airline competes against an outside alternative representing the incumbent competitors already present in the market. The network to be designed follows a hub-and-spoke logic: some airports may behave as spokes, whereas others may acquire additional transfer capacity and operate as hubs.
+
+In the implementation used in this repository, the main continuous variables are:
 
 \begin{itemize}
-\item station capacity variables $s_i$ and hub-related capacity variables $sh_i$;
-\item link capacity or frequency variables $a_{ij}$;
-\item market share variables $f_{od}$ for demand served on the designed network and $f^{\mathrm{ext}}_{od}$ for external demand capture;
-\item routing variables $f_{ij}^{od}$ describing how captured demand is assigned across links.
+\item airport-capacity variables $s_i$ and hub-capacity variables $sh_i$, which correspond to the non-hub and hub components of installed airport capacity;
+\item link-capacity or frequency variables $a_{ij}$ for each potential flight leg $(i,j)$;
+\item market-share variables $f_{od}$ and $f^{\mathrm{ext}}_{od}$, representing the proportions of market $(o,d)$ captured by the new airline and by the outside alternative, respectively;
+\item routing variables $f_{ij}^{od}$, which determine how the demand captured by the airline is assigned over the arcs of the designed network.
 \end{itemize}
 
-The data generated in the numerical instances include market demand, prices, travel times, operating cost coefficients, station costs, hub costs, and candidate connections. Demand conservation, link-capacity constraints, station-capacity constraints, and hub-capacity constraints ensure that any feasible solution corresponds to a valid hub-and-spoke operating pattern.
+The data generated in the numerical instances include market demand, ticket prices, travel times, operating cost coefficients, airport deployment costs, hub costs, and the set of candidate direct connections. As in the TFG, the state variables are treated as given, while the optimization determines capacities, network structure, and market shares.
 
-The model also embeds a behavioral description of competition. For each origin-destination market, the airline competes against a set of external alternatives summarized through an outside utility term. The entropy terms used in the optimization induce a smooth market share split between the designed network and those alternatives, thereby avoiding discontinuous choice rules while preserving an economically interpretable logit structure.
+The formulation keeps the behavioral viewpoint of Chapters 2 and 3 of the TFG. For each market $(o,d)$, passengers choose between the newly designed airline network and the external alternative. Rather than imposing the resulting logit split through a non-convex constraint, the model introduces entropy terms and utility terms in the objective. The lower-level optimality conditions then reproduce the market split in closed form.
 
-Budget limitations are imposed on both variable and approximated fixed costs. Variable costs scale with the amount of installed capacity, while fixed costs associated with stations and hubs are represented through a reweighted penalty that depends on the capacities selected in previous iterations. This feature is central to keeping the overall problem continuous while still encouraging sparse network structures.
+The hub-and-spoke structure is enforced through dedicated capacity constraints. Airport capacity must sustain departures and arrivals, hub capacity must sustain connecting traffic, and direct service between two airports is allowed only when the corresponding endpoints have sufficient hub capacity. In addition, market-specific profitability constraints are introduced in the airline model so that the network only captures traffic on markets whose revenue covers the associated operating cost.
+
+Finally, deployment decisions remain continuous but are intended to behave sparsely. Positive values of $s_i$, $sh_i$, or $a_{ij}$ indicate that the corresponding resource is activated, while zero values indicate that it is not used. This is the mechanism through which the continuous model emulates the discrete build-or-not-build logic of the original mixed-integer problem.

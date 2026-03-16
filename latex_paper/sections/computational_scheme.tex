@@ -1,19 +1,22 @@
-\section{Iterative Fixed-Cost Approximation and Computational Scheme}
-The main non-smooth feature of the airline network design problem is the presence of fixed costs associated with opening stations, hubs, and links. Directly embedding these costs in the bilevel formulation would naturally lead to binary variables and non-convex nonsmooth structure. The computational strategy adopted here is to approximate fixed costs through sparsity-promoting penalties on the capacity variables.
+\section{Computational Scheme}
+The computational procedure is best understood as the combination of two iterative ideas that already appear separately in the TFG and are coupled here in the airline implementation. The first idea is the majorization-minimization treatment of fixed costs through reweighted $\ell_1$ penalties. The second idea is the iterative adaptation of market coefficients in the bilevel layer.
 
-Let $z$ denote a generic capacity variable, such as a station capacity or hub-capacity component. A fixed-cost term of the form $\kappa \, \mathbf{1}_{\{z>0\}}$ is replaced by a reweighted $\ell_1$ surrogate,
+For the deployment terms, the TFG replaces indicator-type fixed costs by reweighted linear penalties. In its generic form, a fixed activation term $\kappa\,\mathbf{1}_{\{z>0\}}$ is approximated at iteration $k$ through a contribution proportional to
 \begin{equation}
-\kappa \, \frac{z}{z^{\mathrm{prev}} + \varepsilon},
+\kappa \, \frac{z^{(k)}}{z^{(k-1)}+\varepsilon},
 \end{equation}
-where $z^{\mathrm{prev}}$ is the value obtained in the previous iteration and $\varepsilon > 0$ is a small regularization parameter. When a component remains small, the corresponding weight becomes large and pushes that component toward zero; when a component is persistently active, the penalty becomes milder. This mechanism progressively separates active and inactive capacities and better mimics a fixed-charge structure.
+which is the first-order MM surrogate associated with the logarithmic sparsity regularizer. This mechanism is the bridge between the discontinuous $\ell_0$ viewpoint and the continuous optimization model.
 
-The algorithm implemented in the project alternates between two nested loops:
+In the airline chapter of the TFG, this idea is used to represent deployment costs for airport, hub, and link capacities. In the current code, the reweighting is concentrated on the airport-capacity variables $s_i$ and $sh_i$, which are the dominant source of fixed-cost non-smoothness in the bilevel setting. The previous iterates \texttt{s\_prev}, \texttt{sh\_prev}, and \texttt{a\_prev} are written to GAMS before each solve and determine the linearized penalties used in the current iteration.
 
+On top of that MM loop, the bilevel implementation in \texttt{generate\_data.py} introduces an inner calibration loop for the market-wise coefficients \texttt{alfa\_od} and \texttt{beta\_od}. The resulting algorithm alternates the following steps:
 \begin{itemize}
-\item an outer loop that updates the reference capacities used in the reweighted penalties;
-\item an inner loop that solves the continuous design problem and adjusts the market-weight matrices $\alpha_{od}$ and $\beta_{od}$.
+\item solve the lower-level airline model with the current reweighting coefficients and current market weights;
+\item recover capacities, market shares, and route flows from the GAMS output;
+\item update auxiliary bounds related to feasible logit shares;
+\item solve the companion single-level model used to evaluate the current design;
+\item compute gradient-style corrections for \texttt{alfa\_od} and \texttt{beta\_od};
+\item update the reference capacities used in the MM penalties and repeat.
 \end{itemize}
 
-Within each cycle, the model writes the current parameters to GAMS input files, solves the lower-level problem, recovers the resulting capacities and flows, updates bounds for the demand share variables, solves the companion single-level model, and then computes gradient-style corrections for the market weights. The resulting capacities are thresholded to identify negligible components, and the next outer iteration uses those capacities as the new reference point in the reweighted cost approximation.
-
-This procedure should be interpreted as a successive approximation algorithm rather than as an exact global bilevel solver. Its purpose is to exploit the scalability of continuous conic optimization while progressively recovering the sparse structures that would normally emerge from discrete fixed-cost decisions. In practice, this yields a workable compromise between modeling realism and numerical tractability.
+This nested iteration is not an exact bilevel algorithm in the classical sense. Rather, it is a practical successive-approximation scheme that preserves the tractability of the continuous model while progressively improving two aspects of the solution: the fidelity with which fixed costs are represented, and the consistency between lower-level market emphasis and upper-level profit. That is precisely the computational philosophy inherited from the TFG and extended in the present project.

@@ -1,15 +1,19 @@
 \section{Bilevel Weight-Adjustment Framework}
-Although the single-level model produces feasible and behaviorally meaningful networks, its objective remains a surrogate for the airline's actual target. The project therefore introduces a bilevel scheme in which the upper level selects the lower-level market weights so as to improve true profitability.
+The bilevel contribution of the present project starts from the single-level airline model just described and asks a natural question: how should the lower-level market weights be chosen so that the resulting design maximizes the airline's true profit? In the TFG, the market coefficients $w^{od}$ are treated as exogenous quantities derived from the data. In the current implementation, they are generalized to learnable coefficients of the form
+\begin{equation}
+w^{od}(\alpha_{od},\beta_{od}) = \alpha_{od}\bigl(p^{od}q^{od}\bigr)^{\beta_{od}},
+\end{equation}
+where $q^{od}$ and $p^{od}$ denote market demand and price. In the code, these matrices are stored as \texttt{alfa\_od} and \texttt{beta\_od}.
 
-At the conceptual level, the bilevel problem can be written as
+This introduces a notational overlap with the scalar parameters $\alpha$ and $\beta$ used in the TFG for multiobjective weighting and budget penalization. Conceptually, however, the roles are different. The scalar $\alpha$ of the TFG controls the trade-off between $PAX$ and $OP$ in the public-network model, whereas the matrices $\alpha_{od}$ and $\beta_{od}$ used here calibrate the relative relevance of each market inside the private-airline lower-level objective.
+
+At a conceptual level, the extended problem can be written as
 \begin{align}
-\max_{\alpha,\beta} \quad & \Pi\bigl(x^\star(\alpha,\beta)\bigr) \\
-\text{s.t.} \quad & x^\star(\alpha,\beta) \in \arg\min_x \Phi^{\mathrm{LL}}(x;\alpha,\beta),
+\max_{\alpha_{od},\beta_{od}} \quad & \Pi\bigl(x^\star(\alpha_{od},\beta_{od})\bigr) \\
+\text{s.t.} \quad & x^\star(\alpha_{od},\beta_{od}) \in \arg\min_x \Phi_{\mathrm{air}}(x;\alpha_{od},\beta_{od}),
 \end{align}
-where $\Pi(\cdot)$ denotes the airline profit and $x^\star(\alpha,\beta)$ is an optimal solution of the lower-level design problem. Rather than solving this model through exact bilevel reformulation, the code implements an iterative adjustment of the weight matrices $\alpha_{od}$ and $\beta_{od}$.
+where $\Phi_{\mathrm{air}}$ denotes the continuous airline single-level objective and $\Pi$ is the actual profit of the airline. The upper-level problem therefore does not redesign the network directly; instead, it learns how the lower level should value each market so that the induced design is more profitable.
 
-The logic is the following. Starting from uniform weights, the algorithm solves the lower-level model and recovers capacities, market shares, and route assignments. Using these outputs, it computes sensitivity-like updates that compare the current lower-level market valuation with the contribution of each market to the upper-level objective. Markets whose lower-level emphasis is too weak relative to profit are assigned larger weights, while markets that are overemphasized are down-weighted. The update is repeated over several inner iterations and the coefficients are projected onto prescribed bounds to keep the procedure numerically stable.
+The interpretation is straightforward. If a market contributes strongly to revenue and profitability but is underemphasized in the lower-level design, the bilevel update should increase its weight. If a market receives excessive emphasis in the lower-level objective relative to its profit contribution, its weight should be reduced. In this way, the bilevel layer acts as a calibration mechanism over the continuous design model inherited from the TFG.
 
-This interpretation is consistent with the expressions appearing in the implementation, where the matrices \texttt{alfa\_od} and \texttt{beta\_od} are updated through gradient-style steps after alternating solves of the lower-level and single-level models. The bilevel layer therefore acts as a calibration mechanism: it does not modify the feasible network set directly, but reshapes the lower-level objective so that the resulting continuous design tracks profit more closely.
-
-The advantage of this strategy is practical tractability. Exact mixed-integer bilevel formulations with fixed costs, passenger-choice structure, and multicommodity flows are extremely difficult to solve. By moving the complexity to an iterative weight-adjustment procedure, the model preserves a strong link between design choices and profitability without sacrificing the continuous structure of the lower-level optimization.
+In the current implementation, this calibration is not solved through an exact KKT-based bilevel reformulation. Instead, the matrices $\alpha_{od}$ and $\beta_{od}$ are updated iteratively using gradient-style corrections computed from successive lower-level solves. This choice is consistent with the philosophy of the original continuous approach: preserve tractability, avoid mixed-integer bilevel structure, and exploit repeated convex or nearly convex solves to approach a profit-oriented design.
