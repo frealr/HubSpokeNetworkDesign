@@ -1,0 +1,15 @@
+\section{Bilevel Weight-Adjustment Framework}
+Although the single-level model produces feasible and behaviorally meaningful networks, its objective remains a surrogate for the airline's actual target. The project therefore introduces a bilevel scheme in which the upper level selects the lower-level market weights so as to improve true profitability.
+
+At the conceptual level, the bilevel problem can be written as
+\begin{align}
+\max_{\alpha,\beta} \quad & \Pi\bigl(x^\star(\alpha,\beta)\bigr) \\
+\text{s.t.} \quad & x^\star(\alpha,\beta) \in \arg\min_x \Phi^{\mathrm{LL}}(x;\alpha,\beta),
+\end{align}
+where $\Pi(\cdot)$ denotes the airline profit and $x^\star(\alpha,\beta)$ is an optimal solution of the lower-level design problem. Rather than solving this model through exact bilevel reformulation, the code implements an iterative adjustment of the weight matrices $\alpha_{od}$ and $\beta_{od}$.
+
+The logic is the following. Starting from uniform weights, the algorithm solves the lower-level model and recovers capacities, market shares, and route assignments. Using these outputs, it computes sensitivity-like updates that compare the current lower-level market valuation with the contribution of each market to the upper-level objective. Markets whose lower-level emphasis is too weak relative to profit are assigned larger weights, while markets that are overemphasized are down-weighted. The update is repeated over several inner iterations and the coefficients are projected onto prescribed bounds to keep the procedure numerically stable.
+
+This interpretation is consistent with the expressions appearing in the implementation, where the matrices \texttt{alfa\_od} and \texttt{beta\_od} are updated through gradient-style steps after alternating solves of the lower-level and single-level models. The bilevel layer therefore acts as a calibration mechanism: it does not modify the feasible network set directly, but reshapes the lower-level objective so that the resulting continuous design tracks profit more closely.
+
+The advantage of this strategy is practical tractability. Exact mixed-integer bilevel formulations with fixed costs, passenger-choice structure, and multicommodity flows are extremely difficult to solve. By moving the complexity to an iterative weight-adjustment procedure, the model preserves a strong link between design choices and profitability without sacrificing the continuous structure of the lower-level optimization.

@@ -1,0 +1,15 @@
+\section{Problem Setting}
+We consider a set of airports indexed by $i,j \in N$ and a set of origin-destination markets indexed by $(o,d) \in N \times N$ with $o \neq d$. For each market, the airline can either capture a fraction of demand through itineraries operated on its own network or lose that demand to an external alternative. The main continuous design variables are:
+
+\begin{itemize}
+\item station capacity variables $s_i$ and hub-related capacity variables $sh_i$;
+\item link capacity or frequency variables $a_{ij}$;
+\item market share variables $f_{od}$ for demand served on the designed network and $f^{\mathrm{ext}}_{od}$ for external demand capture;
+\item routing variables $f_{ij}^{od}$ describing how captured demand is assigned across links.
+\end{itemize}
+
+The data generated in the numerical instances include market demand, prices, travel times, operating cost coefficients, station costs, hub costs, and candidate connections. Demand conservation, link-capacity constraints, station-capacity constraints, and hub-capacity constraints ensure that any feasible solution corresponds to a valid hub-and-spoke operating pattern.
+
+The model also embeds a behavioral description of competition. For each origin-destination market, the airline competes against a set of external alternatives summarized through an outside utility term. The entropy terms used in the optimization induce a smooth market share split between the designed network and those alternatives, thereby avoiding discontinuous choice rules while preserving an economically interpretable logit structure.
+
+Budget limitations are imposed on both variable and approximated fixed costs. Variable costs scale with the amount of installed capacity, while fixed costs associated with stations and hubs are represented through a reweighted penalty that depends on the capacities selected in previous iterations. This feature is central to keeping the overall problem continuous while still encouraging sparse network structures.

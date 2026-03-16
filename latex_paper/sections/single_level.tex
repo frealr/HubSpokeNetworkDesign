@@ -1,0 +1,26 @@
+\section{Single-Level Multiobjective Formulation}
+The starting point of the methodology is a continuous single-level model that balances passenger-attraction and operational efficiency. At a high level, the objective can be written as
+\begin{equation}
+\min \; \gamma \, \Phi^{\mathrm{LL}}(x; \alpha,\beta) + \Psi^{\mathrm{UL}}(x),
+\end{equation}
+where $x$ collects the network design and flow variables, $\Phi^{\mathrm{LL}}$ denotes the lower-level multiobjective surrogate, $(\alpha,\beta)$ are market-specific weights, and $\Psi^{\mathrm{UL}}$ is a scaled version of the true economic objective used to stabilize the combined formulation.
+
+In the implementation, the lower-level surrogate contains three components. The first is a passenger utility term that penalizes generalized travel disutility on the designed network and compares it against an outside option utility. The second is an entropy contribution for the internal market share and the external market share. These terms generate the smooth logit-type demand split seen in the code through epigraph and exponential-cone constraints. The third is an operating-cost term that accounts for the capacity installed on active links.
+
+The passenger-attraction component is market dependent. For each market $(o,d)$, its contribution is scaled by coefficients of the form
+\begin{equation}
+w_{od} = \alpha_{od}\bigl(p_{od} q_{od}\bigr)^{\beta_{od}},
+\end{equation}
+where $p_{od}$ is the fare and $q_{od}$ is demand. These coefficients determine how strongly a market influences the lower-level design. When the weights are fixed, the optimization chooses capacities, flows, and market shares that satisfy:
+
+\begin{itemize}
+\item demand splitting between the internal network and the external alternative;
+\item flow conservation for every origin-destination market;
+\item link-capacity restrictions based on aircraft productivity and load factor;
+\item station and hub-capacity restrictions that support transfer activity;
+\item candidate-link restrictions and budget feasibility.
+\end{itemize}
+
+The budget equation combines linear capacity costs with a reweighted approximation of fixed station and hub costs. This turns the full model into a smooth or nearly smooth continuous problem that can be handled with conic optimization tools while still reflecting the economic pressure to concentrate capacity on a limited number of nodes and connections.
+
+An important additional constraint enforces market profitability at the route level by requiring market revenue to dominate the operating cost of the assigned itinerary. This acts as a safeguard against unrealistic demand capture patterns in which traffic would be attracted to economically unsustainable services.

@@ -1,0 +1,19 @@
+\section{Iterative Fixed-Cost Approximation and Computational Scheme}
+The main non-smooth feature of the airline network design problem is the presence of fixed costs associated with opening stations, hubs, and links. Directly embedding these costs in the bilevel formulation would naturally lead to binary variables and non-convex nonsmooth structure. The computational strategy adopted here is to approximate fixed costs through sparsity-promoting penalties on the capacity variables.
+
+Let $z$ denote a generic capacity variable, such as a station capacity or hub-capacity component. A fixed-cost term of the form $\kappa \, \mathbf{1}_{\{z>0\}}$ is replaced by a reweighted $\ell_1$ surrogate,
+\begin{equation}
+\kappa \, \frac{z}{z^{\mathrm{prev}} + \varepsilon},
+\end{equation}
+where $z^{\mathrm{prev}}$ is the value obtained in the previous iteration and $\varepsilon > 0$ is a small regularization parameter. When a component remains small, the corresponding weight becomes large and pushes that component toward zero; when a component is persistently active, the penalty becomes milder. This mechanism progressively separates active and inactive capacities and better mimics a fixed-charge structure.
+
+The algorithm implemented in the project alternates between two nested loops:
+
+\begin{itemize}
+\item an outer loop that updates the reference capacities used in the reweighted penalties;
+\item an inner loop that solves the continuous design problem and adjusts the market-weight matrices $\alpha_{od}$ and $\beta_{od}$.
+\end{itemize}
+
+Within each cycle, the model writes the current parameters to GAMS input files, solves the lower-level problem, recovers the resulting capacities and flows, updates bounds for the demand share variables, solves the companion single-level model, and then computes gradient-style corrections for the market weights. The resulting capacities are thresholded to identify negligible components, and the next outer iteration uses those capacities as the new reference point in the reweighted cost approximation.
+
+This procedure should be interpreted as a successive approximation algorithm rather than as an exact global bilevel solver. Its purpose is to exploit the scalability of continuous conic optimization while progressively recovering the sparse structures that would normally emerge from discrete fixed-cost decisions. In practice, this yields a workable compromise between modeling realism and numerical tractability.
