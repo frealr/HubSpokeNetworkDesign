@@ -1,19 +1,79 @@
 \section{Bilevel Weight-Adjustment Framework}
-The bilevel contribution of the present project starts from the single-level airline model just described and asks a natural question: how should the lower-level market weights be chosen so that the resulting design maximizes the airline's true profit? In the TFG, the market coefficients $w^{od}$ are treated as exogenous quantities derived from the data. In the current implementation, they are generalized to learnable coefficients of the form
+The bilevel model treats the market-wise coefficients $\widehat{\alpha}^{od}$ and $\widehat{\beta}^{od}$ as upper-level decision variables. Their role is to determine how strongly each origin-destination market contributes to the lower-level passenger and entropy terms. The upper-level objective is the actual profit of the airline,
 \begin{equation}
-w^{od}(\alpha_{od},\beta_{od}) = \alpha_{od}\bigl(p^{od}q^{od}\bigr)^{\beta_{od}},
+\Pi(x)=\sum_{(o,d)\in\mathcal{K}} p^{od}q^{od}f^{od}
+-\sum_{(i,j)\in\mathcal{A}} c_{o_{ij}}a_{ij},
 \end{equation}
-where $q^{od}$ and $p^{od}$ denote market demand and price. In the code, these matrices are stored as \texttt{alfa\_od} and \texttt{beta\_od}.
+while the lower-level response is the solution of the continuous network design problem introduced in the previous section.
 
-This introduces a notational overlap with the scalar parameters $\alpha$ and $\beta$ used in the TFG for multiobjective weighting and budget penalization. Conceptually, however, the roles are different. The scalar $\alpha$ of the TFG controls the trade-off between $PAX$ and $OP$ in the public-network model, whereas the matrices $\alpha_{od}$ and $\beta_{od}$ used here calibrate the relative relevance of each market inside the private-airline lower-level objective.
-
-At a conceptual level, the extended problem can be written as
+Using the lower-level variable $y$ to emphasize the nested structure, the bilevel problem can be written as
 \begin{align}
-\max_{\alpha_{od},\beta_{od}} \quad & \Pi\bigl(x^\star(\alpha_{od},\beta_{od})\bigr) \\
-\text{s.t.} \quad & x^\star(\alpha_{od},\beta_{od}) \in \arg\min_x \Phi_{\mathrm{air}}(x;\alpha_{od},\beta_{od}),
+\max_{\widehat{\alpha},\widehat{\beta},x} \quad & \Pi(x) \\
+\text{s.t.} \quad & x \in \arg\min_{y} \Phi_{\mathrm{LL}}(y;\widehat{\alpha},\widehat{\beta}), \\
+& \underline{\alpha} \leq \widehat{\alpha}^{od} \leq \overline{\alpha},
+\quad
+\underline{\beta} \leq \widehat{\beta}^{od} \leq \overline{\beta}
+\qquad \forall (o,d)\in\mathcal{K}.
 \end{align}
-where $\Phi_{\mathrm{air}}$ denotes the continuous airline single-level objective and $\Pi$ is the actual profit of the airline. The upper-level problem therefore does not redesign the network directly; instead, it learns how the lower level should value each market so that the induced design is more profitable.
+The box constraints reflect the projected updates used in the implementation and keep the market hyperparameters in a numerically meaningful range.
 
-The interpretation is straightforward. If a market contributes strongly to revenue and profitability but is underemphasized in the lower-level design, the bilevel update should increase its weight. If a market receives excessive emphasis in the lower-level objective relative to its profit contribution, its weight should be reduced. In this way, the bilevel layer acts as a calibration mechanism over the continuous design model inherited from the TFG.
+\subsection*{Penalty reformulation}
+Solving the bilevel problem directly is difficult because the lower-level solution set depends implicitly on the hyperparameters. Following the penalty-method viewpoint of recent bilevel optimization algorithms, we work instead with a penalized surrogate in which upper- and lower-level objectives are coupled in a single objective. For a penalty parameter $\gamma > 0$, we consider
+\begin{equation}
+\mathcal{P}_{\gamma}(x;\widehat{\alpha},\widehat{\beta})
+=
+-\Pi(x)
+\;+\;
+\gamma\,\Phi_{\mathrm{LL}}(x;\widehat{\alpha},\widehat{\beta})
+\;+\;
+\gamma\,\rho_{\mathrm{bud}}\,\mathrm{exceed}(x),
+\end{equation}
+where $\mathrm{exceed}(x)$ is the budget-violation slack and $\rho_{\mathrm{bud}}$ is a large positive coefficient. In the code, this is exactly the role played by the penalized objective solved in \texttt{cvx-ll.gms}: the profit term appears with the opposite sign, and the lower-level terms are added through a penalty coefficient denoted by \texttt{gamma}.
 
-In the current implementation, this calibration is not solved through an exact KKT-based bilevel reformulation. Instead, the matrices $\alpha_{od}$ and $\beta_{od}$ are updated iteratively using gradient-style corrections computed from successive lower-level solves. This choice is consistent with the philosophy of the original continuous approach: preserve tractability, avoid mixed-integer bilevel structure, and exploit repeated convex or nearly convex solves to approach a profit-oriented design.
+The interpretation is standard. For small values of $\gamma$, the penalized problem prioritizes the upper-level profit term. As $\gamma$ grows, the solution is pushed toward points that are increasingly consistent with lower-level optimality. This is the basic logic behind penalty methods for bilevel optimization, and it is the perspective that guides the algorithm used here.
+
+\subsection*{Companion lower-level solve}
+The implementation also solves the pure lower-level problem
+\begin{equation}
+\min_x \Phi_{\mathrm{LL}}(x;\widehat{\alpha},\widehat{\beta}),
+\end{equation}
+using \texttt{cvx-sl.gms}. This companion solve is needed because the market-hyperparameter updates are based on comparing the market contributions implied by the penalized bilevel step and by the lower-level step. In practice, the algorithm alternates between these two problems:
+\begin{itemize}
+\item a penalized bilevel step, solved through \texttt{cvx-ll.gms};
+\item a lower-level step, solved through \texttt{cvx-sl.gms}.
+\end{itemize}
+
+\subsection*{Hyperparameter update}
+After both solves are available, the market hyperparameters are updated by projected gradient-style steps. Denoting generically by $g_{\alpha}^{od}$ and $g_{\beta}^{od}$ the search directions obtained from the two solves, the update reads
+\begin{align}
+\widehat{\alpha}^{od}_{+} &= \Pi_{[\underline{\alpha},\overline{\alpha}]}
+\left(\widehat{\alpha}^{od} - \mu_{\alpha} g_{\alpha}^{od}\right), \\
+\widehat{\beta}^{od}_{+} &= \Pi_{[\underline{\beta},\overline{\beta}]}
+\left(\widehat{\beta}^{od} - \mu_{\beta} g_{\beta}^{od}\right),
+\end{align}
+where $\Pi$ denotes Euclidean projection onto the admissible interval and $\mu_{\alpha},\mu_{\beta}$ are step sizes. In the current code, these projections are implemented by clipping \texttt{alfa\_od} and \texttt{beta\_od} after every update.
+
+\subsection*{Resolution algorithm}
+The complete method contains two nested loops. The outer loop updates the MM reweighting coefficients used to approximate fixed costs. The inner loop solves the penalized bilevel problem and updates the market hyperparameters. A compact description is given in Algorithm~\ref{alg:penalty-bilevel}.
+
+\begin{algorithm}[t]
+\caption{Penalty-based bilevel algorithm with outer sparsity updates}
+\label{alg:penalty-bilevel}
+\KwIn{Initial market weights $\widehat{\alpha}^{od},\widehat{\beta}^{od}$, initial reference capacities $s^{\mathrm{prev}},sh^{\mathrm{prev}},a^{\mathrm{prev}}$, step sizes $\mu_{\alpha},\mu_{\beta}$, penalty coefficient $\gamma$, numbers of outer and inner iterations.}
+\For{$k=1,\dots,K_{\mathrm{outer}}$}{
+  build the reweighted deployment term from $s^{\mathrm{prev}},sh^{\mathrm{prev}},a^{\mathrm{prev}}$\;
+  \For{$t=1,\dots,K_{\mathrm{inner}}$}{
+    solve the penalized bilevel problem $\min_x \mathcal{P}_{\gamma}(x;\widehat{\alpha},\widehat{\beta})$\;
+    recover the penalized solution $x^{\mathrm{pen}}$\;
+    update the logit-share bounds and related auxiliary quantities\;
+    solve the pure lower-level problem $\min_x \Phi_{\mathrm{LL}}(x;\widehat{\alpha},\widehat{\beta})$\;
+    recover the lower-level solution $x^{\mathrm{ll}}$\;
+    compute the projected update directions for $\widehat{\alpha}$ and $\widehat{\beta}$ from $x^{\mathrm{pen}}$ and $x^{\mathrm{ll}}$\;
+    update $\widehat{\alpha},\widehat{\beta}$ by projected gradient steps\;
+  }
+  set $(s^{\mathrm{prev}},sh^{\mathrm{prev}},a^{\mathrm{prev}})$ equal to the capacities of the latest penalized solution\;
+}
+\KwOut{Network capacities, hub structure, market shares, and learned market hyperparameters.}
+\end{algorithm}
+
+This algorithm should be understood as a practical penalty method rather than as an exact reformulation of the bilevel problem. Its purpose is to produce network designs that are simultaneously sparse, behaviorally meaningful, and aligned with the true profit objective of the airline.

@@ -1,37 +1,81 @@
 \section{Single-Level Multiobjective Formulation}
-The single-level formulation used in this project should be read as a specialization of the framework introduced in Chapters 2 and 3 of the TFG. In the general public-network setting, the model is posed as a continuous optimization problem that minimizes a weighted combination of passenger cost and operator cost,
+This section presents the lower-level problem used inside the bilevel scheme. Let
 \begin{equation}
-\min \; \alpha \, PAX + (1-\alpha)\, OP,
+x := \big(s,sh,a,f,f^{\mathrm{ext}},f^{od}_{ij}\big)
 \end{equation}
-where the scalar parameter $\alpha \in (0,1)$ balances the two objectives. The passenger term $PAX$ contains the negative utilities, the entropy regularizers that generate the logit split, and the congestion surrogates, whereas the operator term $OP$ contains the operating cost of the designed network. Fixed deployment costs are first expressed through indicator functions in a budget constraint and are then incorporated into the objective through a Lagrange multiplier $\beta$ together with a reweighted $\ell_1$ approximation.
+collect the airport-capacity, hub-capacity, link-capacity, market-share, and route-flow variables. The lower level is a continuous airline network design model in which fixed deployment costs are approximated by reweighted penalties and the passenger split between the new airline and the outside option is induced through entropy regularization.
 
-The TFG also shows that this leads to a penalized objective of the form
+To separate the market-wise bilevel hyperparameters from the scalar penalty coefficient used for deployment costs, we denote the former by $\widehat{\alpha}^{od}$ and $\widehat{\beta}^{od}$. The lower-level market weight for market $(o,d)$ is
 \begin{equation}
-\alpha\,PAX + (1-\alpha)\,OP + \beta\,\Phi_{\mathrm{deploy}}^{\mathrm{rw}},
+W^{od} := \widehat{\alpha}^{od}\bigl(p^{od}q^{od}\bigr)^{\widehat{\beta}^{od}},
 \end{equation}
-where $\Phi_{\mathrm{deploy}}^{\mathrm{rw}}$ is the MM-based reweighted approximation of the fixed and linear deployment costs. This is the continuous single-level template on top of which the airline model is built.
+where $q^{od}$ and $p^{od}$ denote demand and price. In the code, these quantities correspond to \texttt{alfa\_od} and \texttt{beta\_od}.
 
-For the airline application, the objective changes in an important way. Since the operator is private, the model is no longer written as a social compromise between passengers and operator. Instead, the single-level airline objective combines:
+The lower-level objective is written as
+\begin{equation}
+\min_x \; \Phi_{\mathrm{LL}}(x;\widehat{\alpha},\widehat{\beta}) :=
+OP(a) + DEP_\beta(s,sh,a) + U_{\mathrm{self}}(x) + U_{\mathrm{ext}}(x) + H_{\mathrm{self}}(x) + H_{\mathrm{ext}}(x),
+\end{equation}
+where the different terms have the following meaning.
+
+\paragraph{Operating costs.}
+The direct operating cost is modeled linearly as
+\begin{equation}
+OP(a) = \sum_{(i,j)\in\mathcal{A}} c_{o_{ij}} a_{ij}.
+\end{equation}
+
+\paragraph{Reweighted deployment costs.}
+The deployment term penalizes airport activation, hub activation, and, at the formulation level, link deployment. Its generic structure is
+\begin{align}
+DEP_\beta(s,sh,a) = \beta \Bigg[
+& \sum_{(i,j)\in\mathcal{A}} \frac{c_{A_{ij}} a_{ij}}{a_{ij}^{\mathrm{prev}}+\varepsilon_A}
+ + \sum_{i\in\mathcal{S}} \frac{c_{S_i}(s_i+sh_i)}{s_i^{\mathrm{prev}}+sh_i^{\mathrm{prev}}+\varepsilon_S} \nonumber \\
+& + \sum_{i\in\mathcal{S}} \lambda \frac{c_{H_i} sh_i}{sh_i^{\mathrm{prev}}+\varepsilon_S}
+ + \sum_{(i,j)\in\mathcal{A}} \bar c_{A_{ij}} a_{ij}
+ + \sum_{i\in\mathcal{S}} \bar c_{S_i}(s_i+sh_i)
+\Bigg].
+\end{align}
+Here $\beta$ is the scalar penalty coefficient associated with the deployment budget and $\lambda$ modulates the cost of activating hubs. In the current implementation, the reweighted fixed-cost approximation is concentrated on airport and hub capacities, which are the variables that dominate the fixed-cost nonsmoothness in the airline case.
+
+\paragraph{Utility terms.}
+The utility contribution of passengers traveling on the new airline is written as
+\begin{equation}
+U_{\mathrm{self}}(x) =
+- \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od}
+\left[
+\omega_p p^{od} f^{od}
+ \omega_t \sum_{(i,j)\in\mathcal{A}} \bigl(t_{ij}+t^{od}_{ij,\mathrm{trans}}\bigr) f_{ij}^{od}
+\right],
+\end{equation}
+whereas the competing outside option contributes
+\begin{equation}
+U_{\mathrm{ext}}(x) =
+- \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od}
+\bigl(\omega_t t^{od}_{\mathrm{ext}} + \omega_p p^{od}_{\mathrm{ext}}\bigr)f^{od}_{\mathrm{ext}}.
+\end{equation}
+The multiplication by $p^{od}$ is essential in the airline setting because the lower level must distinguish not only between large-demand markets, but also between markets that generate different revenue levels.
+
+\paragraph{Entropy terms and logit shares.}
+The logit split is induced by the entropy terms
+\begin{align}
+H_{\mathrm{self}}(x) &= \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od} f^{od}\bigl(\log(f^{od})-1\bigr), \\
+H_{\mathrm{ext}}(x) &= \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od} f^{od}_{\mathrm{ext}}
+\left(\log\left(\frac{f^{od}_{\mathrm{ext}}}{n_{\mathrm{airlines}}}\right)-1\right).
+\end{align}
+These terms replace the explicit nonlinear logit constraints that would appear in a classical mixed-integer model and produce the market split through the optimality conditions of the continuous problem.
+
+\paragraph{Constraints.}
+The lower-level objective is minimized subject to:
 \begin{itemize}
-\item operating costs on active flight legs;
-\item reweighted deployment costs associated with airport capacity, hub capacity, and, in the original TFG formulation, also link activation;
-\item passenger-utility terms on the new airline network;
-\item passenger-utility terms on the external competing alternative;
-\item entropy terms that recover a logit market split;
-\item congestion penalties associated with airport slack variables.
-\end{itemize}
-
-The most characteristic modification of the airline model, emphasized in Chapter 5, is that utility and entropy terms are multiplied by market prices. This is done so that the lower-level problem is no longer merely attracted to large-demand markets, but instead gives more importance to markets with greater revenue potential. In other words, the entropic logit structure is preserved, but it is embedded into a profit-oriented design model.
-
-The continuous airline formulation is completed with the main operational constraints already reflected in the code:
-\begin{itemize}
-\item link-capacity constraints tying passenger flows to flight frequencies through nominal aircraft capacity and load factor;
-\item airport-capacity constraints for departures and arrivals;
+\item link-capacity constraints relating traffic and frequencies;
+\item airport-capacity constraints for arrivals and departures;
 \item hub-capacity constraints for transfer traffic;
+\item direct-flight and connectivity constraints induced by the hub-and-spoke structure;
 \item symmetry constraints on operated links;
 \item flow-conservation constraints for every market;
-\item market-share constraints $f_{od}+f^{\mathrm{ext}}_{od}=1$;
-\item profitability constraints ensuring that captured markets are economically viable.
+\item market split constraints $f^{od}+f^{od}_{\mathrm{ext}}=1$;
+\item profitability constraints ensuring that route revenue dominates operating cost;
+\item nonnegativity and candidate-link restrictions.
 \end{itemize}
 
-This is the true single-level basis of the present work. The bilevel scheme introduced later does not replace this model; it modifies the way market importance is encoded inside its passenger-related terms.
+This lower-level problem is the model that the bilevel scheme repeatedly solves and reweights. The role of the upper level is not to change the feasible set, but to learn the coefficients $\widehat{\alpha}^{od}$ and $\widehat{\beta}^{od}$ that determine how the lower-level passenger terms value each market.

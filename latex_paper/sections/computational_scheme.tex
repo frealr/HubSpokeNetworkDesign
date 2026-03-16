@@ -1,22 +1,23 @@
 \section{Computational Scheme}
-The computational procedure is best understood as the combination of two iterative ideas that already appear separately in the TFG and are coupled here in the airline implementation. The first idea is the majorization-minimization treatment of fixed costs through reweighted $\ell_1$ penalties. The second idea is the iterative adaptation of market coefficients in the bilevel layer.
+The previous section states the algorithmic structure at the model level. This section summarizes how that structure is instantiated in the current implementation.
 
-For the deployment terms, the TFG replaces indicator-type fixed costs by reweighted linear penalties. In its generic form, a fixed activation term $\kappa\,\mathbf{1}_{\{z>0\}}$ is approximated at iteration $k$ through a contribution proportional to
+The outer loop is a classical majorization-minimization procedure for sparse deployment costs. A fixed activation term $\kappa\,\mathbf{1}_{\{z>0\}}$ is approximated at iteration $k$ through
 \begin{equation}
 \kappa \, \frac{z^{(k)}}{z^{(k-1)}+\varepsilon},
 \end{equation}
-which is the first-order MM surrogate associated with the logarithmic sparsity regularizer. This mechanism is the bridge between the discontinuous $\ell_0$ viewpoint and the continuous optimization model.
+which yields the reweighted penalties that are written to GAMS through the arrays \texttt{s\_prev}, \texttt{sh\_prev}, and \texttt{a\_prev}. In the active airline implementation, the nonsmooth approximation is driven primarily by airport and hub capacities.
 
-In the airline chapter of the TFG, this idea is used to represent deployment costs for airport, hub, and link capacities. In the current code, the reweighting is concentrated on the airport-capacity variables $s_i$ and $sh_i$, which are the dominant source of fixed-cost non-smoothness in the bilevel setting. The previous iterates \texttt{s\_prev}, \texttt{sh\_prev}, and \texttt{a\_prev} are written to GAMS before each solve and determine the linearized penalties used in the current iteration.
-
-On top of that MM loop, the bilevel implementation in \texttt{generate\_data.py} introduces an inner calibration loop for the market-wise coefficients \texttt{alfa\_od} and \texttt{beta\_od}. The resulting algorithm alternates the following steps:
+Inside that outer loop, \texttt{generate\_data.py} runs an inner calibration loop for the market-wise coefficients. The workflow is:
 \begin{itemize}
-\item solve the lower-level airline model with the current reweighting coefficients and current market weights;
-\item recover capacities, market shares, and route flows from the GAMS output;
-\item update auxiliary bounds related to feasible logit shares;
-\item solve the companion single-level model used to evaluate the current design;
-\item compute gradient-style corrections for \texttt{alfa\_od} and \texttt{beta\_od};
-\item update the reference capacities used in the MM penalties and repeat.
+\item solve the penalized bilevel problem in \texttt{cvx-ll.gms};
+\item recover capacities, flows, and market shares from the GAMS outputs;
+\item update auxiliary bounds for feasible demand capture;
+\item solve the pure lower-level problem in \texttt{cvx-sl.gms};
+\item compute gradient-like corrections for \texttt{alfa\_od} and \texttt{beta\_od};
+\item project the hyperparameters back to their admissible ranges;
+\item update the MM reference capacities for the next outer iteration.
 \end{itemize}
 
-This nested iteration is not an exact bilevel algorithm in the classical sense. Rather, it is a practical successive-approximation scheme that preserves the tractability of the continuous model while progressively improving two aspects of the solution: the fidelity with which fixed costs are represented, and the consistency between lower-level market emphasis and upper-level profit. That is precisely the computational philosophy inherited from the TFG and extended in the present project.
+The most relevant implementation detail is that two GAMS models are solved repeatedly. The first one, \texttt{cvx-ll.gms}, evaluates the penalty surrogate that mixes upper-level profit and lower-level optimality. The second one, \texttt{cvx-sl.gms}, evaluates the lower-level objective itself. Their outputs are then combined in Python to update the market hyperparameters and to refresh the reweighted fixed-cost approximation.
+
+The resulting procedure is not intended as a globally exact solver. It is a structured successive-approximation method whose practical goal is to maintain the continuous scalability of the single-level model while improving the alignment between sparse deployment decisions and upper-level profit.

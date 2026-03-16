@@ -1,18 +1,18 @@
 \section{Problem Setting}
-We consider a set of candidate airports indexed by $i,j \in \mathcal{S}$ and a set of origin-destination markets indexed by $(o,d) \in \mathcal{K}$, with $o \neq d$. For each market, the new airline competes against an outside alternative representing the incumbent competitors already present in the market. The network to be designed follows a hub-and-spoke logic: some airports may behave as spokes, whereas others may acquire additional transfer capacity and operate as hubs.
+We consider a set of candidate airports indexed by $i,j \in \mathcal{S}$ and a set of origin-destination markets indexed by $(o,d) \in \mathcal{K}$, with $o \neq d$. For each market, the new airline competes against an outside alternative representing incumbent competitors already operating in the market. The network to be designed follows a hub-and-spoke structure: some airports only support local traffic, while others are assigned additional transfer capacity and operate as hubs.
 
-In the implementation used in this repository, the main continuous variables are:
+The main continuous design variables are:
 
 \begin{itemize}
-\item airport-capacity variables $s_i$ and hub-capacity variables $sh_i$, which correspond to the non-hub and hub components of installed airport capacity;
+\item airport-capacity variables $s_i$ and hub-capacity variables $sh_i$, corresponding to the non-hub and hub components of installed airport capacity;
 \item link-capacity or frequency variables $a_{ij}$ for each potential flight leg $(i,j)$;
 \item market-share variables $f_{od}$ and $f^{\mathrm{ext}}_{od}$, representing the proportions of market $(o,d)$ captured by the new airline and by the outside alternative, respectively;
 \item routing variables $f_{ij}^{od}$, which determine how the demand captured by the airline is assigned over the arcs of the designed network.
 \end{itemize}
 
-The data generated in the numerical instances include market demand, ticket prices, travel times, operating cost coefficients, airport deployment costs, hub costs, and the set of candidate direct connections. As in the TFG, the state variables are treated as given, while the optimization determines capacities, network structure, and market shares.
+The state data include market demand, ticket prices, travel times, operating cost coefficients, airport deployment costs, hub costs, and the set of candidate direct connections. Given these quantities, the optimization determines the network topology, the installed capacities, the market shares, and the route assignment of the captured demand.
 
-The formulation keeps the behavioral viewpoint of Chapters 2 and 3 of the TFG. For each market $(o,d)$, passengers choose between the newly designed airline network and the external alternative. Rather than imposing the resulting logit split through a non-convex constraint, the model introduces entropy terms and utility terms in the objective. The lower-level optimality conditions then reproduce the market split in closed form.
+Passenger behavior is modeled through a two-alternative choice between the new airline and the outside option. Rather than imposing the corresponding logit split through an explicit nonlinear constraint, the model introduces entropy and utility terms in the objective. The optimality conditions of the lower-level problem then yield the market split endogenously.
 
 The hub-and-spoke structure is enforced through dedicated capacity constraints. Airport capacity must sustain departures and arrivals, hub capacity must sustain connecting traffic, and direct service between two airports is allowed only when the corresponding endpoints have sufficient hub capacity. In addition, market-specific profitability constraints are introduced in the airline model so that the network only captures traffic on markets whose revenue covers the associated operating cost.
 
