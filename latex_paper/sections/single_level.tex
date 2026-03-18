@@ -12,10 +12,12 @@ W^{od} := \widehat{\alpha}^{od}\bigl(p^{od}q^{od}\bigr)^{\widehat{\beta}^{od}},
 where $q^{od}$ and $p^{od}$ denote demand and price. In the code, these quantities correspond to \texttt{alfa\_od} and \texttt{beta\_od}.
 
 The lower-level objective is written as
-\begin{equation}
+\begin{align}
 \min_x \; \Phi_{\mathrm{LL}}(x;\widehat{\alpha},\widehat{\beta}) :=
-OP(a) + DEP_\beta(s,sh,a) + U_{\mathrm{self}}(x) + U_{\mathrm{ext}}(x) + H_{\mathrm{self}}(x) + H_{\mathrm{ext}}(x),
-\end{equation}
+& \, OP(a) + DEP_\beta(s,sh,a) \nonumber \\
+& + U_{\mathrm{self}}(x) + U_{\mathrm{ext}}(x)
++ H_{\mathrm{self}}(x) + H_{\mathrm{ext}}(x),
+\end{align}
 where the different terms have the following meaning.
 
 \paragraph{Operating costs.}
@@ -39,14 +41,15 @@ Here $\beta$ is the scalar penalty coefficient associated with the deployment bu
 
 \paragraph{Utility terms.}
 The utility contribution of passengers traveling on the new airline is written as
-\begin{equation}
+\begin{align}
 U_{\mathrm{self}}(x) =
 - \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od}
-\left[
-\omega_p p^{od} f^{od}
- \omega_t \sum_{(i,j)\in\mathcal{A}} \bigl(t_{ij}+t^{od}_{ij,\mathrm{trans}}\bigr) f_{ij}^{od}
-\right],
-\end{equation}
+\Bigg[
+& \omega_p p^{od} f^{od} \nonumber \\
+& + \omega_t \sum_{(i,j)\in\mathcal{A}}
+\bigl(t_{ij}+t^{od}_{ij,\mathrm{trans}}\bigr) f_{ij}^{od}
+\Bigg],
+\end{align}
 whereas the competing outside option contributes
 \begin{equation}
 U_{\mathrm{ext}}(x) =
