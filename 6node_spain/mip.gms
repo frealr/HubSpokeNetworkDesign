@@ -176,7 +176,7 @@ Model netdesign /
 option threads = 60;
 option mip     = cplex;
 
-option reslim = 7200;
+option reslim = 60;
 
 Parameter mipgap;
 
