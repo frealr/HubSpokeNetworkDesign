@@ -219,7 +219,7 @@ def get_obj_val(
 
 def write_initial_data(export_dir: Path, params: NetworkParams) -> None:
     demand = params.demand / 365.0
-    nreg = 20
+    nreg = 40
     n_airlines = 5
     vals_regs = np.linspace(0.005, 0.995, nreg - 1)
     lin_coef, bord, b = get_linearization(params.n, nreg, params.alt_utility, vals_regs, n_airlines)

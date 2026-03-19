@@ -10,7 +10,7 @@ Sets
 Alias (i,j,o,d,ii,jj);
 
 * Breakpoints para PWL (K puntos => K-1 segmentos)
-Set seg / seg1*seg20 /;
+Set seg / seg1*seg40 /;
 * segmentos entre breakpoints (K=20 => 19 segmentos)
 
 

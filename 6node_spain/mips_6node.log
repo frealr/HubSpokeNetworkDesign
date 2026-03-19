@@ -1,0 +1,9 @@
+nohup: ignoring input
+/home/lcadarso/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:61: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+budget=30000 obj_val=-22060.4
+budget=40000 obj_val=-63643.8
+budget=50000 obj_val=-78123.1
+budget=60000 obj_val=-81521.7
+budget=70000 obj_val=-81521.7
+budget=80000 obj_val=-83928.7
