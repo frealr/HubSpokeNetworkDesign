@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.20)  18 MAR 2026 18:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.20)  19 MAR 2026 12:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -113,7 +113,29 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <24> not available
 \IEEEPARstartletwidth=\dimen163
 \c@IEEEbiography=\count268
 \@IEEEtranrubishbin=\box52
-) (/usr/local/texlive/2024/texmf-dist/tex/latex/amsmath/amsmath.sty
+) (/usr/local/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2023/11/15 v3.01 LaTeX color extensions (UK)
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1350.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1354.
+Package xcolor Info: Model `RGB' extended on input line 1366.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1368.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1371.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1372.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1373.
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2023/05/13 v2.17o AMS math features
 \@mathmargin=\skip51
 
@@ -255,23 +277,36 @@ File: l3backend-pdftex.def 2024-02-20 L3 backend support: PDF output (pdfTeX)
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 9.
-LaTeX Font Info:    ... okay on input line 9.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 9.
-LaTeX Font Info:    ... okay on input line 9.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 9.
-LaTeX Font Info:    ... okay on input line 9.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 9.
-LaTeX Font Info:    ... okay on input line 9.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 9.
-LaTeX Font Info:    ... okay on input line 9.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 9.
-LaTeX Font Info:    ... okay on input line 9.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 9.
-LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
 
 -- Lines per column: 56 (exact).
-(./sections/abstract.tex
+(/usr/local/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count287
+\scratchdimen=\dimen179
+\scratchbox=\box64
+\nofMPsegments=\count288
+\nofMParguments=\count289
+\everyMPshowfont=\toks23
+\MPscratchCnt=\count290
+\MPscratchDim=\dimen180
+\MPnumerator=\count291
+\makeMPintoPDFobject=\count292
+\everyMPtoPDFconversion=\toks24
+) (./sections/abstract.tex
 LaTeX Font Info:    Trying to load font information for U+msa on input line 6.
 
 (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
@@ -287,26 +322,28 @@ Underfull \hbox (badness 1478) in paragraph at lines 6--7
 []\OT1/ptm/m/n/10 Classical for-mu-la-tions ad-dress these de-ci-sions through
  []
 
-) (./sections/state_of_art.tex [1{/usr/local/texlive/2024/texmf-var/fonts/map/p
-dftex/updmap/pdftex.map}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/bas
-e/8r.enc}
+[1{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/l
+ocal/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
-]) (./sections/problem_setting.tex) (./sections/single_level.tex
+])
+(./sections/state_of_art.tex) (./sections/problem_setting.tex)
+(./sections/single_level.tex
 Underfull \hbox (badness 10000) in paragraph at lines 5--7
 \OT1/ptm/m/n/10 collect the airport-capacity, hub-capacity, link-capacity,
  []
 
+[2]
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
 2.
-(/usr/local/texlive/2024/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+ (/usr/local/texlive/2024/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 Overfull \hbox (18.79018pt too wide) detected at line 20
 []
  []
 
-[2]
+
 Overfull \hbox (86.4576pt too wide) detected at line 39
 []
  []
@@ -316,8 +353,8 @@ Overfull \hbox (8.71402pt too wide) detected at line 52
 []
  []
 
-) (./sections/bilevel.tex [3]) (./sections/computational_scheme.tex)
-(./sections/conclusion.tex [4])
+) (./sections/bilevel.tex [3]) (./sections/computational_scheme.tex [4])
+(./sections/conclusion.tex)
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -338,13 +375,13 @@ L3 programming layer <2024-02-20>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 3702 strings out of 474116
- 61385 string characters out of 5743682
- 1955187 words of memory out of 5000000
- 26034 multiletter control sequences out of 15000+600000
+ 4648 strings out of 474116
+ 74385 string characters out of 5743682
+ 1954187 words of memory out of 5000000
+ 26959 multiletter control sequences out of 15000+600000
  595893 words of font info for 111 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 56i,15n,65p,1007b,462s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 56i,15n,65p,1240b,464s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb>
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.p
@@ -362,7 +399,7 @@ live/2024/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/202
 st/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/
 type1/urw/times/utmr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/
 times/utmri8a.pfb>
-Output written on main.pdf (5 pages, 210201 bytes).
+Output written on main.pdf (5 pages, 211015 bytes).
 PDF statistics:
  106 PDF objects out of 1000 (max. 8388607)
  64 compressed objects within 1 object stream
