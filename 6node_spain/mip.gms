@@ -173,7 +173,7 @@ Model netdesign /
 
 
 
-option threads = 60;
+option threads = 168;
 option mip     = cplex;
 
 option reslim = 60;
