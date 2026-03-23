@@ -1,7 +1,5 @@
-
-
-
-$setglobal TXTDIR "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\export_txt"
+*$setglobal TXTDIR "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\export_txt"
+$setglobal TXTDIR "/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain/export_txt"
 
 
 
@@ -15,78 +13,78 @@ Alias (i,j,o,d);
 Parameter demand(o,d)
 
 /
-$include "%TXTDIR%\demand.txt"
+$include "%TXTDIR%/demand.txt"
 /;
 
 Parameter alt_utility(o,d)
 
 /
-$include "%TXTDIR%\alt_utility.txt"
+$include "%TXTDIR%/alt_utility.txt"
 /;
 
 
 * --- (i,j) ---
 Parameter link_cost(i,j)
 /
-$include "%TXTDIR%\link_cost.txt"
+$include "%TXTDIR%/link_cost.txt"
 /;
 
 Parameter link_capacity_slope(i,j)
 /
-$include "%TXTDIR%\link_capacity_slope.txt"
+$include "%TXTDIR%/link_capacity_slope.txt"
 /;
 
 Parameter prices(o,d)
 /
-$include "%TXTDIR%\prices.txt"
+$include "%TXTDIR%/prices.txt"
 /;
 
 Parameter op_link_cost(i,j)
 /
-$include "%TXTDIR%\op_link_cost.txt"
+$include "%TXTDIR%/op_link_cost.txt"
 /;
 
 
 Parameter candidates(i,j)
 /
-$include "%TXTDIR%\candidates.txt"
+$include "%TXTDIR%/candidates.txt"
 /;
 
 Parameter travel_time(i,j)
 /
-$include "%TXTDIR%\travel_time.txt"
+$include "%TXTDIR%/travel_time.txt"
 /;
 
 * --- (i) ---
 Parameter station_cost(i)
 /
-$include "%TXTDIR%\station_cost.txt"
+$include "%TXTDIR%/station_cost.txt"
 /;
 
 Parameter hub_cost(i)
 /
-$include "%TXTDIR%\hub_cost.txt"
+$include "%TXTDIR%/hub_cost.txt"
 /;
 
 Parameter station_capacity_slope(i)
 /
-$include "%TXTDIR%\station_capacity_slope.txt"
+$include "%TXTDIR%/station_capacity_slope.txt"
 /;
 
 Parameter budget
 /
-$include "%TXTDIR%\budget.txt"
+$include "%TXTDIR%/budget.txt"
 /;
 
 
 Parameter s_prev(i)
 /
-$include "%TXTDIR%\s_prev.txt"
+$include "%TXTDIR%/s_prev.txt"
 /;
 
 Parameter sh_prev(i)
 /
-$include "%TXTDIR%\sh_prev.txt"
+$include "%TXTDIR%/sh_prev.txt"
 /;
 
 
@@ -102,20 +100,20 @@ Scalar n; n = card(i);
 Scalar epsi; epsi = 1e-3;
 
 Scalar lam /
-$include "%TXTDIR%\lam.txt"
+$include "%TXTDIR%/lam.txt"
 /;
 
 Scalar alfa /
-$include "%TXTDIR%\alfa.txt"
+$include "%TXTDIR%/alfa.txt"
 /;
 
 
 Scalar iter /
-$include "%TXTDIR%\current_iter.txt"
+$include "%TXTDIR%/current_iter.txt"
 /;
 
 Scalar niters /
-$include "%TXTDIR%\niters.txt"
+$include "%TXTDIR%/niters.txt"
 /;
 
 Scalar logit_coef; logit_coef = 0.02;
@@ -127,4 +125,3 @@ Scalar epsi_f; epsi_f = 1e-4;
 
 
 display travel_time,link_cost,link_capacity_slope,prices,candidates,station_cost,station_capacity_slope,a_max, iter, niters;
-

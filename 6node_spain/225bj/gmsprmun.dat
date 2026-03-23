@@ -1,0 +1,5 @@
+Input=/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain/mip.gms
+ScrDir=225bj
+SysDir=/opt/gams/gams49.6_linux_x64_64_sfx
+ScriptNext=225bj/gamsnext.sh
+NetLicense=225bj/gamslice.dat

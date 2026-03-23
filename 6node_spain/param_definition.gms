@@ -9,9 +9,9 @@ Sets
 ;
 Alias (i,j,o,d,ii,jj);
 
-* Breakpoints para PWL (K puntos => K-1 segmentos)
-Set seg / seg1*seg40 /;
-* segmentos entre breakpoints (K=20 => 19 segmentos)
+* Breakpoints para PWL (alineado con mips_6node.m)
+Set seg / seg1*seg20 /;
+* segmentos de la aproximacion PWL
 
 
 Parameter b(seg,o,d)

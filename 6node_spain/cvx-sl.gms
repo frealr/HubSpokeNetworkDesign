@@ -83,7 +83,7 @@ Equation
 *---------------------*
 
 ul_def..
-    ul =e= 1e-2*(-sum((o,d),prices(o,d)*demand(o,d)*f(o,d) ) + sum((i,j), op_link_cost(i,j) * a(i,j))) ;
+    ul =e= 1e-2*(-sum((o,d)$(ord(o) ne ord(d)),prices(o,d)*demand(o,d)*f(o,d) ) + sum((i,j), op_link_cost(i,j) * a(i,j))) ;
 
 
 * Presupuesto (bud): costes lineales + (si iter<niters) costes fijos aproximados
@@ -105,17 +105,17 @@ op_def..
 * Pasajeros (pax): tiempos/precios en ruta y alternativas + entropías
 pax_def..
     pax =e= 1e-2*(
-      sum((o,d),
+      sum((o,d)$(ord(o) ne ord(d)),
             alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *  
            ( logit_coef*prices(o,d)*f(o,d) + sum((i,j), travel_time(i,j)*fij(i,j,o,d)*logit_coef)))
 
-    - sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
+    - sum((o,d)$(ord(o) ne ord(d)), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
           * alt_utility(o,d)*fext(o,d))
 
-    + sum((o,d),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
+    + sum((o,d)$(ord(o) ne ord(d)),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
 *          * (  ( f(o,d)*log(f(o,d)) - f(o,d) ) ))
 
-   + sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *(ftext(o,d)
+   + sum((o,d)$(ord(o) ne ord(d)), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *(ftext(o,d)
    - fext_aux(o,d)*log(n_airlines))) )
    
 
@@ -335,6 +335,20 @@ fyext.fx(o,d)=1;
 exceed.fx = 0;
 
 
+Parameter fnodemand(o,d);
+fnodemand(o,d)=0;
+
+
+loop((o,d)$(demand(o,d) lt 1e-3),
+
+fnodemand(o,d)=1;
+
+);
+
+
+f.fx(o,d)$(fnodemand(o,d)=1)=0;
+
+
 
 
 
@@ -364,7 +378,7 @@ put 'i,j,o,d,value' /;
 loop((i,j,o,d),
     put i.tl ',' j.tl ',' o.tl ',' d.tl ',' fij.l(i,j,o,d):0:15 / );
 putclose fijx;
-
+$onText
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:
@@ -377,7 +391,6 @@ EmbeddedCode Connect:
     symbols:
       - name: a_level
 endEmbeddedCode
-
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:
@@ -390,7 +403,7 @@ EmbeddedCode Connect:
     symbols:
       - name: s_level
 endEmbeddedCode
-
+$offText
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:

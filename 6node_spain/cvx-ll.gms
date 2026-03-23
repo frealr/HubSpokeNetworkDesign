@@ -107,7 +107,7 @@ op_def..
 pax_def..
     pax =e= 1e-2*(
 
-    + sum((o,d),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
+    + sum((o,d)$(ord(o) ne ord(d)),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
 *          * (  ( f(o,d)*log(f(o,d)) - f(o,d) ) ))
 
    + sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *(ftext(o,d)
@@ -120,7 +120,7 @@ utility_def..
             alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *  
            ( logit_coef*prices(o,d)*f(o,d) + sum((i,j), (travel_time(i,j))*fij(i,j,o,d)*logit_coef)))
 
-    - sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
+    - sum((o,d)$(ord(o) ne ord(d)), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
           * alt_utility(o,d)*fext(o,d)) );
 
 
@@ -142,7 +142,7 @@ utility_def..
 
 * Objetivo total
 obj_def..
-    obj =e= pax + op + ut + 1e3*exceed + 1e-6*bud;
+    obj =e= pax + op + ut + 1e6*exceed + 1e-6*bud;
 
 *---------------------*
 * Restricciones       *
@@ -150,11 +150,11 @@ obj_def..
 
 
 bud_avail..
-    bud =l= budget;
+    bud$(iter <= niters) =l= budget;
     
 bud_final..
     ( sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$((s_prev(i) > 0.01) or (sh_prev(i) > 0.01)), station_cost(i))
-  + sum(i$(sh_prev(i) > 0.01), lam*hub_cost(i)))$(iter = niters) - exceed
+  + sum(i$(sh_prev(i) > 0.01), lam*hub_cost(i)))$(iter = niters) 
     =l=
     budget
 ;
@@ -269,7 +269,7 @@ Model netplan /
     obj_def
     
     bud_avail
-*    bud_final
+    bud_final
     
     def_f_aux
     def_f_aux2
@@ -346,6 +346,20 @@ fyext.fx(o,d)=1;
 exceed.fx = 0;
 
 
+Parameter fnodemand(o,d);
+fnodemand(o,d)=0;
+
+
+loop((o,d)$(demand(o,d) lt 1e-3),
+
+fnodemand(o,d)=1;
+
+);
+
+
+f.fx(o,d)$(fnodemand(o,d)=1)=0;
+
+
 
 
 
@@ -388,6 +402,7 @@ loop((i,j,o,d),
     put i.tl ',' j.tl ',' o.tl ',' d.tl ',' fij.l(i,j,o,d):0:15 / );
 putclose fijx;
 
+$onText
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:
@@ -400,7 +415,6 @@ EmbeddedCode Connect:
     symbols:
       - name: a_level
 endEmbeddedCode
-
 EmbeddedCode Connect:
 - GAMSReader:
     symbols:
@@ -413,6 +427,7 @@ EmbeddedCode Connect:
     symbols:
       - name: s_level
 endEmbeddedCode
+$offText
 
 EmbeddedCode Connect:
 - GAMSReader:

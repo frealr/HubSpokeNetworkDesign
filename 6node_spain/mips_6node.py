@@ -12,6 +12,8 @@ from scipy.io import savemat
 
 
 DEFAULT_GAMS = Path("/opt/gams/gams49.6_linux_x64_64_sfx/gams")
+MATLAB_NREG = 20
+N_AIRLINES = 5
 
 
 @dataclass
@@ -45,7 +47,6 @@ def read_matrix_csv(path: Path) -> np.ndarray:
 
 def parameters_6node_network(script_dir: Path) -> NetworkParams:
     n = 6
-    n_airlines = 5
     candidates = np.ones((n, n)) - np.eye(n)
 
     distance = read_matrix_csv(script_dir / "distance.csv")
@@ -75,16 +76,17 @@ def parameters_6node_network(script_dir: Path) -> NetworkParams:
     travel_time = cruise_time + takeoff_time + landing_time + taxi_time
     travel_time[eye_mask] = 0
 
-    rng = np.random.default_rng(123)
+    # Match MATLAB's rng(123); rand(...) usage more closely than default_rng.
+    rng = np.random.RandomState(123)
     p_escala = 0.4
     alt_utility = np.zeros((n, n))
 
     for i in range(n):
         for j in range(i + 1, n):
-            escala = rng.random(n_airlines) < p_escala
+            escala = rng.rand(N_AIRLINES) < p_escala
             alt_time_vec = travel_time[i, j] * (1 + 0.5 * escala.astype(float)) + 60 * escala.astype(float)
-            alt_price_vec = prices[i, j] + 0.3 * prices[i, j] * (rng.random(n_airlines) - 0.5)
-            alt_u = np.log(np.sum(np.exp(omega_p * alt_price_vec + omega_t * alt_time_vec))) - np.log(n_airlines)
+            alt_price_vec = prices[i, j] + 0.3 * prices[i, j] * (rng.rand(N_AIRLINES) - 0.5)
+            alt_u = np.log(np.sum(np.exp(omega_p * alt_price_vec + omega_t * alt_time_vec))) - np.log(N_AIRLINES)
             alt_utility[i, j] = alt_u
             alt_utility[j, i] = alt_u
 
@@ -219,10 +221,9 @@ def get_obj_val(
 
 def write_initial_data(export_dir: Path, params: NetworkParams) -> None:
     demand = params.demand / 365.0
-    nreg = 40
-    n_airlines = 5
+    nreg = MATLAB_NREG
     vals_regs = np.linspace(0.005, 0.995, nreg - 1)
-    lin_coef, bord, b = get_linearization(params.n, nreg, params.alt_utility, vals_regs, n_airlines)
+    lin_coef, bord, b = get_linearization(params.n, nreg, params.alt_utility, vals_regs, N_AIRLINES)
 
     candidates = np.zeros((params.n, params.n))
     for i in range(params.n):
@@ -261,6 +262,17 @@ def write_initial_data(export_dir: Path, params: NetworkParams) -> None:
     write_gams_param_ii(export_dir / "a_prev.txt", a_prev)
     write_gams_param1d_full(export_dir / "s_prev.txt", s_prev)
     write_gams_param1d_full(export_dir / "sh_prev.txt", sh_prev)
+
+
+def read_declared_segment_count(path: Path) -> int:
+    for line in path.read_text(encoding="ascii").splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("Set seg / seg1*seg"):
+            continue
+        tail = stripped.removeprefix("Set seg / seg1*seg")
+        number = tail.split()[0].rstrip("/;")
+        return int(number)
+    raise ValueError(f"No pude leer el numero de segmentos en {path}")
 
 
 def read_numeric_sheet(path: Path, sheet_name: str) -> pd.DataFrame:
@@ -324,10 +336,24 @@ def compute_sim_mip(
 
     if run_gams:
         cmd = [str(gams_exe), str(script_dir / "mip.gms")]
-        result = subprocess.run(cmd, cwd=script_dir, capture_output=True, text=True, check=False)
-        if result.returncode != 0:
+        output_lines: list[str] = []
+        with subprocess.Popen(
+            cmd,
+            cwd=script_dir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+        ) as process:
+            assert process.stdout is not None
+            for line in process.stdout:
+                print(line, end="", flush=True)
+                output_lines.append(line)
+            returncode = process.wait()
+
+        if returncode != 0:
             raise RuntimeError(
-                f"GAMS falló con código {result.returncode}\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+                f"GAMS falló con código {returncode}\nSALIDA:\n{''.join(output_lines)}"
             )
 
     workbook = script_dir / "output_all.xlsx"
@@ -401,6 +427,13 @@ def main() -> None:
     export_dir = script_dir / "export_txt"
     output_dir = script_dir / "6node_hs_prueba_v0"
     export_dir.mkdir(exist_ok=True)
+
+    declared_nreg = read_declared_segment_count(script_dir / "param_definition.gms")
+    if declared_nreg != MATLAB_NREG:
+        raise ValueError(
+            f"param_definition.gms declara {declared_nreg} segmentos, pero mips_6node.m usa {MATLAB_NREG}. "
+            "Alinea ambos antes de ejecutar el modelo."
+        )
 
     params = parameters_6node_network(script_dir)
     write_initial_data(export_dir, params)
