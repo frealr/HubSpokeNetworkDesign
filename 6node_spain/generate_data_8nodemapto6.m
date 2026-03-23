@@ -105,6 +105,7 @@ budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
 budgets = [3e4,4e4,5e4,6e4,7e4,8e4];
+budgets = 4e4;
 
 
 %budgets = [4e4];
@@ -618,7 +619,7 @@ mu_alfa = 1e-8; %funcionan para cvx blo
 mu_beta = 5e-2; %funcionan para cvx blo
 
 mu_alfa = 1e-7;
-mu_beta = 2e-1;
+mu_beta = 1e-1;
 
 alfa_od = ones(n);
 beta_od = ones(n);
@@ -1082,7 +1083,7 @@ sh_prev = s_prev;
 
 %s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
 
-filename = sprintf('./8node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_bet=%d.mat',budget,lam,alfa,mu_alfa,mu_beta);
+filename = sprintf('./6node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_bet=%d_replica8node.mat',budget,lam,alfa,mu_alfa,mu_beta);
 save(filename,'s','sh', ...
     'a','f','fext','fij','comp_time','used_budget', ...
     'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');

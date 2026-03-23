@@ -115,7 +115,7 @@ budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
 budgets = [3e4,4e4,5e4,6e4,7e4,8e4];
 %budgets = 3e4;
-%budgets = [4e4];
+budgets = [4e4];
 %budgets = 5e4;
 %budgets = [4e4,5e4,6e4,7e4,8e4,9e4];
 
@@ -950,6 +950,7 @@ for iter=1:niters
 
         system(cmdpath);
         gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-mip.gms';
+        gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.gms'; %cambiar
 
         gamsExe = 'C:\GAMS\50\gams.exe'; 
 
@@ -1028,9 +1029,9 @@ for iter=1:niters
         sh_prev = sh;
 end
 
-s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
+% s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
 
-filename = sprintf('./6node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d.mat',budget,lam,alfa);
+filename = sprintf('./6node_hs_prueba_v0_blo/deprecated_bud=%d_lam=%d_alfa=%d.mat',budget,lam,alfa);
 save(filename,'s','sh', ...
     'a','f','fext','fij','comp_time','used_budget', ...
     'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');
