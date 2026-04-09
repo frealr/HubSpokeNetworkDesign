@@ -1,5 +1,5 @@
 * ---------- Conjuntos ----------
-$include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition_cvx-blo.gms";
+$include "param_definition_cvx-blo.gms";
 
 
 *---------------------*
@@ -8,7 +8,7 @@ $include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definit
 
 
 Nonnegative Variable
-    s(i),        s(i),    sh(i),    
+    s(i),     sh(i),    
     a(i,j),
     f(o,d),      fext(o,d), f_aux(o,d), fext_aux(o,d),
     fij(i,j,o,d), exceed
@@ -73,6 +73,9 @@ Equation
     def_deltaaaux(i,j)
     powercones(i)
     powerconea(i,j)
+    f_bounds_logit(o,d)
+    
+    station_cap_first_iter(i)
     
 *rescap
 ;
@@ -82,14 +85,14 @@ Equation
 *---------------------*
 
 ul_def..
-    ul =e= 1e-2*(-sum((o,d),prices(o,d)*demand(o,d)*f(o,d) ) + sum((i,j), op_link_cost(i,j) * a(i,j))) ;
+    ul =e= 1e-2*(-sum((o,d)$(ord(o) ne ord(d)),prices(o,d)*demand(o,d)*f(o,d) ) + sum((i,j), op_link_cost(i,j) * a(i,j))) ;
 
 
 * Presupuesto (bud): costes lineales + (si iter<niters) costes fijos aproximados
 bud_def..
-    bud =e= sum(i, station_capacity_slope(i)*(s(i) + sh(i)))
+    bud =e= sum(i, station_capacity_slope(i)*(s(i) + 1.01*sh(i)))
          + sum(i,
-                        station_cost(i)*(s(i)+sh(i))/((s_prev(i)+sh_prev(i))+epsi))
+                        station_cost(i)*(s(i)+1.01*sh(i))/((s_prev(i)+sh_prev(i))+epsi))
          + sum(i,
                         lam*hub_cost(i)*sh(i)/(sh_prev(i)+epsi));
                         
@@ -99,22 +102,22 @@ bud_def..
 
 * Operación (op): coste lineal de operar enlaces
 op_def..
-    op =e= 1e-2*sum((i,j), op_link_cost(i,j) * a(i,j));
+    op =e= 1e-3*sum((i,j), op_link_cost(i,j) * a(i,j));
 
 * Pasajeros (pax): tiempos/precios en ruta y alternativas + entropías
 pax_def..
     pax =e= 1e-2*(
-      sum((o,d),
+      sum((o,d)$(ord(o) ne ord(d)),
             alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *  
            ( logit_coef*prices(o,d)*f(o,d) + sum((i,j), travel_time(i,j)*fij(i,j,o,d)*logit_coef)))
 
-    - sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
+    - sum((o,d)$(ord(o) ne ord(d)), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d)
           * alt_utility(o,d)*fext(o,d))
 
-    + sum((o,d),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
+    + sum((o,d)$(ord(o) ne ord(d)),alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) * (ft(o,d)))
 *          * (  ( f(o,d)*log(f(o,d)) - f(o,d) ) ))
 
-   + sum((o,d), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *(ftext(o,d)
+   + sum((o,d)$(ord(o) ne ord(d)), alfa_od(o,d)*(prices(o,d)*demand(o,d))**beta_od(o,d) *(ftext(o,d)
    - fext_aux(o,d)*log(n_airlines))) )
    
 
@@ -137,7 +140,7 @@ pax_def..
 
 * Objetivo total
 obj_def..
-    obj =e= ul + 5e-2*gamma_*(pax + op + 1e3*exceed + 1e-4*bud);
+    obj =e= ul + 5e-2*gamma_*(pax + op + 1e3*exceed + 1e-6*bud);
 
 *---------------------*
 * Restricciones       *
@@ -145,11 +148,11 @@ obj_def..
 
 
 bud_avail..
-    bud$(iter < niters) =l= budget;
+    bud =l= budget;
     
 bud_final..
-    ( sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$((s_prev(i) > 0.1) or (sh_prev(i) > 0.05)), station_cost(i))
-  + sum(i$(sh_prev(i) > 0.05), lam*hub_cost(i)))$(iter = niters) - exceed
+    ( sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$((s_prev(i) > 0.01) or (sh_prev(i) > 0.01)), station_cost(i))
+  + sum(i$(sh_prev(i) > 0.01), lam*hub_cost(i)))$(iter = niters) - exceed
     =l=
     budget
 ;
@@ -167,6 +170,8 @@ link_cap(i,j)..
 
     
 station_cap(i)..   sigma * (sum(j, a(j,i)) + sum(j, a(i,j))) =l= s(i) + sh(i);
+
+station_cap_first_iter(i)$(iter <= 1).. sigma * (sum(j, a(j,i)) + sum(j, a(i,j))) =l= sh(i);
 
 hub_connect_cap(i).. sigma * (sum( (o,d,j)$(ord(o)<>ord(i)),
     demand(o,d) * fij(i,j,o,d) / (a_nom * tau))  + sum( (o,d,j)$(ord(d)<>ord(i)),
@@ -219,10 +224,10 @@ candidates_zero(i,j)$(not candidates(i,j))..
     a(i,j) =e= 0;
 
 * Fijaciones en la iteración final si previos pequeños (replica iter==niters … <=0.1)
-fix_s_at_zero(i)$( (s_prev(i) <= 0.1) and (iter = niters) )..
+fix_s_at_zero(i)$( (s_prev(i) <= 0.01) and (iter = niters) )..
     s(i) =l= epsi;
     
-fix_sh_at_zero(i)$( (sh_prev(i) <= 0.05) and (iter = niters) )..
+fix_sh_at_zero(i)$( (sh_prev(i) <= 0.01) and (iter = niters) )..
     sh(i) =l= epsi;
     
 
@@ -239,6 +244,8 @@ epigraphf(o,d)..  ft(o,d) =g= -fr(o,d)-f_aux(o,d);
 
 epigraphfext(o,d)..  ftext(o,d) =g= -frext(o,d)-fext_aux(o,d);
 
+
+f_bounds_logit(o,d).. f(o,d) =l= f_bounds(o,d);
 *rescap(i,j,o,d).. fij(i,j,o,d) =l= capa(i,j);
 
 *---------------------*
@@ -258,7 +265,7 @@ Model netplan /
     obj_def
     
     bud_avail
-    bud_final
+*    bud_final
     
     def_f_aux
     def_fext_aux
@@ -294,7 +301,10 @@ Model netplan /
     exponefext
     epigraphf
     epigraphfext
-
+    
+    f_bounds_logit
+    
+*    station_cap_first_iter
 
   /;
 
@@ -324,8 +334,24 @@ fext.up(o,d)=1;
 fy.fx(o,d)=1;
 fyext.fx(o,d)=1;
 
+*sh.fx('i2') = 0;
+
 
 exceed.fx = 0;
+
+
+Parameter fnodemand(o,d);
+fnodemand(o,d)=0;
+
+
+loop((o,d)$(demand(o,d) lt 1e-3),
+
+fnodemand(o,d)=1;
+
+);
+
+
+f.fx(o,d)$(fnodemand(o,d)=1)=0;
 
 
 
@@ -335,6 +361,16 @@ exceed.fx = 0;
 option threads = 64;
 
 option nlp=mosek;
+
+$onecho > mosek.opt
+MSK_DPAR_INTPNT_CO_TOL_PFEAS 1e-10
+MSK_DPAR_INTPNT_CO_TOL_DFEAS 1e-10
+MSK_DPAR_INTPNT_CO_TOL_REL_GAP 1e-10
+MSK_DPAR_INTPNT_CO_TOL_INFEAS 1e-14
+MSK_DPAR_INTPNT_CO_TOL_NEAR_REL 1
+$offecho
+
+netplan.optfile = 1;
 
 Solve netplan using nlp minimizing obj;
 Parameter solverTime;
@@ -349,6 +385,55 @@ Parameter fnew(o,i,j,d);
 
 fnew(o,i,j,d)=fij.l(i,j,o,d);
 
+Parameter ffix(o,d),sfix(i);
+ffix(o,d)=0;
+sfix(i)=0;
+
+loop((o,d)$(f.l(o,d) lt 1e-3),
+
+ffix(o,d)=1;
+
+);
+
+
+
+loop((i)$(sh.l(i) lt 1e-3),
+
+sfix(i)=1;
+
+);
+
+f.fx(o,d)$(ffix(o,d)=1)=0;
+sh.fx(i)$(sfix(i)=1)=0;
+
+Parameter conecta(i);
+conecta(i) = 0;
+loop(i$(sh.l(i) gt 3e-2 ),
+     loop(j$( ((sh.l(j) lt 3e-2) and (a.l(i,j) gt 1e-3)) ),
+        conecta(i) = 1 + conecta(i) )
+);
+
+
+Parameter sobra(i);
+sobra(i) = 0;
+
+loop(i$( sh.l(i) gt 3e-2 ),
+    loop(j$( ((sh.l(j) lt 3e-2) and (a.l(i,j) gt 1e-3))  ),
+    sobra(i) = 0 )
+);
+
+
+loop(i$( sh.l(i) gt 3e-2 ),
+    loop(j$( (sh.l(j) gt 3e-2) and (conecta(j) lt 1) and (a.l(i,j) gt 1e-3) ),
+    sobra(i) = 0 )
+);
+
+
+sh.fx(i)$((sobra(i)=1) and iter > 1)=0;
+
+
+Solve netplan using nlp minimizing obj;
+
 execute_unload "resultado.gdx";
 
 
@@ -357,32 +442,6 @@ put 'i,j,o,d,value' /;
 loop((i,j,o,d),
     put i.tl ',' j.tl ',' o.tl ',' d.tl ',' fij.l(i,j,o,d):0:15 / );
 putclose fijx;
-
-EmbeddedCode Connect:
-- GAMSReader:
-    symbols:
-      - name: a
-- Projection:
-    name: a.l(i,j)
-    newName: a_level(i,j)
-- ExcelWriter:
-    file: output_a.xlsx
-    symbols:
-      - name: a_level
-endEmbeddedCode
-
-EmbeddedCode Connect:
-- GAMSReader:
-    symbols:
-      - name: s
-- Projection:
-    name: s.l(i)
-    newName: s_level(i)
-- ExcelWriter:
-    file: output_s.xlsx
-    symbols:
-      - name: s_level
-endEmbeddedCode
 
 EmbeddedCode Connect:
 - GAMSReader:

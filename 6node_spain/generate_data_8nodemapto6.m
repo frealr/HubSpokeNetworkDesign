@@ -17,6 +17,7 @@ if ~exist(basedir,'dir'); mkdir(basedir); end
     congestion_coef_links,travel_time,alt_utility,a_nom,tau,eta,...
     a_max,candidasourcertes,omega_t,omega_p] = parameters_6node_network();
 
+%demand = demand./365;
 
 M = 1e4;
 nreg = 20;
@@ -93,6 +94,8 @@ a_prev = 1e4*ones(n);
 s_prev = 1e4*ones(1,n);
 sh_prev = 1e-3*s_prev;
 
+%sh_prev = [5,0.5,5,5,5,5];
+
 write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
 write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
 write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
@@ -104,8 +107,17 @@ alfa = 0.5;
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
-budgets = [3e4,4e4,5e4,6e4,7e4,8e4];
-budgets = 4e4;
+budgets = [3e4,4e4,5e4,6e4,7e4,8e4]; %funcionan con 1e-8,5e-2
+
+budgets = [7e4,8e4];
+% budgets = [6e4,7e4,8e4];
+% %budgets = 3e4;
+ % budgets = [6e4];
+
+%
+%budgets = [5e4,6e4,8e4];
+%budgets = 6e4;
+% budgets = 8e4;
 
 
 %budgets = [4e4];
@@ -131,7 +143,7 @@ lam = 4;
 %    % disp(used_budget);
 % end
 
-%% run cvx model
+%% define cvx model
 
 
 alfas = 0.1;
@@ -142,24 +154,149 @@ fprintf(fid, '%d', gamma);
 fclose(fid);
 
 
+mus_alfa = [1e-9, 5e-9, 1e-8, 5e-8, 1e-7, 5e-7];
+mus_beta = [1e-2, 5e-2, 1e-1, 2e-1, 5e-1, 1];
+
+mus_alfa = [1e-8,5e-8,1e-7];
+mus_beta = [5e-3,1e-2,5e-2,1e-1];
+
+mus_alfa = 1e-7; mus_beta = 2e-1;
+% 
+% %con demanda dividida
+mus_alfa = 1e-4; mus_beta = 1e-2; %funciona para todos salvo 60
+
+% mus_alfa = [1e-4,1e-3];
+% mus_beta = [1e-2,5e-2];
+
+%mus_alfa = 1e-5; mus_beta = 5e-2;
+
+%% run cvx blo single start
+
+
 for bb=1:length(budgets)
     bud = budgets(bb);
     for al=1:length(alfas)
         alfa = alfas(al);
+        for ma=1:length(mus_alfa)
+            mu_alfa = mus_alfa(ma);
+            for mb=1:length(mus_beta)
+                mu_beta = mus_beta(mb);
 
-        % Initialize alfa_od and beta_od, gamma
-        alfa_od = ones(n);
-        beta_od = ones(n);
-        % beta_od(3,4) = 1.3;
-        % beta_od(4,3) = beta_od(3,4);
-        % beta_od(2,6) = 0.7;
-        % beta_od(6,2) = 0.7;
+                % Initialize alfa_od and beta_od, gamma
+                alfa_od = ones(n);
+                beta_od = ones(n);
+                % beta_od(3,4) = 1.3;
+                % beta_od(4,3) = beta_od(3,4);
+                % beta_od(2,6) = 0.7;
+                % beta_od(6,2) = 0.7;
 
-        %For BLO
-        write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
-        write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
+                %For BLO
+                write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
+                write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
 
-        [s,sh,a,f,fext,fij] = compute_sim_cvx_blo(lam,alfa,n,bud);
+                % Multistart en sh_prev
+                sh_prev = 5 * ones(1, n);
+                sh_prev = [5,2,5,5,5,5];
+                
+
+                [s,sh,a,f,fext,fij, ...
+                 comp_time,used_budget,pax_obj,op_obj, ...
+                 obj_val_ll,alfa_od,beta_od,obj_hist] = ...
+                    compute_sim_cvx_blo(lam,alfa,n,bud,mu_alfa,mu_beta,sh_prev);
+                
+                obj = sum(sum(f.*demand.*prices)) - sum(sum(op_link_cost.*a));
+
+
+                filename = sprintf('./6node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_bet=%d_replica8node.mat',bud,lam,alfa,mu_alfa,mu_beta);
+                save(filename,'s','sh', ...
+                    'a','f','fext','fij','comp_time','used_budget', ...
+                    'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');
+            end
+        end
+    end
+end
+
+
+%% run cvx blo multistart
+
+for bb=1:length(budgets)
+    bud = budgets(bb);
+    for al=1:length(alfas)
+        alfa = alfas(al);
+        for ma=1:length(mus_alfa)
+            mu_alfa = mus_alfa(ma);
+            for mb=1:length(mus_beta)
+                mu_beta = mus_beta(mb);
+
+                % Initialize alfa_od and beta_od, gamma
+                alfa_od = ones(n);
+                beta_od = ones(n);
+                % beta_od(3,4) = 1.3;
+                % beta_od(4,3) = beta_od(3,4);
+                % beta_od(2,6) = 0.7;
+                % beta_od(6,2) = 0.7;
+
+                %For BLO
+                write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
+                write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
+
+                % Multistart en sh_prev
+                sh_prev_list = 5 * ones(n+1, n);
+                for idx_ms = 1:n
+                    sh_prev_list(idx_ms+1, idx_ms) = 2;
+                end
+                
+                best_obj_ms = 1;
+                best_res_ms = struct();
+
+                best_res_ms.f = zeros(n);
+                best_res_ms.a = zeros(n);
+
+                for start_idx = 1:(n+1)
+                    sh_prev_in = sh_prev_list(start_idx, :);
+                    fprintf('empieazo multistart con sh = \n');
+                    sh_prev_in
+                    [s_curr,sh_curr,a_curr,f_curr,fext_curr,fij_curr, ...
+                     comp_time_curr,used_budget_curr,pax_obj_curr,op_obj_curr, ...
+                     obj_val_ll_curr,alfa_od_curr,beta_od_curr,obj_hist_curr] = ...
+                        compute_sim_cvx_blo(lam,alfa,n,bud,mu_alfa,mu_beta,sh_prev_in);
+                    
+
+                    f_curr( abs(f_curr - best_res_ms.f) < 2e-2 ) = best_res_ms.f( abs(f_curr - best_res_ms.f) < 2e-2 );
+                    f_curr
+                    a_curr( abs(a_curr - best_res_ms.a) < 5e-2 ) = best_res_ms.a( abs(a_curr - best_res_ms.a) < 5e-2 );
+                    a_curr
+                    obj_curr = sum(sum(f_curr.*demand.*prices)) - sum(sum(op_link_cost.*a_curr))
+       
+
+                    if (obj_curr > best_obj_ms) && ( sum(s_curr) > 2e-2 )
+                        disp('el mejor hasta ahora');
+                        disp('f sale:');
+                        f_curr
+                        best_obj_ms = obj_curr;
+                        best_res_ms.s = s_curr; best_res_ms.sh = sh_curr; best_res_ms.a = a_curr;
+                        best_res_ms.f = f_curr; best_res_ms.fext = fext_curr; best_res_ms.fij = fij_curr;
+                        best_res_ms.comp_time = comp_time_curr; best_res_ms.used_budget = used_budget_curr;
+                        best_res_ms.pax_obj = pax_obj_curr; best_res_ms.op_obj = op_obj_curr;
+                        best_res_ms.obj_val_ll = obj_val_ll_curr; best_res_ms.alfa_od = alfa_od_curr;
+                        best_res_ms.beta_od = beta_od_curr; best_res_ms.obj_hist = obj_hist_curr;
+                    end
+                end
+
+                % Restore the best result
+                s = best_res_ms.s; sh = best_res_ms.sh; a = best_res_ms.a; f = best_res_ms.f;
+                fext = best_res_ms.fext; fij = best_res_ms.fij; comp_time = best_res_ms.comp_time;
+                used_budget = best_res_ms.used_budget; pax_obj = best_res_ms.pax_obj;
+                op_obj = best_res_ms.op_obj; obj_val_ll = best_res_ms.obj_val_ll;
+                alfa_od = best_res_ms.alfa_od; beta_od = best_res_ms.beta_od;
+                obj_hist = best_res_ms.obj_hist;
+
+                filename = sprintf('./6node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_bet=%d_replica8node.mat',bud,lam,alfa,mu_alfa,mu_beta);
+                save(filename,'s','sh', ...
+                    'a','f','fext','fij','comp_time','used_budget', ...
+                    'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');
+            end
+        end
     end
 end
 
@@ -170,11 +307,57 @@ best_obj = 1e3*ones(1,length(budgets));
 best_alfa = zeros(1,length(budgets));
 used_bud = best_alfa;
 
+%% load blo results
+
+
+for bb=1:length(budgets)
+    bud = budgets(bb);
+    bud
+    best_obj = 0;
+    best_mu_alfa = 0;
+    best_mu_beta = 0;
+
+    filename_MIP = sprintf('./6node_hs_prueba_v0/2h_bud=%d_lam=%d',bud,lam);
+    load(filename_MIP);
+    f_MIP = f;
+    a_MIP = a;
+    
+    for al=1:length(alfas)
+        alfa = alfas(al);
+        for ma=1:length(mus_alfa)
+            mu_alfa = mus_alfa(ma);
+            for mb=1:length(mus_beta)
+                mu_beta = mus_beta(mb);
+                filename = sprintf('./6node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_bet=%d_replica8node.mat',bud,lam,alfa,mu_alfa,mu_beta);
+                load(filename);
+                obj = sum(sum(f.*prices.*demand)) - sum(sum(a.*op_link_cost));
+                if (obj > best_obj)
+                    best_obj = obj;
+                    best_f = f;
+                    best_a = a;
+                    best_mu_alfa = mu_alfa; best_mu_beta = mu_beta;
+                end
+            end
+        end
+    end
+    f_MIP( abs(f_MIP - best_f) < 2e-2 ) = best_f( abs(f_MIP - best_f) < 2e-2 );
+    a_MIP( abs(f_MIP - best_f) < 2e-2 ) = best_a( abs(f_MIP - best_f) < 2e-2 );
+    % best_f
+    % f_MIP
+    % best_a
+    % a_MIP
+    obj_MIP = sum(sum(f_MIP.*prices.*demand)) - sum(sum(a_MIP.*op_link_cost));
+    gap = 100.*(obj_MIP - best_obj)/obj_MIP;
+    fprintf('budget = %d: best obj  = %d, mu_alfa = %d, mu_beta = %d, MIP obj = %d, gap = %d \n',bud,best_obj,best_mu_alfa,best_mu_beta,obj_MIP,gap);
+end
+
+
 %%
 
 mu_beta = 2e-1;
 mu_alfa = 1e-7;
 budgets = [3e4,4e4,5e4,6e4,7e4,8e4,9e4,1e5];
+budgets = 4e4;
 
 for bb=1:length(budgets)
     bud = budgets(bb);
@@ -590,7 +773,7 @@ fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
 end
 
 
-function [s,sh,a,f,fext,fij] = compute_sim_cvx_blo(lam,alfa,n,budget)
+function [s_ll,sh_ll,a_ll,f_ll,fext_ll,fij_ll,comp_time,used_budget,pax_obj,op_obj,obj_val_ll,alfa_od,beta_od,obj_hist] = compute_sim_cvx_blo(lam,alfa,n,budget,mu_alfa,mu_beta,sh_prev_in)
 
 
 [n,link_cost,station_cost,hub_cost,link_capacity_slope,...
@@ -605,21 +788,9 @@ debug = struct('a',{},'f',{},'fext',{},'fij',{}, ...
                'grad_alfa_f',{},'grad_beta_f',{}, ...
                'alfa_od',{},'beta_od',{});
 
-niters = 20;
-
-%mus_alfa = [1e-7,3e-8,1e-8];
-%mus_beta = [1e-1,2e-1,3e-1,5e-1];
-
-% mu_alfa = 1e-7; mu_beta = 1e-1; %mejor para todos salvo 30k
-%mu_alfa = 3e-8; mu_beta = 3e-1; %mejor para 30k
-mu_alfa = 1e-7;
-mu_beta = 2e-1;
-
-mu_alfa = 1e-8; %funcionan para cvx blo
-mu_beta = 5e-2; %funcionan para cvx blo
-
-mu_alfa = 1e-7;
-mu_beta = 1e-1;
+niters = 20; %dejarlo despues asi
+ niters = 40;
+%niters = 10; %como estaba antes
 
 alfa_od = ones(n);
 beta_od = ones(n);
@@ -663,7 +834,8 @@ bliters = 30;
 
 a_prev = 1e4*ones(n);
 s_prev = 1e4*ones(1,n);
-sh_prev = s_prev;
+sh_prev = sh_prev_in;
+%sh_prev = [5,2,5,5,5,5];
 
 comp_time = 0;
 
@@ -678,7 +850,7 @@ while iter <= niters
     stop = 0;
     for bliter=1:bliters
     
-        if (abs((obj_val-obj_val_prev)./obj_val) <= 1e-3) && (bliter > 1) 
+        if (abs((obj_val-obj_val_prev)./(obj_val+1e-4)) <= 1e-3) && (bliter > 1) 
             stop = 1;
         elseif (stop == 0)
         
@@ -693,7 +865,7 @@ while iter <= niters
             cmdpath = "cd C:\GAMS\50";
             
             system(cmdpath);
-            gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-ll.gms';
+            gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.gms';
             
             gamsExe = 'C:\GAMS\50\gams.exe'; 
             
@@ -772,6 +944,8 @@ while iter <= niters
             
             a_ll = a;
             f_ll = f;
+            fext_ll = fext;
+            fij_ll = fij;
 
             s_ll = s;
             sh_ll = sh;
@@ -796,7 +970,7 @@ while iter <= niters
             end
 
             used_budget = get_budget(s,sh,a,n,...
-                station_cost,station_capacity_slope,hub_cost,link_cost,lam)
+                station_cost,station_capacity_slope,hub_cost,link_cost,lam);
 
             
             
@@ -814,7 +988,7 @@ while iter <= niters
             set_max_f(n,fij,n_airlines,travel_time,prices,alt_utility,omega_p,omega_t);
                
             
-            gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-sl.gms';
+            gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-sl.gms';
             
             gamsExe = 'C:\GAMS\50\gams.exe'; 
             
@@ -888,7 +1062,7 @@ while iter <= niters
             used_budget = get_budget(s,sh,a,n,...
                 station_cost,station_capacity_slope,hub_cost,link_cost,lam);
             
-            disp(obj_val_ll);
+            % disp(obj_val_ll);
             
             f_sl = f;
             a_sl = a;
@@ -908,7 +1082,7 @@ while iter <= niters
             alfa_od = alfa_od - mu_alfa.*grad_alfa_f;
         
             beta_od = max(0.5,beta_od);
-            beta_od = min(2,beta_od);
+            beta_od = min(2.1,beta_od);
             
         
             alfa_od = max(1,alfa_od);
@@ -919,12 +1093,12 @@ while iter <= niters
             write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
             write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
             
-            disp('beta');
-            disp(beta_od);
-            disp('alfa');
-            disp(alfa_od);
-            disp('obj_val');
-            disp(obj_val_ll);
+            % disp('beta');
+            % disp(beta_od);
+            % disp('alfa');
+            % disp(alfa_od);
+            % disp('obj_val');
+            % disp(obj_val_ll);
         
             obj_hist(bliter) = obj_val_ll;
         
@@ -935,10 +1109,10 @@ while iter <= niters
             obj_val_prev = obj_val;
             obj_val = obj_val_ll;
 
-            debug(iter,bliter).a = a;
-            debug(iter,bliter).f = f;
-            debug(iter,bliter).fext = fext;
-            debug(iter,bliter).fij = fij;
+            debug(iter,bliter).a = a_ll;
+            debug(iter,bliter).f = f_ll;
+            debug(iter,bliter).fext = fext_ll;
+            debug(iter,bliter).fij = fij_ll;
             debug(iter,bliter).grad_alfa_v = grad_alfa_v;
             debug(iter,bliter).grad_beta_v = grad_beta_v;
             debug(iter,bliter).grad_alfa_f = grad_alfa_f;
@@ -954,9 +1128,9 @@ while iter <= niters
         
         if iter < (niters -1)
           %  iter = niters-1; 
-            disp('cumplo presupuesto');
+            % disp('cumplo presupuesto');
         end
-        %break;
+       % break; %comentar
     end
     s_prev = s_ll;
     sh_prev = sh_ll;
@@ -966,127 +1140,6 @@ while iter <= niters
     iter = iter+1;
 end
 
-% a_prev = 1e4*ones(n);
-% s_prev = 0.1*ones(1,n);
-% sh_prev = s_prev;
-
-cmdpath = "cd C:\GAMS\50";
-
-system(cmdpath);
-gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-ll.gms';
-
-gamsExe = 'C:\GAMS\50\gams.exe'; 
-
-
-cmd = sprintf('%s %s ', ...
-    gamsExe, gmsFile);
-
-niters = 30;
-
-fid = fopen("./export_txt/niters.txt",'w');
-if fid < 0, error('No puedo abrir %s', fid); end
-fprintf(fid, '%d', niters);
-fclose(fid);
-
-%niters = 1;
-% 
-
-a_prev = 1e4*ones(n);
-s_prev = 1e4*ones(1,n);
-sh_prev = s_prev;
-% for iter=1:niters
-% 
-%         write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
-%         write_gams_param1d_full('./export_txt/s_prev.txt', s_prev);
-%         write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev);
-% 
-% 
-%         %cmdpath = "cd C:\GAMS\50";
-%         cmdpath = "cd C:\GAMS\50";
-% 
-%         system(cmdpath);
-%         gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-ll.gms';
-% 
-%         gamsExe = 'C:\GAMS\50\gams.exe'; 
-% 
-% 
-%         cmd = sprintf('%s %s ', ...
-%             gamsExe, gmsFile);
-% 
-% 
-%         fid = fopen("./export_txt/current_iter.txt",'w');
-%         if fid < 0, error('No puedo abrir %s', fid); end
-%         fprintf(fid, '%d', iter);
-%         fclose(fid);
-%         [status,out] = system(cmd);
-%          disp(out);
-% 
-%         results_file_ctime = readtable('./output_all.xlsx','Sheet','solver_time');
-%         comp_time = comp_time + table2array(results_file_ctime);
-% 
-%         results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
-%         sh = table2array(results_file_sh(1,:));
-%         sh = max(sh,1e-4);
-% 
-% 
-% 
-% 
-% 
-%         results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
-%         s = table2array(results_file_s(1,:));
-%         s = max(s,1e-4);
-% 
-%         results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-%         f = table2array(results_file_f(1:n,2:(n+1)));
-% 
-% 
-% 
-% 
-% 
-%         results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
-%         a = table2array(results_file_a(1:n,2:(n+1)));
-%         a = max(a,1e-4);
-% 
-%         % 
-%         % write_gams_param_ii('./export_txt/a_prev.txt', a);
-%         % write_gams_param1d_full('./export_txt/s_prev.txt', s);
-%         % write_gams_param1d_full('./export_txt/sh_prev.txt', sh);
-% 
-% 
-% 
-%         results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-%         f = table2array(results_file_f(1:n,2:(n+1)));
-% 
-% 
-%         results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-%         fext = table2array(results_file_fext(1:n,2:(n+1)));
-% 
-% 
-%         T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
-%         [iU,~,iIdx] = unique(T.i,'stable');
-%         [jU,~,jIdx] = unique(T.j,'stable');
-%         [oU,~,oIdx] = unique(T.o,'stable');
-%         [dU,~,dIdx] = unique(T.d,'stable');
-% 
-% 
-%         fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
-%             [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
-% 
-%         a(a < 1e-2) = 0;
-%         f(f < 1e-2) = 0;
-%         fij(fij < 1e-2) = 0;
-%         fext(fext > 0.99) = 1;
-%         a_prev = a;
-%         s_prev = s;
-%         sh_prev = sh;
-% end
-
-%s = s_ll; sh = sh_ll; a = a_ll; f = f_ll;
-
-filename = sprintf('./6node_hs_prueba_v0_blo/bud=%d_lam=%d_alfa=%d_mu_al=%d_mu_bet=%d_replica8node.mat',budget,lam,alfa,mu_alfa,mu_beta);
-save(filename,'s','sh', ...
-    'a','f','fext','fij','comp_time','used_budget', ...
-    'pax_obj','op_obj','obj_val_ll','alfa_od','beta_od','obj_hist');
 
 save('debug_matlab.mat','debug')
 
@@ -1154,7 +1207,7 @@ cmdpath = "cd C:\GAMS\50";
 
 system(cmdpath);
 
-gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mip.gms';
+gmsFile  = 'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mip.gms';
 
 gamsExe = 'C:\GAMS\50\gams.exe'; 
 
@@ -1494,7 +1547,7 @@ station_capacity_slope = (5*5e2 + 4*50*8).*ones(1,n); % 500 e/dia estacionamient
 
 % Demand: datos reales de pasajeros anuales - generados por extract_demand_8node.py
 demand = readmatrix('demand.csv');
-demand = demand./365;
+%demand = demand./365;
 
 load_factor = 0.25 .* ones(1, n);
 

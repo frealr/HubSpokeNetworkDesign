@@ -1,11 +1,11 @@
 
---- Job cvx-ll.gms Start 02/17/26 12:16:18 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
+--- Job cvx-ll.gms Start 04/08/26 11:38:21 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\50\gmsprmNT.txt
 --- GAMS Parameters defined
     Input C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.gms
     PageSize 0
-    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ar\
+    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225ws\
     SysDir C:\GAMS\50\
     LogOption 3
     AppendLog 1
@@ -13,76 +13,76 @@
     ErrorLog 99
     IDE 1
     LstTitleLeftAligned 1
-*** Time-limited license expired 9 days ago
-Licensee: Luis Cadarso Morga                             G250911+0003Ac-GEN
+Licensee: Luis Cadarso Morga                             G260211+0003Ac-GEN
           University Rey Juan Carlos                                DCE4613
-          225ar\gamslice.dat
-          node:23539203 mem:64 cores:8 ipport:61117 v:2                    
+          225ws\gamslice.dat
+          node:23539203 mem:64 cores:8 ipport:51464 v:2                    
           Course license for use within the course and related course work
+          The expiration date of time-limited license is Aug 10, 2026
 System information: 8 physical cores and 64 Gb physical memory detected
 GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
 --- Starting compilation
 --- cvx-ll.gms(2) 2 Mb
---- . param_definition_cvx-blo.gms(18) 3 Mb
+--- . param_definition_cvx-blo.gms(16) 3 Mb
 --- .. demand.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(26) 3 Mb
+--- . param_definition_cvx-blo.gms(24) 3 Mb
 --- .. alt_utility.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(33) 3 Mb
+--- . param_definition_cvx-blo.gms(31) 3 Mb
 --- .. link_cost.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(38) 3 Mb
+--- . param_definition_cvx-blo.gms(36) 3 Mb
 --- .. link_capacity_slope.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(43) 3 Mb
+--- . param_definition_cvx-blo.gms(41) 3 Mb
 --- .. alfa_od.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(48) 3 Mb
+--- . param_definition_cvx-blo.gms(46) 3 Mb
 --- .. beta_od.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(53) 3 Mb
+--- . param_definition_cvx-blo.gms(51) 3 Mb
 --- .. prices.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(58) 3 Mb
+--- . param_definition_cvx-blo.gms(56) 3 Mb
 --- .. op_link_cost.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(65) 3 Mb
+--- . param_definition_cvx-blo.gms(63) 3 Mb
 --- .. candidates.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(70) 3 Mb
+--- . param_definition_cvx-blo.gms(68) 3 Mb
 --- .. travel_time.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(76) 3 Mb
+--- . param_definition_cvx-blo.gms(74) 3 Mb
 --- .. station_cost.txt(6) 3 Mb
---- . param_definition_cvx-blo.gms(81) 3 Mb
+--- . param_definition_cvx-blo.gms(79) 3 Mb
 --- .. hub_cost.txt(6) 3 Mb
---- . param_definition_cvx-blo.gms(86) 3 Mb
+--- . param_definition_cvx-blo.gms(84) 3 Mb
 --- .. station_capacity_slope.txt(6) 3 Mb
---- . param_definition_cvx-blo.gms(91) 3 Mb
+--- . param_definition_cvx-blo.gms(89) 3 Mb
 --- .. budget.txt(1) 3 Mb
---- . param_definition_cvx-blo.gms(96) 3 Mb
+--- . param_definition_cvx-blo.gms(94) 3 Mb
 --- .. f_bounds.txt(36) 3 Mb
---- . param_definition_cvx-blo.gms(102) 3 Mb
+--- . param_definition_cvx-blo.gms(100) 3 Mb
 --- .. s_prev.txt(6) 3 Mb
---- . param_definition_cvx-blo.gms(107) 3 Mb
+--- . param_definition_cvx-blo.gms(105) 3 Mb
 --- .. sh_prev.txt(6) 3 Mb
---- . param_definition_cvx-blo.gms(123) 3 Mb
+--- . param_definition_cvx-blo.gms(121) 3 Mb
 --- .. lam.txt(1) 3 Mb
---- . param_definition_cvx-blo.gms(127) 3 Mb
+--- . param_definition_cvx-blo.gms(125) 3 Mb
 --- .. alfa.txt(1) 3 Mb
---- . param_definition_cvx-blo.gms(132) 3 Mb
+--- . param_definition_cvx-blo.gms(130) 3 Mb
 --- .. current_iter.txt(1) 3 Mb
---- . param_definition_cvx-blo.gms(136) 3 Mb
+--- . param_definition_cvx-blo.gms(134) 3 Mb
 --- .. niters.txt(1) 3 Mb
---- . param_definition_cvx-blo.gms(140) 3 Mb
+--- . param_definition_cvx-blo.gms(138) 3 Mb
 --- .. gamma.txt(1) 3 Mb
---- . param_definition_cvx-blo.gms(152) 3 Mb
---- cvx-ll.gms(358) 3 Mb
+--- . param_definition_cvx-blo.gms(149) 3 Mb
+--- cvx-ll.gms(376) 3 Mb
 --- $echo File C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt
---- cvx-ll.gms(458) 3 Mb
---- Starting execution: elapsed 0:00:00.025
---- cvx-ll.gms(949) 4 Mb
+--- cvx-ll.gms(533) 3 Mb
+--- Starting execution: elapsed 0:00:00.028
+--- cvx-ll.gms(967) 4 Mb
 --- Generating NLP model netplan
---- cvx-ll.gms(953) 7 Mb
----   1,382 rows  1,710 columns  8,964 non-zeroes
+--- cvx-ll.gms(973) 7 Mb
+---   1,387 rows  1,710 columns  8,979 non-zeroes
 ---   576 nl-code  144 nl-non-zeroes
 --- Range statistics (absolute non-zero finite values)
 --- RHS       [min, max] : [ 1.000E-06, 1.000E+07] - Zero values observed as well
 --- Bound     [min, max] : [ 1.000E-06, 1.000E+00] - Zero values observed as well
---- Matrix    [min, max] : [ 1.000E-06, 5.934E+05]
---- cvx-ll.gms(953) 5 Mb
---- Executing MOSEK (Solvelink=2): elapsed 0:00:00.044
+--- Matrix    [min, max] : [ 5.711E-04, 8.156E+09]
+--- cvx-ll.gms(973) 5 Mb
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:00.050
 
 MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
 
@@ -92,10 +92,11 @@ MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
 	                https://www.mosek.com
 
 Reading parameter(s) from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt"
->>  MSK_DPAR_INTPNT_TOL_REL_GAP   1e-14
->>  MSK_DPAR_INTPNT_TOL_PFEAS     1e-14
->>  MSK_DPAR_INTPNT_TOL_DFEAS     1e-14
->>  MSK_DPAR_BASIS_REL_TOL_S      1e-14
+>>  MSK_DPAR_INTPNT_CO_TOL_PFEAS 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_DFEAS 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_REL_GAP 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_INFEAS 1e-14
+>>  MSK_DPAR_INTPNT_CO_TOL_NEAR_REL 1
 Finished reading from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt"
 
 Extraction of quadratics (ThreePass algorithm): 0.00s
@@ -103,7 +104,7 @@ Problem
   Name                   :                 
   Objective sense        : minimize        
   Type                   : CONIC (conic optimization problem)
-  Constraints            : 1381            
+  Constraints            : 1386            
   Affine conic cons.     : 0               
   Disjunctive cons.      : 0               
   Cones                  : 72              
@@ -135,71 +136,200 @@ Factor     - dense det. time        : 0.00              GP order time          :
 Factor     - nonzeros before factor : 5830              after factor           : 9605            
 Factor     - dense dim.             : 0                 flops                  : 3.82e+05        
 ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
-0   2.5e+06  1.3e+04  3.5e+04  0.00e+00   1.146597260e+05   1.498697723e+05   1.0e+00  0.01  
-1   1.4e+06  7.0e+03  2.6e+04  -1.00e+00  1.475657792e+05   1.827766444e+05   5.6e-01  0.01  
-2   2.5e+05  1.3e+03  1.1e+04  -1.00e+00  6.227571052e+05   6.579759329e+05   1.0e-01  0.01  
-3   7.5e+04  3.8e+02  6.1e+03  -1.00e+00  2.271493634e+06   2.306735358e+06   3.0e-02  0.01  
-4   5.2e+04  2.6e+02  5.1e+03  -1.00e+00  1.376553655e+06   1.411797687e+06   2.1e-02  0.01  
-5   1.1e+04  5.3e+01  2.3e+03  -9.99e-01  2.158248450e+06   2.193567131e+06   4.2e-03  0.01  
-6   1.2e+03  6.1e+00  7.5e+02  -9.90e-01  1.589172627e+06   1.624817991e+06   4.8e-04  0.01  
-7   2.1e+02  1.1e+00  2.6e+02  -8.98e-01  3.413064760e+05   3.756903438e+05   8.4e-05  0.01  
-8   1.2e+02  6.2e-01  9.0e+01  2.25e-01   2.719682401e+05   2.887665449e+05   5.0e-05  0.01  
-9   3.7e+01  1.9e-01  1.0e+01  9.04e-01   1.313244699e+05   1.354993529e+05   1.5e-05  0.01  
-10  1.3e+01  6.6e-02  2.4e+00  9.77e-01   9.500366588e+04   9.654664883e+04   5.3e-06  0.01  
-11  4.5e+00  2.3e-02  4.7e-01  1.10e+00   7.767022198e+04   7.815515615e+04   1.8e-06  0.01  
-12  2.3e+00  1.2e-02  1.7e-01  1.23e+00   7.599171466e+04   7.622343877e+04   9.3e-07  0.01  
-13  1.3e+00  6.4e-03  6.9e-02  1.20e+00   7.487190723e+04   7.499161419e+04   5.1e-07  0.01  
-14  6.2e-01  3.1e-03  2.4e-02  1.10e+00   7.426740081e+04   7.432580984e+04   2.5e-07  0.01  
-15  4.3e-01  2.2e-03  1.4e-02  9.84e-01   7.429015947e+04   7.433179204e+04   1.7e-07  0.01  
-16  2.5e-01  1.3e-03  6.7e-03  9.72e-01   7.436017677e+04   7.438534221e+04   1.0e-07  0.01  
-17  2.1e-01  1.0e-03  5.1e-03  8.54e-01   7.441451605e+04   7.443596029e+04   8.2e-08  0.01  
-18  1.1e-01  5.7e-04  2.1e-03  9.27e-01   7.451845569e+04   7.453055293e+04   4.6e-08  0.01  
-19  8.4e-02  4.2e-04  1.5e-03  7.85e-01   7.457290669e+04   7.458282298e+04   3.3e-08  0.02  
-20  2.6e-02  1.3e-04  2.7e-04  8.57e-01   7.470563799e+04   7.470892363e+04   1.0e-08  0.02  
-21  1.5e-02  7.4e-05  1.4e-04  6.09e-01   7.476638441e+04   7.476876732e+04   5.9e-09  0.02  
-22  1.1e-02  5.3e-05  9.7e-05  5.18e-01   7.480696487e+04   7.480900022e+04   4.2e-09  0.02  
-23  9.0e-03  4.5e-05  8.4e-05  2.69e-01   7.483123402e+04   7.483320066e+04   3.6e-09  0.02  
-24  8.2e-03  4.1e-05  7.3e-05  3.61e-01   7.484479227e+04   7.484660361e+04   3.3e-09  0.02  
-25  7.4e-03  3.7e-05  6.9e-05  1.94e-01   7.485791515e+04   7.485979074e+04   2.9e-09  0.02  
-26  6.4e-03  3.2e-05  5.9e-05  2.48e-01   7.487867688e+04   7.488042257e+04   2.6e-09  0.02  
-27  3.8e-03  1.9e-05  3.1e-05  2.94e-01   7.495119264e+04   7.495246542e+04   1.5e-09  0.02  
-28  3.2e-03  1.6e-05  2.9e-05  1.28e-01   7.497004965e+04   7.497143192e+04   1.3e-09  0.02  
-29  1.5e-03  7.8e-06  1.1e-05  3.85e-01   7.506018756e+04   7.506094592e+04   6.2e-10  0.02  
-30  1.1e-03  5.6e-06  7.8e-06  2.59e-01   7.509881352e+04   7.509952490e+04   4.4e-10  0.02  
-31  3.0e-04  1.5e-06  1.5e-06  5.02e-01   7.521286580e+04   7.521314571e+04   1.2e-10  0.02  
-32  1.2e-04  6.3e-07  5.3e-07  4.90e-01   7.526618517e+04   7.526636219e+04   5.0e-11  0.02  
-33  5.2e-05  2.6e-07  1.6e-07  7.49e-01   7.529832730e+04   7.529841296e+04   2.1e-11  0.02  
-34  1.5e-05  7.8e-08  3.1e-08  7.42e-01   7.532038628e+04   7.532042081e+04   6.2e-12  0.02  
-35  8.6e-06  4.3e-08  1.5e-08  7.07e-01   7.532726182e+04   7.532728604e+04   3.4e-12  0.02  
-36  2.8e-06  1.4e-08  3.1e-09  8.41e-01   7.533412129e+04   7.533413066e+04   1.1e-12  0.02  
-37  1.8e-06  9.0e-09  1.7e-09  7.52e-01   7.533570832e+04   7.533571535e+04   7.2e-13  0.02  
-38  5.5e-07  2.8e-09  3.2e-10  8.75e-01   7.533788743e+04   7.533788987e+04   2.2e-13  0.02  
-39  3.0e-07  1.5e-09  1.5e-10  7.78e-01   7.533839801e+04   7.533839966e+04   1.2e-13  0.03  
-40  1.3e-07  6.3e-10  4.2e-11  8.83e-01   7.533880927e+04   7.533881002e+04   5.0e-14  0.03  
-41  4.0e-08  2.0e-10  8.2e-12  8.56e-01   7.533905935e+04   7.533905963e+04   1.6e-14  0.03  
+0   2.5e+06  8.2e+09  4.7e+09  0.00e+00   3.803392449e+09   8.547835121e+09   1.0e+00  0.01  
+1   7.7e+05  2.5e+09  2.6e+09  -1.00e+00  3.803789213e+09   8.548414569e+09   3.1e-01  0.01  
+2   1.3e+05  4.2e+08  1.1e+09  -1.00e+00  3.802911339e+09   8.548477609e+09   5.2e-02  0.01  
+3   1.7e+04  5.6e+07  3.9e+08  -1.00e+00  3.797543793e+09   8.542830231e+09   6.8e-03  0.01  
+4   1.0e+02  3.3e+05  3.0e+07  -1.00e+00  2.627244188e+09   7.372789257e+09   4.0e-05  0.01  
+5   1.8e+00  5.9e+03  4.0e+06  -1.00e+00  -5.258967017e+10  -4.784320370e+10  7.2e-07  0.01  
+6   4.2e-02  1.4e+02  6.2e+05  -1.00e+00  -3.172328181e+10  -2.693962822e+10  1.7e-08  0.01  
+7   1.0e-02  3.4e+01  3.0e+05  -9.88e-01  -3.209204102e+10  -2.724718000e+10  4.2e-09  0.01  
+8   4.8e-03  1.6e+01  1.9e+05  -8.86e-01  -5.851881744e+10  -5.396842210e+10  1.9e-09  0.01  
+9   2.1e-03  6.9e+00  7.7e+04  -4.62e-01  -6.867616713e+10  -6.567913657e+10  8.4e-10  0.01  
+10  8.9e-04  2.9e+00  1.6e+04  5.75e-01   -3.310256011e+10  -3.194778994e+10  3.6e-10  0.01  
+11  2.7e-04  8.7e-01  2.7e+03  1.05e+00   -1.033133753e+10  -9.998610033e+09  1.1e-10  0.01  
+12  9.9e-05  3.2e-01  6.3e+02  9.50e-01   -5.301614853e+09  -5.175173910e+09  4.0e-11  0.01  
+13  5.4e-05  1.7e-01  2.5e+02  1.02e+00   -3.691156079e+09  -3.623724911e+09  2.1e-11  0.01  
+14  2.1e-05  7.0e-02  7.2e+01  9.49e-01   -2.432042017e+09  -2.402654375e+09  8.6e-12  0.01  
+15  6.9e-06  2.2e-02  1.4e+01  9.14e-01   -1.802034994e+09  -1.791810027e+09  2.8e-12  0.01  
+16  2.7e-06  8.8e-03  3.9e+00  8.95e-01   -1.591642009e+09  -1.587264711e+09  1.1e-12  0.01  
+17  1.6e-06  5.1e-03  1.8e+00  8.24e-01   -1.518855794e+09  -1.516073499e+09  6.2e-13  0.01  
+18  8.2e-07  2.7e-03  7.3e-01  8.93e-01   -1.458792001e+09  -1.457263667e+09  3.3e-13  0.01  
+19  4.8e-07  1.6e-03  3.7e-01  7.75e-01   -1.430710188e+09  -1.429681656e+09  1.9e-13  0.01  
+20  2.0e-07  6.6e-04  1.0e-01  8.13e-01   -1.397269695e+09  -1.396811043e+09  8.1e-14  0.02  
+21  8.4e-08  2.8e-04  3.1e-02  8.27e-01   -1.379924492e+09  -1.379710128e+09  3.4e-14  0.02  
+22  4.1e-08  1.3e-04  1.1e-02  9.31e-01   -1.371656614e+09  -1.371550544e+09  1.6e-14  0.02  
+23  2.5e-08  8.1e-05  4.9e-03  1.09e+00   -1.368051376e+09  -1.367989343e+09  1.0e-14  0.02  
+24  1.8e-08  5.7e-05  2.9e-03  1.09e+00   -1.366172060e+09  -1.366128965e+09  7.0e-15  0.02  
+25  1.2e-08  3.9e-05  1.7e-03  1.04e+00   -1.364786158e+09  -1.364756271e+09  4.8e-15  0.02  
+26  8.6e-09  2.8e-05  1.2e-03  7.36e-01   -1.364385003e+09  -1.364359831e+09  3.4e-15  0.02  
+27  4.4e-09  1.4e-05  6.1e-04  3.89e-01   -1.363815194e+09  -1.363794523e+09  1.7e-15  0.02  
+28  3.0e-09  9.8e-06  4.7e-04  -5.02e-02  -1.363617933e+09  -1.363596200e+09  1.1e-15  0.02  
+29  1.5e-09  4.8e-06  3.1e-04  -3.20e-01  -1.363136509e+09  -1.363109018e+09  5.2e-16  0.02  
+30  1.1e-09  3.7e-06  1.9e-04  -3.50e-01  -1.361271833e+09  -1.361253293e+09  3.9e-16  0.02  
+31  9.3e-10  3.0e-06  1.5e-04  2.32e-01   -1.360767017e+09  -1.360749562e+09  3.2e-16  0.02  
+32  4.1e-10  1.4e-06  4.9e-05  4.59e-01   -1.358096595e+09  -1.358087718e+09  1.4e-16  0.02  
+33  1.8e-10  5.7e-07  1.5e-05  6.90e-01   -1.356321407e+09  -1.356317134e+09  5.8e-17  0.02  
+34  9.2e-11  3.0e-07  6.2e-06  7.65e-01   -1.355498907e+09  -1.355496335e+09  2.9e-17  0.02  
+35  4.5e-11  1.5e-07  2.4e-06  7.79e-01   -1.354956757e+09  -1.354955269e+09  1.4e-17  0.02  
+36  1.6e-11  5.2e-08  5.3e-07  8.55e-01   -1.354514725e+09  -1.354514151e+09  5.0e-18  0.02  
+37  8.0e-12  2.6e-08  2.0e-07  8.24e-01   -1.354382168e+09  -1.354381844e+09  2.6e-18  0.02  
+38  1.8e-12  6.0e-09  2.4e-08  8.80e-01   -1.354250291e+09  -1.354250207e+09  5.9e-19  0.02  
+39  1.7e-12  5.5e-09  2.2e-08  9.08e-01   -1.354246612e+09  -1.354246534e+09  5.5e-19  0.02  
+40  3.4e-13  1.1e-09  2.1e-09  9.18e-01   -1.354211541e+09  -1.354211523e+09  1.1e-19  0.03  
+41  1.2e-13  3.9e-10  4.5e-10  9.87e-01   -1.354205162e+09  -1.354205156e+09  4.0e-20  0.03  
+42  7.0e-14  2.3e-10  2.1e-10  9.93e-01   -1.354203726e+09  -1.354203722e+09  2.3e-20  0.03  
+43  6.5e-14  2.1e-10  1.8e-10  9.94e-01   -1.354203563e+09  -1.354203560e+09  2.2e-20  0.03  
+44  2.0e-14  1.5e-10  3.2e-11  9.98e-01   -1.354203519e+09  -1.354203518e+09  1.4e-20  0.03  
+45  1.8e-14  1.3e-10  2.7e-11  1.01e+00   -1.354203276e+09  -1.354203275e+09  1.2e-20  0.03  
+46  1.8e-14  1.3e-10  2.7e-11  1.01e+00   -1.354203276e+09  -1.354203275e+09  1.2e-20  0.03  
+47  2.5e-15  7.9e-11  1.5e-12  1.00e+00   -1.354203240e+09  -1.354203240e+09  9.3e-21  0.03  
+48  2.3e-15  7.3e-11  1.4e-12  9.93e-01   -1.354203143e+09  -1.354203143e+09  8.8e-21  0.03  
 Optimizer terminated. Time: 0.03    
 
 
 Interior-point solution summary
   Problem status  : PRIMAL_AND_DUAL_FEASIBLE
   Solution status : OPTIMAL
-  Primal.  obj: 7.5339059347e+04    nrm: 1e+05    Viol.  con: 2e-02    var: 2e-09    cones: 0e+00  
-  Dual.    obj: 7.5339059631e+04    nrm: 5e+08    Viol.  con: 1e-06    var: 2e-05    cones: 0e+00  
+  Primal.  obj: -1.3542031431e+09   nrm: 1e+10    Viol.  con: 2e-01    var: 3e-07    cones: 3e-09  
+  Dual.    obj: -1.3542031439e+09   nrm: 4e+13    Viol.  con: 8e-01    var: 8e-02    cones: 0e+00  
 
 Return code - 0 [MSK_RES_OK]: No error occurred.
 --- Reading solution for model netplan
---- Executing after solve: elapsed 0:00:00.132
---- cvx-ll.gms(966) 5 Mb
+--- Executing after solve: elapsed 0:00:00.136
+--- cvx-ll.gms(1023) 5 Mb
+--- Generating NLP model netplan
+--- cvx-ll.gms(1031) 7 Mb
+---   1,387 rows  1,710 columns  8,979 non-zeroes
+---   576 nl-code  144 nl-non-zeroes
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.000E-06, 1.000E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-06, 1.000E+00] - Zero values observed as well
+--- Matrix    [min, max] : [ 3.940E-16, 8.156E+09] - Zero values observed as well
+--- cvx-ll.gms(1031) 5 Mb
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:00.142
+
+MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+Reading parameter(s) from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt"
+>>  MSK_DPAR_INTPNT_CO_TOL_PFEAS 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_DFEAS 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_REL_GAP 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_INFEAS 1e-14
+>>  MSK_DPAR_INTPNT_CO_TOL_NEAR_REL 1
+Finished reading from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt"
+
+Extraction of quadratics (ThreePass algorithm): 0.00s
+Setting up initial basis solution.
+1386 basis variables are expected but only 0 basis variables are specified.
+ (400)
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : CONIC (conic optimization problem)
+  Constraints            : 1386            
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 72              
+  Scalar variables       : 1709            
+  Matrix variables       : 0               
+  Integer variables      : 0               
+
+Optimizer started.
+Presolve started.
+Linear dependency checker started.
+Linear dependency checker terminated.
+Eliminator started.
+Freed constraints in eliminator : 65
+Eliminator terminated.
+Eliminator - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - primal attempts        : 1                 successes              : 1               
+Lin. dep.  - dual attempts          : 0                 successes              : 0               
+Lin. dep.  - primal deps.           : 12                dual deps.             : 0               
+Presolve terminated. Time: 0.00    
+Optimizer  - threads                : 16              
+Optimizer  - solved problem         : the primal      
+Optimizer  - Constraints            : 82              
+Optimizer  - Cones                  : 38              
+Optimizer  - Scalar variables       : 210               conic                  : 114             
+Optimizer  - Semi-definite variables: 0                 scalarized             : 0               
+Factor     - setup time             : 0.00            
+Factor     - dense det. time        : 0.00              GP order time          : 0.00            
+Factor     - nonzeros before factor : 294               after factor           : 296             
+Factor     - dense dim.             : 0                 flops                  : 4.41e+03        
+ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
+0   1.2e+06  5.0e+09  4.8e+09  0.00e+00   3.717059085e+09   8.547778929e+09   1.0e+00  0.00  
+1   3.4e+05  1.4e+09  2.5e+09  -1.00e+00  3.714047933e+09   8.544780045e+09   2.7e-01  0.00  
+2   1.2e+05  4.7e+08  1.5e+09  -1.00e+00  3.705307963e+09   8.536040165e+09   9.3e-02  0.00  
+3   1.1e+04  4.3e+07  4.5e+08  -1.00e+00  3.612561166e+09   8.443315676e+09   8.5e-03  0.00  
+4   2.6e+02  1.0e+06  7.0e+07  -1.00e+00  -5.047053455e+08  4.326043528e+09   2.1e-04  0.00  
+5   2.3e+01  9.2e+04  2.1e+07  -1.00e+00  -4.102937674e+09  7.277528286e+08   1.8e-05  0.00  
+6   2.9e-01  1.2e+03  2.3e+06  -1.00e+00  -2.724143090e+09  2.101732392e+09   2.4e-07  0.00  
+7   5.3e-02  2.1e+02  9.9e+05  -9.96e-01  4.625419981e+08   5.251427206e+09   4.2e-08  0.00  
+8   2.8e-02  1.1e+02  6.9e+05  -9.41e-01  -7.102590830e+08  3.876410802e+09   2.3e-08  0.00  
+9   1.3e-02  5.2e+01  3.5e+05  -7.13e-01  -2.382645459e+09  1.016972501e+09   1.0e-08  0.00  
+10  4.8e-03  1.9e+01  7.2e+04  1.68e-01   -2.189964871e+09  -8.171838434e+08  3.8e-09  0.00  
+11  7.3e-04  2.9e+00  3.6e+03  9.05e-01   -1.499658362e+09  -1.292298806e+09  5.8e-10  0.00  
+12  1.6e-04  6.4e-01  3.9e+02  9.99e-01   -1.386620335e+09  -1.340808759e+09  1.3e-10  0.00  
+13  2.9e-05  1.2e-01  3.1e+01  1.00e+00   -1.360177969e+09  -1.351813730e+09  2.3e-11  0.00  
+14  1.1e-05  4.5e-02  7.6e+00  1.00e+00   -1.356461104e+09  -1.353253949e+09  9.0e-12  0.00  
+15  4.3e-06  1.7e-02  1.8e+00  1.00e+00   -1.355044429e+09  -1.353826727e+09  3.4e-12  0.00  
+16  1.8e-06  7.4e-03  5.4e-01  1.00e+00   -1.354557567e+09  -1.354031395e+09  1.5e-12  0.00  
+17  8.1e-07  3.2e-03  1.6e-01  1.01e+00   -1.354353334e+09  -1.354125338e+09  6.4e-13  0.00  
+18  2.9e-07  1.1e-03  3.4e-02  1.02e+00   -1.354254621e+09  -1.354174844e+09  2.3e-13  0.00  
+19  1.0e-07  4.2e-04  7.3e-03  1.05e+00   -1.354220557e+09  -1.354192438e+09  8.4e-14  0.00  
+20  2.0e-08  7.9e-05  5.5e-04  1.13e+00   -1.354205275e+09  -1.354200459e+09  1.6e-14  0.01  
+21  1.6e-08  6.6e-05  4.2e-04  1.10e+00   -1.354204592e+09  -1.354200626e+09  1.3e-14  0.01  
+22  1.6e-08  6.5e-05  4.1e-04  1.23e+00   -1.354204559e+09  -1.354200637e+09  1.3e-14  0.01  
+23  7.0e-09  2.8e-05  9.9e-05  7.50e-01   -1.354203010e+09  -1.354201395e+09  5.1e-15  0.01  
+24  2.3e-09  9.4e-06  2.1e-05  1.00e+00   -1.354202098e+09  -1.354201556e+09  1.6e-15  0.01  
+25  2.3e-09  9.4e-06  2.1e-05  -1.31e+00  -1.354201992e+09  -1.354201450e+09  1.5e-15  0.01  
+26  2.3e-09  9.2e-06  2.0e-05  9.92e-01   -1.354201997e+09  -1.354201465e+09  1.5e-15  0.01  
+27  2.3e-09  9.1e-06  2.0e-05  1.00e+00   -1.354201994e+09  -1.354201465e+09  1.4e-15  0.01  
+28  2.3e-09  9.1e-06  2.0e-05  1.00e+00   -1.354201994e+09  -1.354201465e+09  1.4e-15  0.01  
+29  2.3e-09  9.1e-06  2.0e-05  1.00e+00   -1.354201994e+09  -1.354201465e+09  1.4e-15  0.01  
+30  2.2e-10  8.7e-07  5.9e-07  9.96e-01   -1.354201717e+09  -1.354201666e+09  1.4e-16  0.01  
+31  2.2e-10  8.7e-07  5.9e-07  1.00e+00   -1.354201715e+09  -1.354201665e+09  1.3e-16  0.01  
+32  2.2e-10  8.7e-07  5.9e-07  1.00e+00   -1.354201715e+09  -1.354201665e+09  1.3e-16  0.01  
+33  1.5e-10  6.1e-07  3.5e-07  9.99e-01   -1.354201708e+09  -1.354201673e+09  9.3e-17  0.01  
+34  1.5e-10  6.1e-07  3.4e-07  1.00e+00   -1.354201708e+09  -1.354201673e+09  9.3e-17  0.01  
+35  2.2e-11  9.0e-08  2.0e-08  1.00e+00   -1.354201698e+09  -1.354201693e+09  1.7e-17  0.01  
+36  2.4e-12  9.4e-09  6.6e-10  1.00e+00   -1.354201694e+09  -1.354201694e+09  1.7e-18  0.01  
+37  2.4e-12  9.4e-09  6.6e-10  1.00e+00   -1.354201694e+09  -1.354201694e+09  1.7e-18  0.01  
+38  2.4e-12  9.4e-09  6.6e-10  1.00e+00   -1.354201694e+09  -1.354201694e+09  1.7e-18  0.01  
+39  2.4e-12  9.4e-09  6.6e-10  1.00e+00   -1.354201694e+09  -1.354201694e+09  1.7e-18  0.01  
+40  2.4e-12  9.4e-09  6.6e-10  1.00e+00   -1.354201694e+09  -1.354201694e+09  1.5e-18  0.01  
+41  2.4e-12  9.4e-09  6.6e-10  1.00e+00   -1.354201694e+09  -1.354201694e+09  1.5e-18  0.01  
+42  2.4e-12  9.4e-09  6.6e-10  1.00e+00   -1.354201694e+09  -1.354201694e+09  1.5e-18  0.01  
+Optimizer terminated. Time: 0.01    
+
+
+Interior-point solution summary
+  Problem status  : UNKNOWN
+  Solution status : UNKNOWN
+  Primal.  obj: -1.3542016942e+09   nrm: 1e+10    Viol.  con: 1e-03    var: 1e-17    cones: 1e-07  
+  Dual.    obj: -1.3542016936e+09   nrm: 3e+10    Viol.  con: 1e-07    var: 6e-01    cones: 9e-13  
+
+Basic solution summary
+  Problem status  : UNKNOWN
+  Solution status : UNKNOWN
+  Primal.  obj: -1.3542031431e+09   nrm: 1e+10    Viol.  con: 8e+04    var: 0e+00    cones: 0e+00  
+  Dual.    obj: -1.3542031439e+09   nrm: 4e+13    Viol.  con: 0e+00    var: 2e+10    cones: 0e+00  
+
+Return code - 100006 [MSK_RES_TRM_STALL]: The optimizer is terminated due to slow progress.
+--- Reading solution for model netplan
+--- Executing after solve: elapsed 0:00:00.208
+--- cvx-ll.gms(1037) 5 Mb
 --- GDX File (execute_unload) C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\resultado.gdx
---- cvx-ll.gms(975) 7 Mb
---- Initialize embedded library embconnectcclib64.dll
---- Execute embedded library embconnectcclib64.dll
---- cvx-ll.gms(988) 7 Mb
---- Initialize embedded library embconnectcclib64.dll
---- Execute embedded library embconnectcclib64.dll
---- cvx-ll.gms(1001) 8 Mb
+--- cvx-ll.gms(1073) 8 Mb
 --- Initialize embedded library embconnectcclib64.dll
 --- Execute embedded library embconnectcclib64.dll
 --- Putfile fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\fij_long.csv
 *** Status: Normal completion
---- Job cvx-ll.gms Stop 02/17/26 12:16:19 elapsed 0:00:00.832
+--- Job cvx-ll.gms Stop 04/08/26 11:38:22 elapsed 0:00:00.895

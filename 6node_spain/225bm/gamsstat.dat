@@ -1,0 +1,16 @@
+=0MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+=CReading parameter(s) from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt"
+=C>>  MSK_DPAR_INTPNT_TOL_REL_GAP   1e-14
+=C>>  MSK_DPAR_INTPNT_TOL_PFEAS     1e-14
+=C>>  MSK_DPAR_INTPNT_TOL_DFEAS     1e-14
+=C>>  MSK_DPAR_BASIS_REL_TOL_S      1e-14
+=CFinished reading from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt"
+
+=CExtraction of quadratics (ThreePass algorithm): 0.00s
+
+Return code - 0 [MSK_RES_OK]: No error occurred.

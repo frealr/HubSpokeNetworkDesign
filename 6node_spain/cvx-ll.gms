@@ -79,7 +79,6 @@ Equation
     powerconea(i,j)
     
     cuad_cone(i)
-    
 *rescap
 ;
 
@@ -101,7 +100,7 @@ bud_def..
 
 * Operación (op): coste lineal de operar enlaces
 op_def..
-    op =e= 1e-2*sum((i,j), op_link_cost(i,j) * a(i,j));
+    op =e= 1e-3*sum((i,j), op_link_cost(i,j) * a(i,j));
 
 * Pasajeros (pax): tiempos/precios en ruta y alternativas + entropías
 pax_def..
@@ -142,7 +141,11 @@ utility_def..
 
 * Objetivo total
 obj_def..
-    obj =e= pax + op + ut + 1e6*exceed + 1e-6*bud;
+    obj =e= pax + ut + 1e-6*bud$(iter < niters) + 1e6*exceed + op;
+    
+*+ op + ut + 1e6*exceed + 1e-6*bud$(iter < niters);
+    
+
 
 *---------------------*
 * Restricciones       *
@@ -150,7 +153,7 @@ obj_def..
 
 
 bud_avail..
-    bud$(iter <= niters) =l= budget;
+    bud$(iter < niters) =l= budget;
     
 bud_final..
     ( sum(i, station_capacity_slope(i)*(s(i) + sh(i)))   + sum(i$((s_prev(i) > 0.01) or (sh_prev(i) > 0.01)), station_cost(i))
@@ -172,6 +175,7 @@ link_cap(i,j)..
 
     
 station_cap(i)..   sigma * (sum(j, a(j,i)) + sum(j, a(i,j))) =l= s(i) + sh(i);
+
 
 hub_connect_cap(i).. sigma * (sum( (o,d,j)$(ord(o)<>ord(i)),
     demand(o,d) * fij(i,j,o,d) / (a_nom * tau))  + sum( (o,d,j)$(ord(d)<>ord(i)),
@@ -309,7 +313,10 @@ Model netplan /
     epigraphfext
     
     utility_def
+    
+*    ob_limit
 *    cuad_cone
+*    station_cap_first_iter
 
 
   /;
@@ -362,21 +369,23 @@ f.fx(o,d)$(fnodemand(o,d)=1)=0;
 
 
 
-
-
 option threads = 64;
 option subsystems;
 
-option nlp=mosek;
 
-$onecho>mosek.opt
-MSK_DPAR_INTPNT_TOL_REL_GAP   1e-14
-MSK_DPAR_INTPNT_TOL_PFEAS     1e-14
-MSK_DPAR_INTPNT_TOL_DFEAS     1e-14
-MSK_DPAR_BASIS_REL_TOL_S      1e-14
-$offEcho
+$onecho > mosek.opt
+MSK_DPAR_INTPNT_CO_TOL_PFEAS 1e-10
+MSK_DPAR_INTPNT_CO_TOL_DFEAS 1e-10
+MSK_DPAR_INTPNT_CO_TOL_REL_GAP 1e-10
+MSK_DPAR_INTPNT_CO_TOL_INFEAS 1e-14
+MSK_DPAR_INTPNT_CO_TOL_NEAR_REL 1
+$offecho
 
 netplan.optfile = 1;
+
+option nlp=mosek;
+
+
 
 
 
@@ -392,6 +401,57 @@ display f.l, fext.l, fij.l, a.l, s.l;
 Parameter fnew(o,i,j,d);
 
 fnew(o,i,j,d)=fij.l(i,j,o,d);
+
+Parameter ffix(o,d),sfix(i);
+ffix(o,d)=0;
+sfix(i)=0;
+
+loop((o,d)$(f.l(o,d) lt 1e-3),
+
+ffix(o,d)=1;
+
+);
+
+
+
+loop((i)$(sh.l(i) lt 1e-3),
+
+sfix(i)=1;
+
+);
+
+f.fx(o,d)$(ffix(o,d)=1)=0;
+sh.fx(i)$(sfix(i)=1)=0;
+
+Parameter conecta(i);
+conecta(i) = 0;
+loop(i$(sh.l(i) gt 3e-2 ),
+     loop(j$( ((sh.l(j) lt 3e-2) and (a.l(i,j) gt 1e-3)) ),
+        conecta(i) = 1 + conecta(i) )
+);
+
+
+Parameter sobra(i);
+sobra(i) = 0;
+
+loop(i$( sh.l(i) gt 3e-2 ),
+    loop(j$( ((sh.l(j) lt 3e-2) and (a.l(i,j) gt 1e-3))  ),
+    sobra(i) = 0 )
+);
+
+loop(i$( sh.l(i) gt 3e-2 ),
+    loop(j$( (sh.l(j) gt 3e-2) and (conecta(j) lt 1) and (a.l(i,j) gt 1e-3) ),
+    sobra(i) = 0 )
+);
+
+
+*sh.fx(i)$((sobra(i)=1) and iter > 1)=0;
+
+Solve netplan using nlp minimizing obj;
+
+*Solve netplan using minlp minimizing obj;
+display sobra,conecta;
+solverTime = netplan.resusd;
 
 execute_unload "resultado.gdx";
 

@@ -137,18 +137,6 @@ Scalar lam /
 $include "%TXTDIR%\lam.txt"
 /;
 
-Scalar alfa /
-$include "%TXTDIR%\alfa.txt"
-/;
-
-
-Scalar dm_pax /
-$include "%TXTDIR%\dm_pax.txt"
-/;
-
-Scalar dm_op /
-$include "%TXTDIR%\dm_op.txt"
-/;
 
 Scalar budget /
 $include "%TXTDIR%\budget.txt"
