@@ -257,7 +257,10 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
     print('este es el presupuesto:')
     print(budget)
     
-    obj_hist = np.zeros(30)
+    obj_hist_iters = {}  # {num_iter: [obj_val en cada bliter de esa iter]}
+    s_traj = []           # s tras cada iter outer
+    sh_traj = []          # sh tras cada iter outer
+    f_traj = []           # f tras cada iter outer
     bliters = 30
     
     a_prev = 1e4 * np.ones((n, n))
@@ -273,6 +276,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
         write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od)
         write_gams_param_ii('./export_txt/beta_od.txt', beta_od)
         stop = 0
+        obj_hist_this_iter = []
         for bliter in range(1, bliters + 1):
             if (abs((obj_val - obj_val_prev) / (obj_val + 1e-4)) <= 1e-3) and (bliter > 1):
                 stop = 1
@@ -281,12 +285,12 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                 write_gams_param1d_full('./export_txt/s_prev.txt', s_prev)
                 write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev)
                 
-                gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\cvx-ll.gms'
-                gamsExe = r'C:\GAMS\50\gams.exe'
+                gmsFile = r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain/cvx-ll.gms'
+                gamsExe = r'/opt/gams/gams49.6_linux_x64_64_sfx/gams'
                 cmd = f'"{gamsExe}" "{gmsFile}"'
                 
                 write_txt_param('current_iter', _iter)
-                subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                subprocess.run(cmd, shell=True, cwd=r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 
                 ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
                 if ctime_vals is not None and len(ctime_vals) > 0:
@@ -350,9 +354,9 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                 
                 set_max_f(n, fij, n_airlines, travel_time, prices, alt_utility, omega_p, omega_t)
                 
-                gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\cvx-sl.gms'
+                gmsFile = r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain/cvx-sl.gms'
                 cmd = f'"{gamsExe}" "{gmsFile}"'
-                subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                subprocess.run(cmd, shell=True, cwd=r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 
                 ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
                 if ctime_vals is not None and len(ctime_vals) > 0:
@@ -416,7 +420,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                 write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od)
                 write_gams_param_ii('./export_txt/beta_od.txt', beta_od)
                 
-                obj_hist[bliter - 1] = obj_val_ll
+                obj_hist_this_iter.append(obj_val_ll)
                 
                 obj_val_prev = obj_val
                 obj_val = obj_val_ll
@@ -434,9 +438,15 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                     "beta_od": beta_od.copy()
                 })
                 
+        obj_hist_iters[_iter] = obj_hist_this_iter.copy()
+
         if (used_budget - budget) / budget < 0.05:
             pass
             
+        s_traj.append(s_ll.copy())
+        sh_traj.append(sh_ll.copy())
+        f_traj.append(f_ll.copy())
+
         s_prev = s_ll.copy()
         sh_prev = sh_ll.copy()
         a_prev = a_ll.copy()
@@ -444,8 +454,12 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
         
         _iter += 1
 
+    s_traj = np.array(s_traj) if s_traj else np.zeros((0, n))
+    sh_traj = np.array(sh_traj) if sh_traj else np.zeros((0, n))
+    f_traj = np.array(f_traj) if f_traj else np.zeros((0, n, n))
+
     sio.savemat("debug_matlab.mat", {"debug": debug})
-    return s, sh, a, f, fext, fij, comp_time, used_budget, pax_obj, op_obj, obj_val_ll, alfa_od, beta_od, obj_hist
+    return s, sh, a, f, fext, fij, comp_time, used_budget, pax_obj, op_obj, obj_val_ll, alfa_od, beta_od, obj_hist_iters, s_traj, sh_traj, f_traj
 
 def compute_sim_MIP(lam, budget):
     (n, link_cost, station_cost, hub_cost, link_capacity_slope,
@@ -462,11 +476,11 @@ def compute_sim_MIP(lam, budget):
     write_gams_param_ii('./export_txt/a_prev.txt', a_prev)
     write_gams_param1d_full('./export_txt/s_prev.txt', s_prev)
     
-    gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\mip.gms'
-    gamsExe = r'C:\GAMS\50\gams.exe'
+    gmsFile = r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain/mip.gms'
+    gamsExe = r'/opt/gams/gams49.6_linux_x64_64_sfx/gams'
     cmd = f'"{gamsExe}" "{gmsFile}"'
-    subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    
+    subprocess.run(cmd, shell=True, cwd=r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    #subprocess.run(cmd, shell=True, cwd=r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain')
     if os.path.exists('./output_all.xlsx'):
         sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
         sh = sh_df.to_numpy().flatten() if sh_df is not None and len(sh_df) > 0 else np.zeros(n)
@@ -570,7 +584,8 @@ if __name__ == '__main__':
     write_gams_param1d_full('./export_txt/s_prev.txt', s_prev)
     write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev)
     
-    budgets = [3e4, 3.5e4, 4e4, 4.5e4, 5e4]
+    #budgets = [3e4, 3.5e4, 4e4, 4.5e4, 5e4]
+    budgets = [3e4]
     lam = 4
     for bud in budgets:
         compute_sim_MIP(lam, bud)
@@ -610,7 +625,7 @@ if __name__ == '__main__':
                                            'comp_time': comp_time, 'used_budget': used_budget,
                                            'pax_obj': pax_obj, 'op_obj': op_obj, 'obj_val_ll': obj_val_ll,
                                            'alfa_od': alfa_od, 'beta_od': beta_od, 'obj_hist': obj_hist})
-    """   
+    """
     for bud in budgets:
         for al in alfas:
             for mu_al in mus_alfa:
@@ -626,13 +641,15 @@ if __name__ == '__main__':
                         
                     best_obj_ms = 1
                     best_res_ms = {'f': np.zeros((n, n)), 'a': np.zeros((n, n))}
+                    total_comp_time_ms = 0
                     
                     for start_idx in range(n + 1):
                         sh_prev_in = sh_prev_list[start_idx, :]
                         print('empieazo multistart con sh = ')
                         print(sh_prev_in)
                         res = compute_sim_cvx_blo(lam, al, n, bud, mu_al, mu_bet, sh_prev_in)
-                        (s_curr, sh_curr, a_curr, f_curr, fext_curr, fij_curr, comp_time_curr, used_budget_curr, pax_obj_curr, op_obj_curr, obj_val_ll_curr, alfa_od_curr, beta_od_curr, obj_hist_curr) = res
+                        (s_curr, sh_curr, a_curr, f_curr, fext_curr, fij_curr, comp_time_curr, used_budget_curr, pax_obj_curr, op_obj_curr, obj_val_ll_curr, alfa_od_curr, beta_od_curr, obj_hist_iters_curr, s_traj_curr, sh_traj_curr, f_traj_curr) = res
+                        total_comp_time_ms += comp_time_curr
                         
                         f_curr[np.abs(f_curr - best_res_ms['f']) < 2e-2] = best_res_ms['f'][np.abs(f_curr - best_res_ms['f']) < 2e-2]
                         print(f_curr)
@@ -648,10 +665,23 @@ if __name__ == '__main__':
                             print(f_curr)
                             best_obj_ms = obj_curr
                             best_res_ms.update({'s': s_curr, 'sh': sh_curr, 'a': a_curr, 'f': f_curr, 'fext': fext_curr, 'fij': fij_curr,
-                                                'comp_time': comp_time_curr, 'used_budget': used_budget_curr, 'pax_obj': pax_obj_curr,
+                                                'used_budget': used_budget_curr, 'pax_obj': pax_obj_curr,
                                                 'op_obj': op_obj_curr, 'obj_val_ll': obj_val_ll_curr, 'alfa_od': alfa_od_curr,
-                                                'beta_od': beta_od_curr, 'obj_hist': obj_hist_curr})
+                                                'beta_od': beta_od_curr, 'obj_hist_iters': obj_hist_iters_curr,
+                                                's_traj': s_traj_curr, 'sh_traj': sh_traj_curr, 'f_traj': f_traj_curr})
                                                 
+                    # Tiempo total de cómputo = suma de todas las inicializaciones
+                    best_res_ms['comp_time'] = total_comp_time_ms
+
+                    # Convertir obj_hist_iters (dict Python) a cell array para savemat
+                    if 'obj_hist_iters' in best_res_ms:
+                        ohi = best_res_ms['obj_hist_iters']
+                        n_done = len(ohi)
+                        obj_hist_cell = np.empty((1, n_done), dtype=object)
+                        for k in range(n_done):
+                            obj_hist_cell[0, k] = np.array(ohi.get(k + 1, []))
+                        best_res_ms['obj_hist_iters'] = obj_hist_cell
+
                     filename = f'./4node_hs_prueba_v0_blo/bud={bud}_lam={lam}_alfa={al}_mu_al={mu_al}_mu_bet={mu_bet}_python.mat'
                     sio.savemat(filename, best_res_ms)
 

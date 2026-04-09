@@ -1,5 +1,6 @@
 * ---------- Conjuntos ----------
-$include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition.gms";
+*$include "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\param_definition.gms";
+$include "/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain/param_definition.gms";
 
 
 * ---------- Variables ----------

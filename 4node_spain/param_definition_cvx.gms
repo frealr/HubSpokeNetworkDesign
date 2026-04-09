@@ -1,7 +1,8 @@
 
 
 
-$setglobal TXTDIR "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt"
+*$setglobal TXTDIR "C:\Users\freal\Desktop\HubSpokeNetworkDesign\4node_spain\export_txt"
+$setglobal TXTDIR "/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain/export_txt"
 
 
 
