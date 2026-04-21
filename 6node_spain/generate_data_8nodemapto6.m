@@ -111,7 +111,7 @@ budgets = [3e4,4e4,5e4,6e4,7e4,8e4]; %funcionan con 1e-8,5e-2
 
 budgets = [7e4,8e4];
 % budgets = [6e4,7e4,8e4];
-% %budgets = 3e4;
+budgets = 3e4;
  % budgets = [6e4];
 
 %
@@ -196,7 +196,7 @@ for bb=1:length(budgets)
 
                 % Multistart en sh_prev
                 sh_prev = 5 * ones(1, n);
-                sh_prev = [5,2,5,5,5,5];
+                sh_prev = [2,5,5,5,5,5];
                 
 
                 [s,sh,a,f,fext,fij, ...
@@ -1596,4 +1596,3 @@ eta = 0.3;
 a_max = 1e9;
 
 end
-
