@@ -141,7 +141,7 @@ utility_def..
 
 * Objetivo total
 obj_def..
-    obj =e= pax + ut + 1e-6*bud$(iter < niters) + 1e6*exceed + op;
+    obj =e= pax + ut + 1e-6*bud$(iter <= niters) + 1e6*exceed + op;
     
 *+ op + ut + 1e6*exceed + 1e-6*bud$(iter < niters);
     

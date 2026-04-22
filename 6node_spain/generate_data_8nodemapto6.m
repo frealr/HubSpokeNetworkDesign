@@ -852,8 +852,13 @@ while iter <= niters
     
         if (abs((obj_val-obj_val_prev)./(obj_val+1e-4)) <= 1e-3) && (bliter > 1) 
             stop = 1;
+            iter
+            f
+            
         elseif (stop == 0)
-        
+ 
+            s_prev = round(s_prev,4);
+            sh_prev = round(sh_prev,4);
     
     
             write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
@@ -886,30 +891,32 @@ while iter <= niters
             comp_time = comp_time + table2array(results_file_ctime);
         
             results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
-            sh = table2array(results_file_sh(1,:));
+            sh = table2array(results_file_sh(1,:)); sh = round(sh,4);
             sh = max(sh,1e-4);
+            
        
     
     
         
         
             results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
-            s = table2array(results_file_s(1,:));
+            s = table2array(results_file_s(1,:));  s = round(s,4);
             s = max(s,1e-4);
-         
+           
+            % 
             s
             sh
     
             results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-            f = table2array(results_file_f(1:n,2:(n+1)));
+            f = table2array(results_file_f(1:n,2:(n+1))); f = round(f,4);
             f
     
     
     
         
             results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
-            a = table2array(results_file_a(1:n,2:(n+1)));
-            a = max(a,1e-4);
+            a = table2array(results_file_a(1:n,2:(n+1))); 
+            a = max(a,1e-4); 
     
             % 
             % write_gams_param_ii('./export_txt/a_prev.txt', a);
@@ -919,11 +926,11 @@ while iter <= niters
             
             
             results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-            f = table2array(results_file_f(1:n,2:(n+1)));
+            f = table2array(results_file_f(1:n,2:(n+1))); f = round(f,4);
             
             
             results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-            fext = table2array(results_file_fext(1:n,2:(n+1)));
+            fext = table2array(results_file_fext(1:n,2:(n+1))); fext = round(fext,4);
             
             
             T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
@@ -935,6 +942,7 @@ while iter <= niters
             
             fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
                 [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
+          
             
             a(a < 1e-2) = 0;
             f(f < 1e-2) = 0;
@@ -968,6 +976,7 @@ while iter <= niters
                     grad_beta_v(oo,dd) = (alfa_od(oo,dd)+1e-4)*((beta_od(oo,dd)*demand(oo,dd)*prices(oo,dd)).^(beta_od(oo,dd)-1)) * (logit_coef * prices(oo,dd) * f(oo,dd) + logit_coef * sum(sum(squeeze(fij(:,:,oo,dd)) .* travel_time)) - alt_utility(oo,dd) * fext(oo,dd) + f(oo,dd)*( log(max(0,f(oo,dd)) + 1e-12) - 1 ) + fext(oo,dd)*( log(max(0,fext(oo,dd))/n_airlines + 1e-12)  - 1 ) );
                 end
             end
+
 
             used_budget = get_budget(s,sh,a,n,...
                 station_cost,station_capacity_slope,hub_cost,link_cost,lam);
@@ -1009,17 +1018,19 @@ while iter <= niters
             comp_time = comp_time + table2array(results_file_ctime);
         
             results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
-            sh = table2array(results_file_sh(1,:));
+            sh = table2array(results_file_sh(1,:)); sh = round(sh,4);
             sh = max(sh,1e-4);
+            
         
         
             results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
-            s = table2array(results_file_s(1,:));
+            s = table2array(results_file_s(1,:)); s = round(s,4);
             s = max(s,1e-4);
+
 
         
             results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
-            a = table2array(results_file_a(1:n,2:(n+1)));
+            a = table2array(results_file_a(1:n,2:(n+1))); 
             a = max(a,1e-4);
             
                 % write_gams_param_ii('./export_txt/a_prev.txt', a);
@@ -1030,10 +1041,10 @@ while iter <= niters
     
             
             results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-            f = table2array(results_file_f(1:n,2:(n+1)));
+            f = table2array(results_file_f(1:n,2:(n+1))); f = round(f,4);
             
             results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-            fext = table2array(results_file_fext(1:n,2:(n+1)));
+            fext = table2array(results_file_fext(1:n,2:(n+1))); fext = round(fext,4);
             
             
             T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
@@ -1076,6 +1087,7 @@ while iter <= niters
                     grad_beta_f(oo,dd) = gamma .*( (alfa_od(oo,dd)+1e-4)*((beta_od(oo,dd)*demand(oo,dd)*prices(oo,dd)).^(beta_od(oo,dd)-1)) * (logit_coef * prices(oo,dd) * f(oo,dd) + logit_coef * sum(sum(squeeze(fij(:,:,oo,dd)) .* travel_time)) - alt_utility(oo,dd) * fext(oo,dd) + f(oo,dd)*( log(f(oo,dd) + 1e-12) - 1 ) + fext(oo,dd)*( log(fext(oo,dd)/n_airlines + 1e-12)  - 1 ) ) - grad_beta_v(oo,dd));
                 end
             end
+
             
         
             beta_od = beta_od - mu_beta.*grad_beta_f;
@@ -1089,6 +1101,7 @@ while iter <= niters
             alfa_od = min(9,alfa_od);
             alfa_od(1:n+1:end) = 1;
             beta_od(1:n+1:end) = 1;
+
         
             write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
             write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
@@ -1136,8 +1149,11 @@ while iter <= niters
     sh_prev = sh_ll;
     a_prev = a_ll;
     stop = 0;
-    
+    iter
     iter = iter+1;
+    f_ll
+    s_ll
+    sh_ll
 end
 
 

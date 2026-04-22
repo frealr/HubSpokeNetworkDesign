@@ -1,11 +1,11 @@
 
---- Job cvx-ll.gms Start 04/21/26 15:36:30 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
+--- Job cvx-ll.gms Start 04/21/26 19:59:51 50.4.1 84b10359 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\50\gmsprmNT.txt
 --- GAMS Parameters defined
     Input C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.gms
     PageSize 0
-    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225wu\
+    ScrDir C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\225xi\
     SysDir C:\GAMS\50\
     LogOption 3
     AppendLog 1
@@ -15,8 +15,8 @@
     LstTitleLeftAligned 1
 Licensee: Luis Cadarso Morga                             G260211+0003Ac-GEN
           University Rey Juan Carlos                                DCE4613
-          225wu\gamslice.dat
-          node:23539203 mem:64 cores:8 ipport:64860 v:2                    
+          225xi\gamslice.dat
+          node:23539203 mem:64 cores:8 ipport:60124 v:2                    
           Course license for use within the course and related course work
           The expiration date of time-limited license is Aug 10, 2026
 System information: 8 physical cores and 64 Gb physical memory detected
@@ -68,21 +68,21 @@ GAMS 50.4.1   Copyright (C) 1987-2025 GAMS Development. All rights reserved
 --- . param_definition_cvx-blo.gms(138) 3 Mb
 --- .. gamma.txt(1) 3 Mb
 --- . param_definition_cvx-blo.gms(149) 3 Mb
---- cvx-ll.gms(377) 3 Mb
+--- cvx-ll.gms(376) 3 Mb
 --- $echo File C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt
---- cvx-ll.gms(534) 3 Mb
---- Starting execution: elapsed 0:00:00.015
---- cvx-ll.gms(968) 4 Mb
+--- cvx-ll.gms(533) 3 Mb
+--- Starting execution: elapsed 0:00:00.016
+--- cvx-ll.gms(967) 4 Mb
 --- Generating NLP model netplan
---- cvx-ll.gms(974) 7 Mb
----   1,389 rows  1,710 columns  8,982 non-zeroes
+--- cvx-ll.gms(973) 7 Mb
+---   1,381 rows  1,710 columns  8,963 non-zeroes
 ---   576 nl-code  144 nl-non-zeroes
 --- Range statistics (absolute non-zero finite values)
 --- RHS       [min, max] : [ 1.000E-06, 1.000E+07] - Zero values observed as well
 --- Bound     [min, max] : [ 1.000E-06, 1.000E+00] - Zero values observed as well
 --- Matrix    [min, max] : [ 1.000E-06, 2.069E+07]
---- cvx-ll.gms(974) 5 Mb
---- Executing MOSEK (Solvelink=2): elapsed 0:00:00.031
+--- cvx-ll.gms(973) 5 Mb
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:00.032
 
 MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
 
@@ -104,7 +104,7 @@ Problem
   Name                   :                 
   Objective sense        : minimize        
   Type                   : CONIC (conic optimization problem)
-  Constraints            : 1388            
+  Constraints            : 1380            
   Affine conic cons.     : 0               
   Disjunctive cons.      : 0               
   Cones                  : 72              
@@ -136,71 +136,219 @@ Factor     - dense det. time        : 0.00              GP order time          :
 Factor     - nonzeros before factor : 5830              after factor           : 9605            
 Factor     - dense dim.             : 0                 flops                  : 3.82e+05        
 ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
-0   2.5e+06  1.7e+05  1.3e+05  0.00e+00   7.582604308e+05   8.879840656e+05   1.0e+00  0.01  
-1   1.3e+06  8.6e+04  9.2e+04  -1.00e+00  8.016336271e+05   9.313582498e+05   5.0e-01  0.01  
-2   2.7e+05  1.9e+04  4.3e+04  -1.00e+00  2.440157274e+06   2.569888547e+06   1.1e-01  0.01  
-3   1.0e+05  7.0e+03  2.6e+04  -1.00e+00  1.784982648e+06   1.914722579e+06   4.1e-02  0.01  
-4   3.2e+04  2.2e+03  1.5e+04  -1.00e+00  3.014834119e+06   3.144585899e+06   1.3e-02  0.01  
-5   7.9e+03  5.4e+02  7.3e+03  -9.99e-01  2.606409223e+06   2.736049523e+06   3.2e-03  0.01  
-6   8.7e+02  5.9e+01  2.4e+03  -9.92e-01  2.343628575e+06   2.471469270e+06   3.5e-04  0.01  
-7   9.1e+01  6.2e+00  6.3e+02  -9.21e-01  7.267462923e+04   1.826489983e+05   3.6e-05  0.01  
-8   3.4e+01  2.3e+00  1.4e+02  5.47e-03   -8.530550408e+04  -3.917479616e+04  1.4e-05  0.01  
-9   1.4e+01  9.4e-01  3.2e+01  1.16e+00   4.423532683e+05   4.586390587e+05   5.5e-06  0.01  
-10  4.1e+00  2.8e-01  5.5e+00  9.15e-01   5.554093567e+05   5.605671804e+05   1.6e-06  0.01  
-11  1.7e+00  1.1e-01  1.5e+00  9.74e-01   5.802874659e+05   5.824205212e+05   6.7e-07  0.01  
-12  5.6e-01  3.8e-02  3.0e-01  9.05e-01   5.944821510e+05   5.952490376e+05   2.2e-07  0.01  
-13  2.5e-01  1.7e-02  9.9e-02  8.32e-01   5.983309730e+05   5.987089811e+05   1.0e-07  0.01  
-14  1.6e-01  1.1e-02  5.6e-02  6.78e-01   6.007206821e+05   6.009986368e+05   6.4e-08  0.01  
-15  1.2e-01  7.9e-03  3.5e-02  7.49e-01   6.019765389e+05   6.021848532e+05   4.6e-08  0.01  
-16  5.8e-02  3.9e-03  1.3e-02  7.74e-01   6.045451696e+05   6.046585630e+05   2.3e-08  0.01  
-17  4.2e-02  2.8e-03  9.2e-03  6.95e-01   6.052878866e+05   6.053828971e+05   1.7e-08  0.01  
-18  1.2e-02  8.0e-04  1.2e-03  1.02e+00   6.075778277e+05   6.076022118e+05   4.7e-09  0.01  
-19  6.0e-03  4.1e-04  5.3e-04  8.17e-01   6.080809772e+05   6.080956450e+05   2.4e-09  0.01  
-20  2.2e-03  1.5e-04  1.2e-04  1.04e+00   6.084870600e+05   6.084924159e+05   8.9e-10  0.02  
-21  1.3e-03  8.7e-05  5.4e-05  1.00e+00   6.085829617e+05   6.085861105e+05   5.2e-10  0.02  
-22  2.4e-04  1.6e-05  4.2e-06  1.01e+00   6.086963213e+05   6.086968930e+05   9.4e-11  0.02  
-23  6.5e-05  4.4e-06  5.9e-07  1.06e+00   6.087174634e+05   6.087176142e+05   2.6e-11  0.02  
-24  1.4e-05  9.2e-07  5.2e-08  1.11e+00   6.087242662e+05   6.087242952e+05   5.4e-12  0.02  
-25  5.7e-06  3.8e-07  1.4e-08  1.04e+00   6.087253527e+05   6.087253647e+05   2.3e-12  0.02  
-26  2.5e-06  1.7e-07  4.2e-09  1.02e+00   6.087257472e+05   6.087257526e+05   1.0e-12  0.02  
-27  5.4e-07  3.7e-08  4.2e-10  1.00e+00   6.087259970e+05   6.087259981e+05   2.2e-13  0.02  
-28  4.6e-07  3.1e-08  3.3e-10  9.98e-01   6.087260075e+05   6.087260085e+05   1.8e-13  0.02  
-29  1.4e-07  9.6e-09  5.7e-11  9.90e-01   6.087260429e+05   6.087260432e+05   5.8e-14  0.02  
-30  1.3e-07  8.6e-09  4.9e-11  1.00e+00   6.087260453e+05   6.087260455e+05   5.2e-14  0.02  
-31  3.6e-08  2.4e-09  7.4e-12  1.00e+00   6.087260564e+05   6.087260565e+05   1.6e-14  0.02  
-32  3.6e-08  2.4e-09  7.3e-12  1.01e+00   6.087260565e+05   6.087260566e+05   1.5e-14  0.02  
-33  3.6e-08  2.4e-09  7.3e-12  9.99e-01   6.087260565e+05   6.087260566e+05   1.5e-14  0.02  
-34  3.3e-08  2.2e-09  6.4e-12  1.00e+00   6.087260571e+05   6.087260572e+05   1.4e-14  0.02  
-35  3.3e-08  2.2e-09  6.4e-12  9.98e-01   6.087260571e+05   6.087260572e+05   1.4e-14  0.02  
-36  3.3e-08  2.2e-09  6.4e-12  1.00e+00   6.087260571e+05   6.087260572e+05   1.4e-14  0.02  
-37  3.2e-08  2.2e-09  6.2e-12  1.00e+00   6.087260573e+05   6.087260573e+05   1.4e-14  0.02  
-38  3.2e-08  2.2e-09  6.2e-12  1.00e+00   6.087260573e+05   6.087260573e+05   1.4e-14  0.02  
-39  3.2e-08  2.2e-09  6.2e-12  1.00e+00   6.087260573e+05   6.087260573e+05   1.4e-14  0.02  
-40  9.3e-09  6.3e-10  9.8e-13  1.00e+00   6.087260613e+05   6.087260613e+05   4.0e-15  0.03  
-41  9.3e-09  6.3e-10  9.8e-13  1.01e+00   6.087260613e+05   6.087260613e+05   4.0e-15  0.03  
-42  9.1e-09  6.2e-10  9.4e-13  1.00e+00   6.087260613e+05   6.087260614e+05   3.9e-15  0.03  
-43  9.1e-09  6.2e-10  9.4e-13  1.00e+00   6.087260613e+05   6.087260614e+05   3.9e-15  0.03  
-44  7.8e-09  5.3e-10  7.5e-13  1.00e+00   6.087260613e+05   6.087260613e+05   3.5e-15  0.03  
-45  7.8e-09  5.3e-10  7.5e-13  9.99e-01   6.087260613e+05   6.087260614e+05   3.5e-15  0.03  
-46  7.8e-09  5.3e-10  7.5e-13  9.99e-01   6.087260613e+05   6.087260614e+05   3.5e-15  0.03  
-47  7.2e-09  4.9e-10  6.6e-13  1.00e+00   6.087260614e+05   6.087260614e+05   3.2e-15  0.03  
+0   2.5e+06  1.3e+04  3.4e+04  0.00e+00   1.067725547e+05   1.406317387e+05   1.0e+00  0.00  
+1   1.3e+06  6.8e+03  2.5e+04  -1.00e+00  1.402884781e+05   1.741484898e+05   5.4e-01  0.01  
+2   3.8e+05  1.9e+03  1.3e+04  -1.00e+00  4.137004049e+05   4.475650926e+05   1.5e-01  0.01  
+3   8.0e+04  4.0e+02  6.1e+03  -1.00e+00  2.085210890e+06   2.119099727e+06   3.2e-02  0.01  
+4   3.2e+04  1.6e+02  3.8e+03  -1.00e+00  2.360881931e+06   2.394798645e+06   1.3e-02  0.01  
+5   8.9e+03  4.5e+01  2.0e+03  -9.97e-01  1.676537198e+06   1.710505655e+06   3.5e-03  0.01  
+6   6.8e+02  3.4e+00  5.4e+02  -9.88e-01  1.387266923e+06   1.421901382e+06   2.7e-04  0.01  
+7   1.4e+02  6.8e-01  1.8e+02  -8.17e-01  2.570652963e+05   2.887928915e+05   5.4e-05  0.01  
+8   6.6e+01  3.3e-01  1.7e+01  7.55e-01   2.420271112e+05   2.502564501e+05   2.6e-05  0.01  
+9   1.5e+01  7.7e-02  2.1e+00  9.43e-01   1.144476778e+05   1.163937591e+05   6.1e-06  0.01  
+10  4.5e+00  2.3e-02  4.3e-01  8.30e-01   7.970573431e+04   8.034472924e+04   1.8e-06  0.01  
+11  1.5e+00  7.5e-03  1.1e-01  8.87e-01   7.201644929e+04   7.225885206e+04   6.0e-07  0.01  
+12  7.0e-01  3.5e-03  4.0e-02  9.67e-01   6.968783441e+04   6.980331592e+04   2.8e-07  0.01  
+13  2.8e-01  1.4e-03  9.7e-03  1.18e+00   6.928598253e+04   6.932783009e+04   1.1e-07  0.01  
+14  2.0e-01  1.0e-03  5.8e-03  1.25e+00   6.941143716e+04   6.944010152e+04   7.9e-08  0.01  
+15  6.4e-02  3.2e-04  1.1e-03  1.22e+00   6.961127240e+04   6.961979050e+04   2.6e-08  0.01  
+16  3.8e-02  1.9e-04  5.0e-04  1.03e+00   6.969227032e+04   6.969746337e+04   1.5e-08  0.01  
+17  1.2e-02  6.0e-05  9.2e-05  1.05e+00   6.978517132e+04   6.978683942e+04   4.8e-09  0.01  
+18  6.9e-03  3.5e-05  4.3e-05  8.66e-01   6.981036745e+04   6.981141752e+04   2.8e-09  0.01  
+19  5.3e-03  2.7e-05  2.9e-05  9.17e-01   6.981956122e+04   6.982035840e+04   2.1e-09  0.01  
+20  1.5e-03  7.5e-06  4.3e-06  9.49e-01   6.984299626e+04   6.984322412e+04   6.0e-10  0.02  
+21  8.3e-04  4.2e-06  1.8e-06  1.02e+00   6.984697326e+04   6.984709914e+04   3.3e-10  0.02  
+22  6.0e-04  3.0e-06  1.1e-06  9.67e-01   6.984864626e+04   6.984873860e+04   2.4e-10  0.02  
+23  2.7e-04  1.4e-06  3.4e-07  9.97e-01   6.985095902e+04   6.985100085e+04   1.1e-10  0.02  
+24  1.1e-04  5.7e-07  9.2e-08  1.01e+00   6.985215834e+04   6.985217575e+04   4.5e-11  0.02  
+25  9.5e-05  4.8e-07  7.2e-08  9.62e-01   6.985229970e+04   6.985231471e+04   3.8e-11  0.02  
+26  3.1e-05  1.5e-07  1.3e-08  9.93e-01   6.985285079e+04   6.985285568e+04   1.2e-11  0.02  
+27  9.7e-06  4.9e-08  2.4e-09  9.79e-01   6.985304372e+04   6.985304529e+04   3.9e-12  0.02  
+28  6.1e-06  3.1e-08  1.2e-09  9.71e-01   6.985307827e+04   6.985307928e+04   2.5e-12  0.02  
+29  1.3e-06  6.5e-09  1.2e-10  9.91e-01   6.985312682e+04   6.985312703e+04   5.1e-13  0.02  
+30  1.3e-06  6.3e-09  1.1e-10  9.44e-01   6.985312720e+04   6.985312740e+04   5.0e-13  0.02  
+31  1.2e-06  6.1e-09  1.1e-10  9.54e-01   6.985312758e+04   6.985312778e+04   4.9e-13  0.02  
+32  1.2e-06  6.0e-09  1.1e-10  9.78e-01   6.985312784e+04   6.985312804e+04   4.7e-13  0.02  
+33  1.2e-06  6.0e-09  1.1e-10  9.79e-01   6.985312787e+04   6.985312807e+04   4.7e-13  0.02  
+34  1.2e-06  6.0e-09  1.1e-10  9.77e-01   6.985312787e+04   6.985312807e+04   4.7e-13  0.02  
+35  1.2e-06  6.0e-09  1.1e-10  9.73e-01   6.985312787e+04   6.985312807e+04   4.7e-13  0.02  
+36  4.8e-07  2.4e-09  2.7e-11  9.74e-01   6.985313493e+04   6.985313501e+04   1.9e-13  0.02  
+37  4.0e-07  2.0e-09  2.1e-11  9.93e-01   6.985313586e+04   6.985313593e+04   1.6e-13  0.02  
+38  3.9e-07  2.0e-09  2.0e-11  9.95e-01   6.985313591e+04   6.985313597e+04   1.6e-13  0.02  
+39  3.9e-07  2.0e-09  2.0e-11  9.98e-01   6.985313592e+04   6.985313598e+04   1.5e-13  0.02  
+40  3.9e-07  2.0e-09  2.0e-11  1.00e+00   6.985313599e+04   6.985313605e+04   1.5e-13  0.03  
+41  7.2e-08  3.6e-10  1.6e-12  9.99e-01   6.985313915e+04   6.985313916e+04   2.9e-14  0.03  
+42  6.5e-08  3.3e-10  1.4e-12  9.99e-01   6.985313901e+04   6.985313902e+04   2.8e-14  0.03  
+43  6.4e-08  3.2e-10  1.3e-12  1.00e+00   6.985313904e+04   6.985313905e+04   2.7e-14  0.03  
+44  1.2e-08  5.9e-11  1.0e-13  1.00e+00   6.985313981e+04   6.985313981e+04   4.9e-15  0.03  
 Optimizer terminated. Time: 0.03    
 
 
 Interior-point solution summary
   Problem status  : PRIMAL_AND_DUAL_FEASIBLE
   Solution status : OPTIMAL
-  Primal.  obj: 6.0872606141e+05    nrm: 9e+05    Viol.  con: 9e-04    var: 8e-09    cones: 1e-07  
-  Dual.    obj: 6.0872606144e+05    nrm: 1e+08    Viol.  con: 1e-05    var: 2e-05    cones: 0e+00  
+  Primal.  obj: 6.9853139805e+04    nrm: 1e+05    Viol.  con: 3e-03    var: 4e-11    cones: 1e-08  
+  Dual.    obj: 6.9853139807e+04    nrm: 4e+07    Viol.  con: 3e-08    var: 6e-07    cones: 0e+00  
 
 Return code - 0 [MSK_RES_OK]: No error occurred.
 --- Reading solution for model netplan
---- Executing after solve: elapsed 0:00:00.120
---- cvx-ll.gms(1038) 5 Mb
+--- Executing after solve: elapsed 0:00:00.127
+--- cvx-ll.gms(1023) 5 Mb
+--- Generating NLP model netplan
+--- cvx-ll.gms(1031) 7 Mb
+---   1,381 rows  1,710 columns  8,963 non-zeroes
+---   576 nl-code  144 nl-non-zeroes
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.000E-06, 1.000E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-06, 1.000E+00] - Zero values observed as well
+--- Matrix    [min, max] : [ 1.000E-06, 2.069E+07]
+--- cvx-ll.gms(1031) 5 Mb
+--- Executing MOSEK (Solvelink=2): elapsed 0:00:00.145
+
+MOSEK            50.4.1 84b10359 Aug 28, 2025          WEI x86 64bit/MS Window
+
+	M O S E K       version 11.0.28 (Build date: 2025-8-25 13:05:23)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+Reading parameter(s) from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt"
+>>  MSK_DPAR_INTPNT_CO_TOL_PFEAS 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_DFEAS 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_REL_GAP 1e-10
+>>  MSK_DPAR_INTPNT_CO_TOL_INFEAS 1e-14
+>>  MSK_DPAR_INTPNT_CO_TOL_NEAR_REL 1
+Finished reading from "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mosek.opt"
+
+Extraction of quadratics (ThreePass algorithm): 0.00s
+Setting up initial basis solution.
+1380 basis variables are expected but only 0 basis variables are specified.
+ (400)
+Problem
+  Name                   :                 
+  Objective sense        : minimize        
+  Type                   : CONIC (conic optimization problem)
+  Constraints            : 1380            
+  Affine conic cons.     : 0               
+  Disjunctive cons.      : 0               
+  Cones                  : 72              
+  Scalar variables       : 1709            
+  Matrix variables       : 0               
+  Integer variables      : 0               
+
+Optimizer started.
+Presolve started.
+Linear dependency checker started.
+Linear dependency checker terminated.
+Eliminator started.
+Freed constraints in eliminator : 15
+Eliminator terminated.
+Eliminator - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - tries                  : 1                 time                   : 0.00            
+Lin. dep.  - primal attempts        : 1                 successes              : 1               
+Lin. dep.  - dual attempts          : 0                 successes              : 0               
+Lin. dep.  - primal deps.           : 0                 dual deps.             : 0               
+Presolve terminated. Time: 0.00    
+Optimizer  - threads                : 16              
+Optimizer  - solved problem         : the primal      
+Optimizer  - Constraints            : 60              
+Optimizer  - Cones                  : 30              
+Optimizer  - Scalar variables       : 150               conic                  : 90              
+Optimizer  - Semi-definite variables: 0                 scalarized             : 0               
+Factor     - setup time             : 0.00            
+Factor     - dense det. time        : 0.00              GP order time          : 0.00            
+Factor     - nonzeros before factor : 90                after factor           : 90              
+Factor     - dense dim.             : 0                 flops                  : 6.30e+02        
+ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
+0   1.0e+00  7.7e+03  3.5e+04  0.00e+00   1.061543537e+05   1.406700644e+05   1.0e+00  0.00  
+1   2.7e-01  2.1e+03  1.8e+04  -1.00e+00  1.060069157e+05   1.405010927e+05   2.7e-01  0.00  
+2   5.5e-02  4.2e+02  8.1e+03  -9.97e-01  1.050937531e+05   1.393838389e+05   5.5e-02  0.00  
+3   3.6e-03  2.8e+01  1.9e+03  -9.83e-01  9.040363452e+04   1.210381863e+05   3.6e-03  0.00  
+4   7.8e-04  6.0e+00  6.0e+02  -6.99e-01  6.395812769e+04   8.278782166e+04   7.8e-04  0.00  
+5   1.7e-04  1.3e+00  3.7e+01  6.72e-01   7.112955334e+04   7.520302414e+04   1.7e-04  0.00  
+6   6.5e-06  5.0e-02  2.7e-01  8.75e-01   6.990776981e+04   7.006937447e+04   6.5e-06  0.00  
+7   2.5e-06  1.9e-02  6.7e-02  9.97e-01   6.988823957e+04   6.995009293e+04   2.5e-06  0.00  
+8   9.0e-07  7.0e-03  1.6e-02  9.99e-01   6.988185368e+04   6.990452072e+04   9.0e-07  0.00  
+9   5.7e-08  4.4e-04  2.4e-04  1.00e+00   6.987937037e+04   6.988079665e+04   5.7e-08  0.00  
+10  3.1e-09  2.4e-05  2.8e-06  1.02e+00   6.987929743e+04   6.987937285e+04   3.1e-09  0.00  
+11  5.1e-10  3.9e-06  1.4e-07  1.29e+00   6.987930897e+04   6.987931923e+04   5.1e-10  0.00  
+12  4.2e-10  3.2e-06  1.1e-07  1.05e+00   6.987930989e+04   6.987931831e+04   4.1e-10  0.00  
+13  4.1e-10  3.1e-06  1.1e-07  1.08e+00   6.987930996e+04   6.987931823e+04   4.0e-10  0.00  
+14  4.1e-10  3.1e-06  1.1e-07  1.06e+00   6.987930996e+04   6.987931823e+04   4.0e-10  0.00  
+15  4.1e-10  3.1e-06  1.1e-07  1.08e+00   6.987930996e+04   6.987931823e+04   4.0e-10  0.00  
+16  4.1e-10  3.1e-06  1.1e-07  1.06e+00   6.987930996e+04   6.987931823e+04   4.0e-10  0.00  
+17  4.1e-10  3.1e-06  1.1e-07  1.01e+00   6.987930996e+04   6.987931823e+04   4.0e-10  0.00  
+18  4.1e-10  3.1e-06  1.1e-07  1.13e+00   6.987930998e+04   6.987931821e+04   4.0e-10  0.00  
+19  2.2e-10  1.7e-06  4.8e-08  9.54e-01   6.987931166e+04   6.987931603e+04   2.0e-10  0.00  
+20  1.6e-10  1.2e-06  3.2e-08  1.03e+00   6.987931213e+04   6.987931538e+04   1.5e-10  0.00  
+21  1.4e-10  1.1e-06  2.6e-08  9.76e-01   6.987931229e+04   6.987931514e+04   1.3e-10  0.00  
+22  4.7e-11  3.6e-07  5.8e-09  1.00e+00   6.987931310e+04   6.987931407e+04   4.2e-11  0.00  
+23  4.6e-11  3.6e-07  5.7e-09  9.96e-01   6.987931312e+04   6.987931407e+04   4.1e-11  0.00  
+24  4.6e-11  3.6e-07  5.6e-09  9.99e-01   6.987931312e+04   6.987931406e+04   4.1e-11  0.00  
+25  2.9e-11  2.1e-07  2.5e-09  1.00e+00   6.987931323e+04   6.987931377e+04   2.4e-11  0.00  
+26  2.9e-11  2.1e-07  2.5e-09  1.00e+00   6.987931323e+04   6.987931377e+04   2.4e-11  0.00  
+27  1.7e-11  1.1e-08  3.1e-11  1.00e+00   6.987931340e+04   6.987931343e+04   1.3e-12  0.01  
+28  1.7e-11  1.1e-08  3.1e-11  1.00e+00   6.987931340e+04   6.987931343e+04   1.2e-12  0.01  
+29  1.7e-11  1.1e-08  3.0e-11  1.00e+00   6.987931340e+04   6.987931343e+04   1.2e-12  0.01  
+30  1.7e-11  1.1e-08  3.0e-11  1.00e+00   6.987931340e+04   6.987931343e+04   1.2e-12  0.01  
+31  1.7e-11  1.1e-08  3.0e-11  1.00e+00   6.987931340e+04   6.987931343e+04   1.2e-12  0.01  
+Optimizer terminated. Time: 0.01    
+
+
+Interior-point solution summary
+  Problem status  : UNKNOWN
+  Solution status : UNKNOWN
+  Primal.  obj: 6.9879313401e+04    nrm: 1e+05    Viol.  con: 1e-08    var: 1e-17    cones: 6e-09  
+  Dual.    obj: 6.9879313429e+04    nrm: 1e+06    Viol.  con: 0e+00    var: 6e-06    cones: 7e-18  
+
+Basic solution summary
+  Problem status  : UNKNOWN
+  Solution status : UNKNOWN
+  Primal.  obj: 6.9853139805e+04    nrm: 1e+05    Viol.  con: 1e+04    var: 0e+00    cones: 0e+00  
+  Dual.    obj: 6.9853139694e+04    nrm: 4e+07    Viol.  con: 1e-11    var: 4e+04    cones: 0e+00  
+
+Return code - 100006 [MSK_RES_TRM_STALL]: The optimizer is terminated due to slow progress.
+--- Reading solution for model netplan
+--- Executing after solve: elapsed 0:00:00.202
+--- cvx-ll.gms(1037) 5 Mb
 --- GDX File (execute_unload) C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\resultado.gdx
---- cvx-ll.gms(1074) 8 Mb
+--- cvx-ll.gms(1073) 8 Mb
 --- Initialize embedded library embconnectcclib64.dll
 --- Execute embedded library embconnectcclib64.dll
+  File "<string>", line 155, in <module>
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\gams\connect\connectdatabase.py", line 201, in execute
+    self._execute(instructions)
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\gams\connect\connectdatabase.py", line 174, in _execute
+    execute_return = agent.execute()
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\gams\connect\agents\excelwriter.py", line 436, in execute
+    self._open()
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\gams\connect\agents\excelwriter.py", line 92, in _open
+    self._wb = openpyxl.load_workbook(
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\openpyxl\reader\excel.py", line 348, in load_workbook
+    reader.read()
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\openpyxl\reader\excel.py", line 303, in read
+    self.read_worksheets()
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\openpyxl\reader\excel.py", line 237, in read_worksheets
+    ws_parser.bind_all()
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\openpyxl\worksheet\_reader.py", line 465, in bind_all
+    self.bind_cells()
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\openpyxl\worksheet\_reader.py", line 368, in bind_cells
+    for idx, row in self.parser.parse():
+  File "C:\GAMS\50\GMSPython\Lib\site-packages\openpyxl\worksheet\_reader.py", line 156, in parse
+    for _, element in it:
+  File "C:\GAMS\50\GMSPython\Lib\xml\etree\ElementTree.py", line 1238, in iterator
+    data = source.read(16 * 1024)
+  File "C:\GAMS\50\GMSPython\Lib\zipfile\__init__.py", line 992, in read
+    data = self._read1(n)
+  File "C:\GAMS\50\GMSPython\Lib\zipfile\__init__.py", line 1082, in _read1
+    self._update_crc(data)
+  File "C:\GAMS\50\GMSPython\Lib\zipfile\__init__.py", line 1010, in _update_crc
+    raise BadZipFile("Bad CRC-32 for file %r" % self.name)
+Exception from Connect:
+    ExcelWriter(9) failed: <class 'zipfile.BadZipFile'>: Bad CRC-32 for file 'xl/worksheets/sheet6.xml'
+*** Error at line 1073: Error executing "embeddedCode" section: Check log above
+--- cvx-ll.gms(1073) 8 Mb 1 Error
 --- Putfile fijx C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\fij_long.csv
-*** Status: Normal completion
---- Job cvx-ll.gms Stop 04/21/26 15:36:31 elapsed 0:00:00.768
+--- cvx-ll.gms(1073) 8 Mb 1 Error
+*** Status: Execution error(s)
+--- Job cvx-ll.gms Stop 04/21/26 19:59:52 elapsed 0:00:00.888

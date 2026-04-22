@@ -108,9 +108,11 @@ budgets = [3e4,3.5e4,4e4,4.5e4,5e4];
 
 budgets = [3e4,3.5e4,4e4,4.5e4,5e4,5.5e4,6e4,7e4,8e4];
 budgets = [3e4,4e4,5e4,6e4,7e4,8e4]; %funcionan con 1e-8,5e-2
-budgets = [6e4,7e4,8e4];
-%budgets = 3e4;
-budgets = [8e4];
+
+budgets = [7e4,8e4];
+% budgets = [6e4,7e4,8e4];
+budgets = 3e4;
+ % budgets = [6e4];
 
 %
 %budgets = [5e4,6e4,8e4];
@@ -161,9 +163,12 @@ mus_beta = [5e-3,1e-2,5e-2,1e-1];
 mus_alfa = 1e-7; mus_beta = 2e-1;
 % 
 % %con demanda dividida
-mus_alfa = 1e-4; mus_beta = 1e-2; %funciona para todos salvo 60,80
+mus_alfa = 1e-4; mus_beta = 1e-2; %funciona para todos salvo 60
 
-mus_alfa = 
+% mus_alfa = [1e-4,1e-3];
+% mus_beta = [1e-2,5e-2];
+
+%mus_alfa = 1e-5; mus_beta = 5e-2;
 
 %% run cvx blo single start
 
@@ -191,6 +196,7 @@ for bb=1:length(budgets)
 
                 % Multistart en sh_prev
                 sh_prev = 5 * ones(1, n);
+                sh_prev = [2,5,5,5,5,5];
                 
 
                 [s,sh,a,f,fext,fij, ...
@@ -243,6 +249,9 @@ for bb=1:length(budgets)
                 best_obj_ms = 1;
                 best_res_ms = struct();
 
+                best_res_ms.f = zeros(n);
+                best_res_ms.a = zeros(n);
+
                 for start_idx = 1:(n+1)
                     sh_prev_in = sh_prev_list(start_idx, :);
                     fprintf('empieazo multistart con sh = \n');
@@ -252,8 +261,12 @@ for bb=1:length(budgets)
                      obj_val_ll_curr,alfa_od_curr,beta_od_curr,obj_hist_curr] = ...
                         compute_sim_cvx_blo(lam,alfa,n,bud,mu_alfa,mu_beta,sh_prev_in);
                     
-                    
-                    obj_curr = sum(sum(f_curr.*demand.*prices)) - sum(sum(op_link_cost.*a_curr));
+
+                    f_curr( abs(f_curr - best_res_ms.f) < 2e-2 ) = best_res_ms.f( abs(f_curr - best_res_ms.f) < 2e-2 );
+                    f_curr
+                    a_curr( abs(a_curr - best_res_ms.a) < 5e-2 ) = best_res_ms.a( abs(a_curr - best_res_ms.a) < 5e-2 );
+                    a_curr
+                    obj_curr = sum(sum(f_curr.*demand.*prices)) - sum(sum(op_link_cost.*a_curr))
        
 
                     if (obj_curr > best_obj_ms) && ( sum(s_curr) > 2e-2 )
@@ -775,7 +788,8 @@ debug = struct('a',{},'f',{},'fext',{},'fij',{}, ...
                'grad_alfa_f',{},'grad_beta_f',{}, ...
                'alfa_od',{},'beta_od',{});
 
-niters = 20;
+niters = 20; %dejarlo despues asi
+ niters = 40;
 %niters = 10; %como estaba antes
 
 alfa_od = ones(n);
@@ -838,8 +852,13 @@ while iter <= niters
     
         if (abs((obj_val-obj_val_prev)./(obj_val+1e-4)) <= 1e-3) && (bliter > 1) 
             stop = 1;
+            iter
+            f
+            
         elseif (stop == 0)
-        
+            a_prev = round(a_prev,4);
+            s_prev = round(s_prev,4);
+            sh_prev = round(sh_prev,4);
     
     
             write_gams_param_ii('./export_txt/a_prev.txt', a_prev);
@@ -872,30 +891,32 @@ while iter <= niters
             comp_time = comp_time + table2array(results_file_ctime);
         
             results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
-            sh = table2array(results_file_sh(1,:));
+            sh = table2array(results_file_sh(1,:)); sh = round(sh,4);
             sh = max(sh,1e-4);
+            
        
     
     
         
         
             results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
-            s = table2array(results_file_s(1,:));
+            s = table2array(results_file_s(1,:));  s = round(s,4);
             s = max(s,1e-4);
-         
+           
+            % 
             % s
             % sh
     
             results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-            f = table2array(results_file_f(1:n,2:(n+1)));
+            f = table2array(results_file_f(1:n,2:(n+1))); f = round(f,4);
             % f
     
     
     
         
             results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
-            a = table2array(results_file_a(1:n,2:(n+1)));
-            a = max(a,1e-4);
+            a = table2array(results_file_a(1:n,2:(n+1))); a = round(a,4);
+            a = max(a,1e-4); 
     
             % 
             % write_gams_param_ii('./export_txt/a_prev.txt', a);
@@ -905,11 +926,11 @@ while iter <= niters
             
             
             results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-            f = table2array(results_file_f(1:n,2:(n+1)));
+            f = table2array(results_file_f(1:n,2:(n+1))); f = round(f,4);
             
             
             results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-            fext = table2array(results_file_fext(1:n,2:(n+1)));
+            fext = table2array(results_file_fext(1:n,2:(n+1))); fext = round(fext,4);
             
             
             T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
@@ -921,6 +942,7 @@ while iter <= niters
             
             fij = accumarray([iIdx,jIdx,oIdx,dIdx], T.value, ...
                 [numel(iU), numel(jU), numel(oU), numel(dU)], @sum, 0);
+            fij = round(fij,4);
             
             a(a < 1e-2) = 0;
             f(f < 1e-2) = 0;
@@ -954,6 +976,7 @@ while iter <= niters
                     grad_beta_v(oo,dd) = (alfa_od(oo,dd)+1e-4)*((beta_od(oo,dd)*demand(oo,dd)*prices(oo,dd)).^(beta_od(oo,dd)-1)) * (logit_coef * prices(oo,dd) * f(oo,dd) + logit_coef * sum(sum(squeeze(fij(:,:,oo,dd)) .* travel_time)) - alt_utility(oo,dd) * fext(oo,dd) + f(oo,dd)*( log(max(0,f(oo,dd)) + 1e-12) - 1 ) + fext(oo,dd)*( log(max(0,fext(oo,dd))/n_airlines + 1e-12)  - 1 ) );
                 end
             end
+
 
             used_budget = get_budget(s,sh,a,n,...
                 station_cost,station_capacity_slope,hub_cost,link_cost,lam);
@@ -995,17 +1018,19 @@ while iter <= niters
             comp_time = comp_time + table2array(results_file_ctime);
         
             results_file_sh = readtable('./output_all.xlsx','Sheet','sh_level');
-            sh = table2array(results_file_sh(1,:));
+            sh = table2array(results_file_sh(1,:)); sh = round(sh,4);
             sh = max(sh,1e-4);
+            
         
         
             results_file_s = readtable('./output_all.xlsx','Sheet','s_level');
-            s = table2array(results_file_s(1,:));
+            s = table2array(results_file_s(1,:)); s = round(s,4);
             s = max(s,1e-4);
+
 
         
             results_file_a = readtable('./output_all.xlsx','Sheet','a_level');
-            a = table2array(results_file_a(1:n,2:(n+1)));
+            a = table2array(results_file_a(1:n,2:(n+1))); a= round(a,4);
             a = max(a,1e-4);
             
                 % write_gams_param_ii('./export_txt/a_prev.txt', a);
@@ -1016,10 +1041,10 @@ while iter <= niters
     
             
             results_file_f = readtable('./output_all.xlsx','Sheet','f_level');
-            f = table2array(results_file_f(1:n,2:(n+1)));
+            f = table2array(results_file_f(1:n,2:(n+1))); f = round(a,4);
             
             results_file_fext = readtable('./output_all.xlsx','Sheet','fext_level');
-            fext = table2array(results_file_fext(1:n,2:(n+1)));
+            fext = table2array(results_file_fext(1:n,2:(n+1))); fext = round(fext,4);
             
             
             T = readtable('fij_long.csv');      % columnas: i, j, o, d, value (strings/números)
@@ -1062,6 +1087,7 @@ while iter <= niters
                     grad_beta_f(oo,dd) = gamma .*( (alfa_od(oo,dd)+1e-4)*((beta_od(oo,dd)*demand(oo,dd)*prices(oo,dd)).^(beta_od(oo,dd)-1)) * (logit_coef * prices(oo,dd) * f(oo,dd) + logit_coef * sum(sum(squeeze(fij(:,:,oo,dd)) .* travel_time)) - alt_utility(oo,dd) * fext(oo,dd) + f(oo,dd)*( log(f(oo,dd) + 1e-12) - 1 ) + fext(oo,dd)*( log(fext(oo,dd)/n_airlines + 1e-12)  - 1 ) ) - grad_beta_v(oo,dd));
                 end
             end
+
             
         
             beta_od = beta_od - mu_beta.*grad_beta_f;
@@ -1075,6 +1101,9 @@ while iter <= niters
             alfa_od = min(9,alfa_od);
             alfa_od(1:n+1:end) = 1;
             beta_od(1:n+1:end) = 1;
+
+            alfa_od = round(alfa_od,4); 
+            beta_od = round(beta_od,4);
         
             write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od);
             write_gams_param_ii('./export_txt/beta_od.txt', beta_od);
@@ -1114,7 +1143,7 @@ while iter <= niters
         
         if iter < (niters -1)
           %  iter = niters-1; 
-            disp('cumplo presupuesto');
+            % disp('cumplo presupuesto');
         end
        % break; %comentar
     end
@@ -1122,8 +1151,11 @@ while iter <= niters
     sh_prev = sh_ll;
     a_prev = a_ll;
     stop = 0;
-    
+    iter
     iter = iter+1;
+    f_ll
+    s_ll
+    sh_ll
 end
 
 
@@ -1582,4 +1614,3 @@ eta = 0.3;
 a_max = 1e9;
 
 end
-
