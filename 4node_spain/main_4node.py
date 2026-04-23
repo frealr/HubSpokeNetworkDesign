@@ -292,18 +292,17 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                 write_txt_param('current_iter', _iter)
                 subprocess.run(cmd, shell=True, cwd=r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 
-                ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
-                if ctime_vals is not None and len(ctime_vals) > 0:
-                    comp_time += ctime_vals.to_numpy().flatten()[-1]
-                
+                _df_t = read_gams_csv_robust('./output_all.xlsx', 'solver_time')
+                comp_time += float(_df_t.columns[0]) if _df_t is not None and len(_df_t.columns) > 0 else 0.0
+
                 sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
                 sh = sh_df.to_numpy().flatten() if sh_df is not None and len(sh_df) > 0 else np.zeros(n)
                 sh = np.maximum(sh, 1e-4)
-                
+
                 s_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='s_level')
                 s = s_df.to_numpy().flatten() if s_df is not None and len(s_df) > 0 else np.zeros(n)
                 s = np.maximum(s, 1e-4)
-                
+
                 print(s)
                 print(sh)
 
@@ -358,10 +357,9 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                 cmd = f'"{gamsExe}" "{gmsFile}"'
                 subprocess.run(cmd, shell=True, cwd=r'/home/lcadarso/TFM/HubSpokeNetworkDesign/4node_spain', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 
-                ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
-                if ctime_vals is not None and len(ctime_vals) > 0:
-                    comp_time += ctime_vals.to_numpy().flatten()[-1]
-                
+                _df_t2 = read_gams_csv_robust('./output_all.xlsx', 'solver_time')
+                comp_time += float(_df_t2.columns[0]) if _df_t2 is not None and len(_df_t2.columns) > 0 else 0.0
+
                 sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
                 sh = sh_df.to_numpy().flatten() if sh_df is not None and len(sh_df) > 0 else np.zeros(n)
                 sh = np.maximum(sh, 1e-4)
@@ -498,10 +496,7 @@ def compute_sim_MIP(lam, budget):
         mipgap = mipgap_df.to_numpy().flatten() if mipgap_df is not None and len(mipgap_df) > 0 else [0]
         
         ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
-        if ctime_vals is not None and len(ctime_vals) > 0:
-            comp_time = ctime_vals.values.flatten()[-1]
-        else:
-            comp_time = 0
+        comp_time = float(ctime_vals.columns[0]) if ctime_vals is not None and len(ctime_vals.columns) > 0 else 0
     else:
         sh = np.zeros(n); s = np.zeros(n); sprim = np.zeros(n); deltas = np.zeros(n); a = np.zeros((n,n)); f = np.zeros((n,n)); fext = np.zeros((n,n)); mipgap = [0]; comp_time = 0
         
@@ -584,8 +579,7 @@ if __name__ == '__main__':
     write_gams_param1d_full('./export_txt/s_prev.txt', s_prev)
     write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev)
     
-    #budgets = [3e4, 3.5e4, 4e4, 4.5e4, 5e4]
-    budgets = [3e4]
+    budgets = [3e4, 3.5e4, 4e4, 4.5e4, 5e4]
     lam = 4
     for bud in budgets:
         compute_sim_MIP(lam, bud)

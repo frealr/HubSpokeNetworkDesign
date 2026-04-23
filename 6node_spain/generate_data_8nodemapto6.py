@@ -460,8 +460,8 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                 write_gams_param1d_full('./export_txt/s_prev.txt', s_prev)
                 write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev)
 
-                gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-ll.gms'
-                gamsExe = r'C:\GAMS\50\gams.exe'
+                gmsFile = '/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain/cvx-ll.gms'
+                gamsExe = '/opt/gams/gams49.6_linux_x64_64_sfx/gams'
                 cmd = f'"{gamsExe}" "{gmsFile}"'
 
                 write_txt_param('current_iter', _iter)
@@ -474,7 +474,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                     except PermissionError:
                         time.sleep(0.5)
                 subprocess.run(cmd, shell=True,
-                               cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain',
+                               cwd='/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain',
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
                 _df_t = read_gams_csv_robust('./output_all.xlsx', 'solver_time')
@@ -554,8 +554,8 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                 set_max_f(n, fij, n_airlines, travel_time, prices, alt_utility, omega_p, omega_t)
 
                 # Run cvx-sl.gms
-                gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\cvx-sl.gms'
-                gamsExe = r'C:\GAMS\50\gams.exe'
+                gmsFile = '/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain/cvx-sl.gms'
+                gamsExe = '/opt/gams/gams49.6_linux_x64_64_sfx/gams'
                 cmd = f'"{gamsExe}" "{gmsFile}"'
                 # Delete stale xlsx to prevent corrupted file blocking ExcelWriter
                 for _try in range(10):
@@ -566,7 +566,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, mu_alfa, mu_beta, sh_prev_in):
                     except PermissionError:
                         time.sleep(0.5)
                 subprocess.run(cmd, shell=True,
-                               cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain',
+                               cwd='/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain',
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
                 _df_t2 = read_gams_csv_robust('./output_all.xlsx', 'solver_time')
@@ -720,11 +720,11 @@ def compute_sim_MIP(lam, beta, alfa, n, budget):
     write_txt_param('dm_pax', dm_pax)
     write_txt_param('dm_op', dm_op)
 
-    gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\mip.gms'
-    gamsExe = r'C:\GAMS\50\gams.exe'
+    gmsFile = '/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain/mip.gms'
+    gamsExe = '/opt/gams/gams49.6_linux_x64_64_sfx/gams'
     cmd = f'"{gamsExe}" "{gmsFile}"'
     subprocess.run(cmd, shell=True,
-                   cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain',
+                   cwd='/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain',
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
@@ -837,7 +837,7 @@ if __name__ == '__main__':
     # %% Parameter definition
     alfa = 0.5
     budgets = [3e4,4e4, 5e4, 6e4, 7e4, 8e4]
-    budgets = [3e4]
+
  
 
     lam = 4
@@ -888,7 +888,7 @@ if __name__ == '__main__':
 
                     obj = np.sum(f * demand * prices) - np.sum(op_link_cost * a)
 
-                    filename = f'./6node_hs_prueba_v0_blo/bud={matlab_sprintf_d(bud)}_lam={matlab_sprintf_d(lam)}_alfa={matlab_sprintf_d(alfa)}_mu_al={matlab_sprintf_d(mu_alfa)}_mu_bet={matlab_sprintf_d(mu_beta)}_replica8node_py.mat'
+                    filename = f'./6node_hs_prueba_v0_blo/bud={matlab_sprintf_d(bud)}_lam={matlab_sprintf_d(lam)}_alfa={matlab_sprintf_d(alfa)}_mu_al={matlab_sprintf_d(mu_alfa)}_mu_bet={matlab_sprintf_d(mu_beta)}_replica8node_py-euler.mat'
                     sio.savemat(filename, {
                         's': s, 'sh': sh, 'a': a, 'f': f, 'fext': fext, 'fij': fij,
                         'comp_time': comp_time, 'used_budget': used_budget,
@@ -978,7 +978,7 @@ if __name__ == '__main__':
                             obj_hist_cell[0, k] = np.array(ohi.get(k + 1, []))
                         best_res_ms['obj_hist_iters'] = obj_hist_cell
 
-                    filename = f'./6node_hs_prueba_v0_blo/bud={matlab_sprintf_d(bud)}_lam={matlab_sprintf_d(lam)}_alfa={matlab_sprintf_d(alfa)}_mu_al={matlab_sprintf_d(mu_alfa)}_mu_bet={matlab_sprintf_d(mu_beta)}_replica8node_py.mat'
+                    filename = f'./6node_hs_prueba_v0_blo/bud={matlab_sprintf_d(bud)}_lam={matlab_sprintf_d(lam)}_alfa={matlab_sprintf_d(alfa)}_mu_al={matlab_sprintf_d(mu_alfa)}_mu_bet={matlab_sprintf_d(mu_beta)}_replica8node_py-euler.mat'
                     sio.savemat(filename, best_res_ms)
     
     # %% load blo results
@@ -1001,7 +1001,7 @@ if __name__ == '__main__':
             alfa = al
             for mu_alfa_val in mus_alfa:
                 for mu_beta_val in mus_beta:
-                    filename = f'./6node_hs_prueba_v0_blo/bud={matlab_sprintf_d(bud)}_lam={matlab_sprintf_d(lam)}_alfa={matlab_sprintf_d(alfa)}_mu_al={matlab_sprintf_d(mu_alfa_val)}_mu_bet={matlab_sprintf_d(mu_beta_val)}_py.mat'
+                    filename = f'./6node_hs_prueba_v0_blo/bud={matlab_sprintf_d(bud)}_lam={matlab_sprintf_d(lam)}_alfa={matlab_sprintf_d(alfa)}_mu_al={matlab_sprintf_d(mu_alfa_val)}_mu_bet={matlab_sprintf_d(mu_beta_val)}_py-euler.mat'
                     data = sio.loadmat(filename)
                     f_blo = data['f']
                     a_blo = data['a']

@@ -1,4 +1,4 @@
-$setglobal TXTDIR "C:\Users\freal\Desktop\HubSpokeNetworkDesign\6node_spain\export_txt"
+$setglobal TXTDIR "/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain/export_txt"
 *$setglobal TXTDIR "/home/lcadarso/TFM/HubSpokeNetworkDesign/6node_spain/export_txt"
 
 
@@ -13,7 +13,7 @@ Alias (i,j,o,d);
 Parameter demand(o,d)
 
 /
-$include "%TXTDIR%\demand.txt"
+$include "%TXTDIR%/demand.txt"
 /;
 
 *demand(o,d)=1e-2*demand(o,d);
@@ -21,88 +21,88 @@ $include "%TXTDIR%\demand.txt"
 Parameter alt_utility(o,d)
 
 /
-$include "%TXTDIR%\alt_utility.txt"
+$include "%TXTDIR%/alt_utility.txt"
 /;
 
 
 * --- (i,j) ---
 Parameter link_cost(i,j)
 /
-$include "%TXTDIR%\link_cost.txt"
+$include "%TXTDIR%/link_cost.txt"
 /;
 
 Parameter link_capacity_slope(i,j)
 /
-$include "%TXTDIR%\link_capacity_slope.txt"
+$include "%TXTDIR%/link_capacity_slope.txt"
 /;
 
 Parameter alfa_od(o,d)
 /
-$include "%TXTDIR%\alfa_od.txt"
+$include "%TXTDIR%/alfa_od.txt"
 /;
 
 Parameter beta_od(o,d)
 /
-$include "%TXTDIR%\beta_od.txt"
+$include "%TXTDIR%/beta_od.txt"
 /;
 
 Parameter prices(o,d)
 /
-$include "%TXTDIR%\prices.txt"
+$include "%TXTDIR%/prices.txt"
 /;
 
 Parameter op_link_cost(i,j)
 /
-$include "%TXTDIR%\op_link_cost.txt"
+$include "%TXTDIR%/op_link_cost.txt"
 /;
 
 * op_link_cost(i,j)=1e-2* op_link_cost(i,j);
 
 Parameter candidates(i,j)
 /
-$include "%TXTDIR%\candidates.txt"
+$include "%TXTDIR%/candidates.txt"
 /;
 
 Parameter travel_time(i,j)
 /
-$include "%TXTDIR%\travel_time.txt"
+$include "%TXTDIR%/travel_time.txt"
 /;
 
 * --- (i) ---
 Parameter station_cost(i)
 /
-$include "%TXTDIR%\station_cost.txt"
+$include "%TXTDIR%/station_cost.txt"
 /;
 
 Parameter hub_cost(i)
 /
-$include "%TXTDIR%\hub_cost.txt"
+$include "%TXTDIR%/hub_cost.txt"
 /;
 
 Parameter station_capacity_slope(i)
 /
-$include "%TXTDIR%\station_capacity_slope.txt"
+$include "%TXTDIR%/station_capacity_slope.txt"
 /;
 
 Parameter budget
 /
-$include "%TXTDIR%\budget.txt"
+$include "%TXTDIR%/budget.txt"
 /;
 
 Parameter f_bounds(o,d)
 /
-$include "%TXTDIR%\f_bounds.txt"
+$include "%TXTDIR%/f_bounds.txt"
 /;
 
 
 Parameter s_prev(i)
 /
-$include "%TXTDIR%\s_prev.txt"
+$include "%TXTDIR%/s_prev.txt"
 /;
 
 Parameter sh_prev(i)
 /
-$include "%TXTDIR%\sh_prev.txt"
+$include "%TXTDIR%/sh_prev.txt"
 /;
 
 
@@ -118,24 +118,24 @@ Scalar n; n = card(i);
 Scalar epsi; epsi = 1e-3;
 
 Scalar lam /
-$include "%TXTDIR%\lam.txt"
+$include "%TXTDIR%/lam.txt"
 /;
 
 Scalar alfa /
-$include "%TXTDIR%\alfa.txt"
+$include "%TXTDIR%/alfa.txt"
 /;
 
 
 Scalar iter /
-$include "%TXTDIR%\current_iter.txt"
+$include "%TXTDIR%/current_iter.txt"
 /;
 
 Scalar niters /
-$include "%TXTDIR%\niters.txt"
+$include "%TXTDIR%/niters.txt"
 /;
 
 Scalar gamma_ /
-$include "%TXTDIR%\gamma.txt"
+$include "%TXTDIR%/gamma.txt"
 /;
 
 Scalar logit_coef; logit_coef = 0.02;
