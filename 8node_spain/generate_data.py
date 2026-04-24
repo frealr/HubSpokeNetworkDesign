@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 import scipy.io as sio
 import time
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_GAMS_EXE = '/opt/gams/gams49.6_linux_x64_64_sfx/gams'
+GAMS_EXE = os.environ.get('GAMS_EXE', DEFAULT_GAMS_EXE)
+os.chdir(SCRIPT_DIR)
+
 def read_gams_csv_robust(file_path, symbol_name, max_retries=5, delay=1.0):
     for attempt in range(max_retries):
         try:
@@ -342,7 +347,7 @@ def compute_sim_MIP_entr(lam, beta, alfa, n, budget):
     # This was present but perhaps unused in primary loop; mapping for completeness
     pass
 
-def compute_sim_cvx_blo(lam, alfa, n, budget):
+def compute_sim_cvx_blo(lam, alfa, n, budget, sh_prev_in):
     #revisar vs matlab
     (n, link_cost, station_cost, hub_cost, link_capacity_slope,
      station_capacity_slope, demand, prices, load_factor, op_link_cost,
@@ -374,12 +379,15 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
     print('Este es el presupuesto:')
     print(budget)
     
-    obj_hist = np.zeros(30)
+    obj_hist_iters = {}
+    s_traj = []
+    sh_traj = []
+    f_traj = []
     bliters = 30
-    
+
     a_prev = 1e4 * np.ones((n, n))
     s_prev = 1e4 * np.ones(n)
-    sh_prev = 1e4 * np.ones(n)
+    sh_prev = sh_prev_in.copy()
     
     comp_time = 0
     obj_val = 0
@@ -392,6 +400,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
         write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od)
         write_gams_param_ii('./export_txt/beta_od.txt', beta_od)
         stop = 0
+        obj_hist_this_iter = []
         for bliter in range(1, bliters + 1):
             if (abs((obj_val - obj_val_prev) / obj_val) <= 1e-3 if obj_val != 0 else False) and (bliter > 1):
                 stop = 1
@@ -400,17 +409,15 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 write_gams_param1d_full('./export_txt/s_prev.txt', s_prev)
                 write_gams_param1d_full('./export_txt/sh_prev.txt', sh_prev)
                 
-                gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-ll.gms'
-                gamsExe = r'C:\GAMS\50\gams.exe'
+                gmsFile = os.path.join(SCRIPT_DIR, 'cvx-ll.gms')
+                gamsExe = GAMS_EXE
                 cmd = f'"{gamsExe}" "{gmsFile}"'
-                
+
                 write_txt_param('current_iter', _iter)
-                subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain',stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL)
-                
-                ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
-                if len(ctime_vals) > 0:
-                    comp_time += ctime_vals.to_numpy().flatten()[-1]
+                subprocess.run(cmd, shell=True, cwd=SCRIPT_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+                _df_t = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
+                comp_time += float(_df_t.columns[0]) if _df_t is not None and len(_df_t.columns) > 0 else 0.0
                 
                 sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
                 sh = sh_df.to_numpy().flatten() if len(sh_df) > 0 else np.zeros(n)
@@ -430,16 +437,19 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 
                 f = parse_matrix('./output_all.xlsx', 'f_level', n)
                 fext = parse_matrix('./output_all.xlsx', 'fext_level', n)
-                
-                T = pd.read_csv('fij_long.csv')
-                iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
-                fij = split_and_accumarray(T, iU, jU, oU, dU)
-                
+
+                fij = np.zeros((n, n, n, n))
+                if os.path.exists('fij_long.csv'):
+                    T = pd.read_csv('fij_long.csv')
+                    if len(T) > 0:
+                        iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
+                        fij = split_and_accumarray(T, iU, jU, oU, dU)
+
                 a[a < 1e-2] = 0
                 f[f < 1e-2] = 0
                 fij[fij < 1e-2] = 0
                 fext[fext > 0.99] = 1
-                
+
                 a_ll = a.copy()
                 f_ll = f.copy()
                 s_ll = s.copy()
@@ -464,15 +474,13 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 
                 set_max_f(n, fij, n_airlines, travel_time, prices, alt_utility, omega_p, omega_t)
                 
-                gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\cvx-sl.gms'
-                gamsExe = r'C:\GAMS\50\gams.exe'
+                gmsFile = os.path.join(SCRIPT_DIR, 'cvx-sl.gms')
+                gamsExe = GAMS_EXE
                 cmd = f'"{gamsExe}" "{gmsFile}"'
-                subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain',stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL)
-                
-                ctime_vals = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
-                if len(ctime_vals) > 0:
-                    comp_time += ctime_vals.to_numpy().flatten()[-1]
+                subprocess.run(cmd, shell=True, cwd=SCRIPT_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+                _df_t2 = read_gams_csv_robust('./output_all.xlsx', symbol_name='solver_time')
+                comp_time += float(_df_t2.columns[0]) if _df_t2 is not None and len(_df_t2.columns) > 0 else 0.0
                 
                 sh_df = read_gams_csv_robust('./output_all.xlsx', symbol_name='sh_level')
                 sh = sh_df.to_numpy().flatten() if len(sh_df) > 0 else np.zeros(n)
@@ -487,11 +495,14 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 
                 f = parse_matrix('./output_all.xlsx', 'f_level', n)
                 fext = parse_matrix('./output_all.xlsx', 'fext_level', n)
-                
-                T = pd.read_csv('fij_long.csv')
-                iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
-                fij = split_and_accumarray(T, iU, jU, oU, dU)
-                
+
+                fij = np.zeros((n, n, n, n))
+                if os.path.exists('fij_long.csv'):
+                    T = pd.read_csv('fij_long.csv')
+                    if len(T) > 0:
+                        iU = T['i'].unique(); jU = T['j'].unique(); oU = T['o'].unique(); dU = T['d'].unique()
+                        fij = split_and_accumarray(T, iU, jU, oU, dU)
+
                 a[a < 1e-2] = 0
                 f[f < 1e-2] = 0
                 fext[fext > 0.99] = 1
@@ -538,7 +549,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
                 print('obj_val')
                 print(obj_val_ll)
                 
-                obj_hist[bliter - 1] = obj_val_ll
+                obj_hist_this_iter.append(obj_val_ll)
                 
                 obj_val_prev = obj_val
                 obj_val = obj_val_ll
@@ -562,24 +573,26 @@ def compute_sim_cvx_blo(lam, alfa, n, budget):
             if _iter < (niters - 1):
                 print('cumplo presupuesto')
             # break
-            
+
+        obj_hist_iters[_iter] = obj_hist_this_iter.copy()
+
+        s_traj.append(s_ll.copy())
+        sh_traj.append(sh_ll.copy())
+        f_traj.append(f_ll.copy())
+
         s_prev = s_ll.copy()
         sh_prev = sh_ll.copy()
         a_prev = a_ll.copy()
         stop = 0
-        
+
         _iter += 1
 
-        
-    filename = f'./8node_hs_prueba_v0_blo/bud={budget}_lam={lam}_alfa={alfa}_mu_al={mu_alfa}_mu_bet={mu_beta}_python.mat'
-    if not os.path.exists('./8node_hs_prueba_v0_blo'):
-        os.makedirs('./8node_hs_prueba_v0_blo')
-    sio.savemat(filename, {'s': s, 'sh': sh, 'a': a, 'f': f, 'fext': fext, 'fij': fij,
-                           'comp_time': comp_time, 'used_budget': used_budget,
-                           'pax_obj': pax_obj, 'op_obj': op_obj, 'obj_val_ll': obj_val_ll,
-                           'alfa_od': alfa_od, 'beta_od': beta_od, 'obj_hist': obj_hist})
+    s_traj = np.array(s_traj) if s_traj else np.zeros((0, n))
+    sh_traj = np.array(sh_traj) if sh_traj else np.zeros((0, n))
+    f_traj = np.array(f_traj) if f_traj else np.zeros((0, n, n))
+
     sio.savemat("debug_python.mat", {"debug": debug})
-    return s, sh, a, f, fext, fij
+    return s, sh, a, f, fext, fij, comp_time, used_budget, pax_obj, op_obj, obj_val_ll, alfa_od, beta_od, obj_hist_iters, s_traj, sh_traj, f_traj
 
 
 def compute_sim_MIP(lam, beta, alfa, n, budget):
@@ -605,11 +618,10 @@ def compute_sim_MIP(lam, beta, alfa, n, budget):
     write_txt_param('dm_pax', dm_pax)
     write_txt_param('dm_op', dm_op)
     
-    gmsFile = r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain\mip.gms'
-    gamsExe = r'C:\GAMS\50\gams.exe'
+    gmsFile = os.path.join(SCRIPT_DIR, 'mip.gms')
+    gamsExe = GAMS_EXE
     cmd = f'"{gamsExe}" "{gmsFile}"'
-    subprocess.run(cmd, shell=True, cwd=r'C:\Users\freal\Desktop\HubSpokeNetworkDesign\8node_spain',stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL)
+    subprocess.run(cmd, shell=True, cwd=SCRIPT_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
     # Read outputs
     if os.path.exists('./output_all.xlsx'):
@@ -730,30 +742,65 @@ if __name__ == '__main__':
             
     alfas = [0.1]
     write_txt_param('gamma', 20)
+
+    if not os.path.exists('./8node_hs_prueba_v0_blo'):
+        os.makedirs('./8node_hs_prueba_v0_blo')
+
     for bud in budgets:
         for al in alfas:
             alfa_od = np.ones((n, n))
             beta_od = np.ones((n, n))
             write_gams_param_ii('./export_txt/alfa_od.txt', alfa_od)
             write_gams_param_ii('./export_txt/beta_od.txt', beta_od)
-            compute_sim_cvx_blo(lam, al, n, bud)
-            
-    best_obj = 1e3 * np.ones(len(budgets))
-    best_alfa = np.zeros(len(budgets))
-    used_bud = np.zeros(len(budgets))
-    for bb, bud in enumerate(budgets):
-        for al in alfas:
-            filename = f'./8node_hs_prueba_v0_blo/bud={bud}_lam={lam}_alfa={al}.mat'
-            # (Matches generated output depending on mu_alfa/mu_beta config logic)
-            # In MATLAB, the script calls `load` without matching mu_a/b, so it assumes unique.
-            # Here we just iterate directly if possible.
-            import glob
-            files = glob.glob(f'./8node_hs_prueba_v0_blo/bud={bud}_lam={lam}_alfa={al}*.mat')
-            for f in files:
-                data = sio.loadmat(f)
-                obj_val_ll = data['obj_val_ll'][0][0]
-                ubb = data['used_budget'][0][0]
-                if obj_val_ll < best_obj[bb]:
-                    best_obj[bb] = obj_val_ll
-                    best_alfa[bb] = al
-                    used_bud[bb] = ubb
+
+            sh_prev_list = 1e4 * np.ones((n + 1, n))
+            for idx_ms in range(n):
+                sh_prev_list[idx_ms + 1, idx_ms] = 2
+
+            best_obj_ms = 1
+            best_res_ms = {'f': np.zeros((n, n)), 'a': np.zeros((n, n))}
+            total_comp_time_ms = 0
+
+            for start_idx in range(n + 1):
+                sh_prev_in = sh_prev_list[start_idx, :]
+                print('empiezo multistart con sh = ')
+                print(sh_prev_in)
+                res = compute_sim_cvx_blo(lam, al, n, bud, sh_prev_in)
+                (s_curr, sh_curr, a_curr, f_curr, fext_curr, fij_curr, comp_time_curr, used_budget_curr, pax_obj_curr, op_obj_curr, obj_val_ll_curr, alfa_od_curr, beta_od_curr, obj_hist_iters_curr, s_traj_curr, sh_traj_curr, f_traj_curr) = res
+                total_comp_time_ms += comp_time_curr
+
+                f_curr[np.abs(f_curr - best_res_ms['f']) < 2e-2] = best_res_ms['f'][np.abs(f_curr - best_res_ms['f']) < 2e-2]
+                print(f_curr)
+                a_curr[np.abs(a_curr - best_res_ms['a']) < 5e-2] = best_res_ms['a'][np.abs(a_curr - best_res_ms['a']) < 5e-2]
+                print(a_curr)
+
+                obj_curr = np.sum(f_curr * demand * prices) - np.sum(op_link_cost * a_curr)
+                print(obj_curr)
+
+                if (obj_curr > best_obj_ms) and (np.sum(s_curr) > 2e-2):
+                    print('el mejor hasta ahora')
+                    print('f sale:')
+                    print(f_curr)
+                    best_obj_ms = obj_curr
+                    best_res_ms.update({'s': s_curr, 'sh': sh_curr, 'a': a_curr, 'f': f_curr, 'fext': fext_curr, 'fij': fij_curr,
+                                        'used_budget': used_budget_curr, 'pax_obj': pax_obj_curr,
+                                        'op_obj': op_obj_curr, 'obj_val_ll': obj_val_ll_curr, 'alfa_od': alfa_od_curr,
+                                        'beta_od': beta_od_curr, 'obj_hist_iters': obj_hist_iters_curr,
+                                        's_traj': s_traj_curr, 'sh_traj': sh_traj_curr, 'f_traj': f_traj_curr})
+
+            # Tiempo total de cómputo = suma de todas las inicializaciones
+            best_res_ms['comp_time'] = total_comp_time_ms
+
+            # Convertir obj_hist_iters (dict Python) a cell array para savemat
+            if 'obj_hist_iters' in best_res_ms:
+                ohi = best_res_ms['obj_hist_iters']
+                n_done = len(ohi)
+                obj_hist_cell = np.empty((1, n_done), dtype=object)
+                for k in range(n_done):
+                    obj_hist_cell[0, k] = np.array(ohi.get(k + 1, []))
+                best_res_ms['obj_hist_iters'] = obj_hist_cell
+
+            mu_alfa = 1e-7
+            mu_beta = 2e-1
+            filename = f'./8node_hs_prueba_v0_blo/bud={bud}_lam={lam}_alfa={al}_mu_al={mu_alfa}_mu_bet={mu_beta}_python-euler.mat'
+            sio.savemat(filename, best_res_ms)
