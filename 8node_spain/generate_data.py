@@ -452,6 +452,8 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, sh_prev_in):
 
                 a_ll = a.copy()
                 f_ll = f.copy()
+                fext_ll = fext.copy()
+                fij_ll = fij.copy()
                 s_ll = s.copy()
                 sh_ll = sh.copy()
                 
@@ -592,7 +594,7 @@ def compute_sim_cvx_blo(lam, alfa, n, budget, sh_prev_in):
     f_traj = np.array(f_traj) if f_traj else np.zeros((0, n, n))
 
     sio.savemat("debug_python.mat", {"debug": debug})
-    return s, sh, a, f, fext, fij, comp_time, used_budget, pax_obj, op_obj, obj_val_ll, alfa_od, beta_od, obj_hist_iters, s_traj, sh_traj, f_traj
+    return s_ll, sh_ll, a_ll, f_ll, fext_ll, fij_ll, comp_time, used_budget, pax_obj, op_obj, obj_val_ll, alfa_od, beta_od, obj_hist_iters, s_traj, sh_traj, f_traj
 
 
 def compute_sim_MIP(lam, beta, alfa, n, budget):

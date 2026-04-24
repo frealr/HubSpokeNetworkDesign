@@ -1,5 +1,0 @@
-Input=/home/lcadarso/TFM/HubSpokeNetworkDesign/8node_spain/cvx-ll.gms
-ScrDir=225n
-SysDir=/opt/gams/gams49.6_linux_x64_64_sfx
-ScriptNext=225n/gamsnext.sh
-NetLicense=225n/gamslice.dat
