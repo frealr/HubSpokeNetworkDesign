@@ -1,12 +1,14 @@
 import sys
 import os
+from urllib.error import URLError
+from urllib.request import urlopen
 import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+from cartopy.io import img_tiles as cimgt
 
 
 def _out_path(mat_path, suffix):
@@ -28,6 +30,10 @@ AIRPORTS = {
 NODE_ORDER = ['MAD', 'BCN', 'PMI', 'AGP', 'ALC', 'LPA']   # nodes 1..6
 
 PROJ = ccrs.PlateCarree()
+MAIN_EXTENT = [-10.0, 5.5, 34.8, 44.5]
+CANARY_DISPLAY = {
+    'LPA': ('Las Palmas', 35.95, -7.15),
+}
 
 # Canary Islands extent (lon_min, lon_max, lat_min, lat_max)
 _CAN_EXT = (-18.5, -13.0, 27.4, 29.6)
@@ -47,6 +53,21 @@ def _add_spain_features(ax):
                    edgecolor='#555555', zorder=2)
     ax.add_feature(cfeature.COASTLINE.with_scale('110m'), linewidth=0.6,
                    edgecolor='#555555', zorder=2)
+
+
+def _add_map_background(ax, zoom, tile_source=None):
+    if tile_source is not None:
+        ax.add_image(tile_source, zoom, interpolation='bilinear', zorder=0)
+        return
+    _add_spain_features(ax)
+
+
+def _google_tiles_available(tile_source, timeout=3):
+    try:
+        with urlopen(tile_source._image_url((0, 0, 1)), timeout=timeout) as response:
+            return response.status == 200
+    except (OSError, URLError):
+        return False
 
 
 def _great_circle_pts(lon1, lat1, lon2, lat2, n_pts=120):
@@ -75,94 +96,146 @@ def _great_circle_pts(lon1, lat1, lon2, lat2, n_pts=120):
     return lons, lats
 
 
-def _plot_node(ax, lon, lat, color, marker, ms, lcol, iata):
+def _plot_node(ax, lon, lat, color, marker, ms, lcol, iata, show_label=True):
+    ax.plot(lon, lat, marker=marker, color=color, markersize=ms,
+            markeredgecolor='black', markeredgewidth=0.8,
+            transform=PROJ, zorder=5)
+    if show_label:
+        ax.text(lon + 0.15, lat + 0.15, iata, transform=PROJ,
+                fontsize=15, fontweight='bold', color=lcol, zorder=6, clip_on=True)
+
+
+def _node_style(is_hub, is_spoke):
+    if is_hub:
+        return 'red', 'o', 12, 'darkred'
+    if is_spoke:
+        return 'steelblue', 'o', 10, 'navy'
+    return 'black', 'x', 10, 'gray'
+
+
+def _plot_mainland_canary_placeholder(ax, iata, color, marker, ms, lcol):
+    if iata not in CANARY_DISPLAY:
+        return
+    _, lat, lon = CANARY_DISPLAY[iata]
     ax.plot(lon, lat, marker=marker, color=color, markersize=ms,
             markeredgecolor='white', markeredgewidth=0.8,
-            transform=PROJ, zorder=5)
-    ax.text(lon + 0.15, lat + 0.15, iata, transform=PROJ,
-            fontsize=9, fontweight='bold', color=lcol, zorder=6, clip_on=True)
+            transform=PROJ, zorder=5, alpha=0.95)
+    ax.text(lon + 0.12, lat + 0.10, iata, transform=PROJ,
+            fontsize=15, fontweight='bold', color=lcol, zorder=6, clip_on=True)
 
 
-def plot_network_topology(mat_path, show=True):
+def _make_overlay_axes(fig, position, projection, extent):
+    ax_overlay = fig.add_axes(position, projection=projection, label='canary-overlay')
+    ax_overlay.set_extent(extent, crs=PROJ)
+    ax_overlay.patch.set_alpha(0.0)
+    for spine in ax_overlay.spines.values():
+        spine.set_visible(False)
+    ax_overlay.set_xticks([])
+    ax_overlay.set_yticks([])
+    return ax_overlay
+
+
+def _network_map_data(mat_path):
     data = sio.loadmat(mat_path)
-    s  = np.ravel(data['s'])
+    s = np.ravel(data['s'])
     sh = np.ravel(data['sh'])
-    a  = data['a']
-    n  = len(NODE_ORDER)
+    a = data['a']
+    return s, sh, a
 
-    is_hub   = sh > 1e-2
+
+def _build_network_topology_figure(mat_path, use_google_tiles=True):
+    s, sh, a = _network_map_data(mat_path)
+    n = len(NODE_ORDER)
+
+    is_hub = sh > 1e-2
     is_spoke = (~is_hub) & (s > 1e-2)
+    tile_source = None
+    if use_google_tiles:
+        candidate_tiles = cimgt.GoogleTiles(style='street')
+        if _google_tiles_available(candidate_tiles):
+            tile_source = candidate_tiles
+        else:
+            print('Google tile background unavailable, using cartopy fallback.')
+    map_proj = tile_source.crs if tile_source is not None else ccrs.AlbersEqualArea(
+        central_longitude=-3.5, central_latitude=40.0,
+        standard_parallels=(36.0, 44.0))
+    can_proj = tile_source.crs if tile_source is not None else ccrs.AlbersEqualArea(
+        central_longitude=-15.5, central_latitude=28.1,
+        standard_parallels=(27.0, 29.5))
 
-    fig = plt.figure(figsize=(9, 8))
+    fig = plt.figure(figsize=(10.5, 8))
 
-    # Main axes: mainland Spain + Balearics
-    ax = fig.add_axes([0.05, 0.05, 0.90, 0.90],
-                      projection=ccrs.AlbersEqualArea(
-                          central_longitude=-3.5, central_latitude=40.0,
-                          standard_parallels=(36.0, 44.0)))
-    ax.set_extent([-10.0, 5.5, 34.8, 44.5], crs=PROJ)
-    _add_spain_features(ax)
-    ax.gridlines(draw_labels=False, linewidth=0.3, color='gray',
-                 alpha=0.4, linestyle='--')
+    main_pos = [0.05, 0.05, 0.78, 0.90]
+    ax = fig.add_axes(main_pos, projection=map_proj)
+    ax.set_extent(MAIN_EXTENT, crs=PROJ)
+    _add_map_background(ax, zoom=6, tile_source=tile_source)
+    ax.gridlines(draw_labels=False, linewidth=0.3, color='white',
+                 alpha=0.45, linestyle='--')
 
-    # Inset: Canary Islands – lower-left rectangle
-    ax_can = fig.add_axes([0.05, 0.05, 0.25, 0.22],
-                          projection=ccrs.AlbersEqualArea(
-                              central_longitude=-15.5, central_latitude=28.1,
-                              standard_parallels=(27.0, 29.5)))
+    ax_can = fig.add_axes([0.06, 0.07, 0.24, 0.22], projection=can_proj)
     ax_can.set_extent(_CAN_EXT, crs=PROJ)
-    _add_spain_features(ax_can)
+    _add_map_background(ax_can, zoom=7, tile_source=tile_source)
     for sp in ax_can.spines.values():
         sp.set_edgecolor('#333333')
         sp.set_linewidth(1.2)
 
-    # ── Links ────────────────────────────────────────────────────────────────
+    ax_overlay = _make_overlay_axes(fig, main_pos, map_proj, MAIN_EXTENT)
+
     for i in range(n):
         for j in range(i + 1, n):
-            if a[i, j] > 1e-2 or a[j, i] > 1e-2:
-                _, lat1, lon1 = AIRPORTS[NODE_ORDER[i]]
-                _, lat2, lon2 = AIRPORTS[NODE_ORDER[j]]
-                lons, lats = _great_circle_pts(lon1, lat1, lon2, lat2)
-                kw = dict(transform=PROJ, color='steelblue',
-                          linewidth=1.8, alpha=0.75, zorder=3)
-                # Draw on main map; cartopy clips automatically
-                ax.plot(lons, lats, **kw)
-                # Draw on inset too (for links from/to LPA)
-                if _in_canary(lon1, lat1) or _in_canary(lon2, lat2):
-                    ax_can.plot(lons, lats, **kw)
+            if a[i, j] <= 1e-2 and a[j, i] <= 1e-2:
+                continue
 
-    # ── Airports ─────────────────────────────────────────────────────────────
+            iata_i = NODE_ORDER[i]
+            iata_j = NODE_ORDER[j]
+            _, lat1, lon1 = AIRPORTS[iata_i]
+            _, lat2, lon2 = AIRPORTS[iata_j]
+            kw = dict(transform=PROJ, color='steelblue',
+                      linewidth=1.8, alpha=0.75, zorder=3)
+
+            if _in_canary(lon1, lat1) or _in_canary(lon2, lat2):
+                disp_lat1, disp_lon1 = lat1, lon1
+                disp_lat2, disp_lon2 = lat2, lon2
+                if iata_i in CANARY_DISPLAY:
+                    _, disp_lat1, disp_lon1 = CANARY_DISPLAY[iata_i]
+                if iata_j in CANARY_DISPLAY:
+                    _, disp_lat2, disp_lon2 = CANARY_DISPLAY[iata_j]
+                ax_overlay.plot([disp_lon1, disp_lon2], [disp_lat1, disp_lat2], **kw)
+            else:
+                lons, lats = _great_circle_pts(lon1, lat1, lon2, lat2)
+                ax.plot(lons, lats, **kw)
+
     for i, iata in enumerate(NODE_ORDER):
         _, lat, lon = AIRPORTS[iata]
-        if is_hub[i]:
-            color, marker, ms, lcol = 'red',       'o', 10, 'darkred'
-        elif is_spoke[i]:
-            color, marker, ms, lcol = 'steelblue', 'o',  8, 'navy'
-        else:
-            color, marker, ms, lcol = 'gray',      'x',  7, 'gray'
+        color, marker, ms, lcol = _node_style(is_hub[i], is_spoke[i])
 
         if _in_canary(lon, lat):
-            _plot_node(ax_can, lon, lat, color, marker, ms, lcol, iata)
+            _plot_mainland_canary_placeholder(ax_overlay, iata, color, marker, ms, lcol)
         else:
             _plot_node(ax, lon, lat, color, marker, ms, lcol, iata)
 
-    # ── Legend ────────────────────────────────────────────────────────────────
     legend_handles = [
-        mlines.Line2D([], [], color='red',       marker='o', ms=8,
+        mlines.Line2D([], [], color='red', marker='o', ms=12,
                       linestyle='None', label='Hub'),
-        mlines.Line2D([], [], color='steelblue', marker='o', ms=8,
+        mlines.Line2D([], [], color='steelblue', marker='o', ms=12,
                       linestyle='None', label='Spoke'),
         mlines.Line2D([], [], color='steelblue', linewidth=1.8,
                       alpha=0.75, label='Link'),
     ]
-    ax.legend(handles=legend_handles, loc='upper right',
+    ax.legend(handles=legend_handles, loc='upper left',
+              bbox_to_anchor=(1.01, 1.0), borderaxespad=0.0,
               fontsize=9, framealpha=0.9)
 
     title = mat_path.split('/')[-1].replace('.mat', '')
     ax.set_title(f'Network topology – {title}', fontsize=10, pad=8)
+    return fig
 
+
+def plot_network_topology(mat_path, show=True):
     out_path = _out_path(mat_path, '_map.png')
-    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    fig = _build_network_topology_figure(mat_path, use_google_tiles=True)
+    fig.savefig(out_path, dpi=150, bbox_inches='tight')
+
     print(f'Saved: {out_path}')
     if show:
         plt.show()
@@ -179,7 +252,7 @@ def plot_sh_trajectory(mat_path, show=True):
     colors  = plt.cm.tab10(np.linspace(0, 0.9, n))
     markers = ['o', 's', '^', 'D', 'v', 'P']
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(9.5, 5))
     title = mat_path.split('/')[-1].replace('.mat', '')
     fig.suptitle(title, fontsize=9)
 
@@ -198,9 +271,11 @@ def plot_sh_trajectory(mat_path, show=True):
     ax.set_xlabel('Outer iteration')
     ax.set_ylabel('s + sh  (hub active)  /  sh  (otherwise)')
     ax.set_title('Hub/station capacity trajectory')
-    ax.legend(fontsize=9)
+    ax.legend(fontsize=9, loc='upper left',
+              bbox_to_anchor=(1.01, 1.0), borderaxespad=0.0,
+              framealpha=0.95)
     ax.grid(True, linestyle='--', alpha=0.4)
-    plt.tight_layout()
+    fig.tight_layout(rect=[0.0, 0.0, 0.82, 0.95])
 
     out_path = _out_path(mat_path, '_sh_traj.png')
     plt.savefig(out_path, dpi=150)
@@ -223,7 +298,7 @@ def plot_f_trajectory(mat_path, show=True):
     colors  = plt.cm.tab20(np.linspace(0, 1, n_pairs, endpoint=False))
     markers = ['o', 's', '^', 'D', 'v', 'P', 'X', 'h', '*', '<', '>', 'p']
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(12, 6.5))
     title = mat_path.split('/')[-1].replace('.mat', '')
     fig.suptitle(title, fontsize=9)
 
@@ -240,9 +315,11 @@ def plot_f_trajectory(mat_path, show=True):
     ax.set_xlabel('Outer iteration')
     ax.set_ylabel('f$^{od}$  (market share)')
     ax.set_title('Market share trajectory per OD pair')
-    ax.legend(ncol=4, fontsize=7, loc='best')
+    ax.legend(ncol=2, fontsize=7, loc='center left',
+              bbox_to_anchor=(1.01, 0.5), borderaxespad=0.0,
+              framealpha=0.95)
     ax.grid(True, linestyle='--', alpha=0.4)
-    plt.tight_layout()
+    fig.tight_layout(rect=[0.0, 0.0, 0.74, 0.95])
 
     out_path = _out_path(mat_path, '_f_traj.png')
     plt.savefig(out_path, dpi=150)
@@ -273,7 +350,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) < 2:
         # Default search if no arg
-        search_path = './6node_hs_prueba_v0_blo/*.mat'
+        search_path = './6node_hs_prueba_v0_blo/*-euler.mat'
         candidates = sorted(glob.glob(search_path))
         if not candidates:
             print(f"No .mat files found in {search_path}")

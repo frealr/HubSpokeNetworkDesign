@@ -1,0 +1,13 @@
+nohup: ignoring input
+/home/lcadarso/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:61: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+Construyendo red iberia simple (25 nodos)...
+  Nodos: 25  |  Mercados: 203
+  Yield directo: 46  |  Vía MAD: 149  |  Media global: 8
+  Aerolíneas competidoras consideradas: 8
+  n=25, pares OD con demanda>0: 203
+  export_txt/ actualizado.
+
+=== budget=1e+05 ===
+  iter 1/40
+  iter 2/40

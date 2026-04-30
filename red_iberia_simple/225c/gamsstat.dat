@@ -1,0 +1,21 @@
+=0MOSEK            49.6.0 20d51043 May 13, 2025          LEG x86 64bit/Linux    
+	M O S E K       version 11.0.20 (Build date: 2025-5-7 15:22:05)
+	Copyright (C)   MOSEK ApS, Fruebjergvej 3, Box 16
+	                DK-2100 Copenhagen, Denmark
+	                https://www.mosek.com
+
+=CGAMS/MOSEK license detected
+=CReading parameter(s) from "/home/lcadarso/TFM/HubSpokeNetworkDesign/red_iberia_simple/mosek.opt"
+=C>>  MSK_DPAR_INTPNT_CO_TOL_PFEAS 1e-10
+=C>>  MSK_DPAR_INTPNT_CO_TOL_DFEAS 1e-10
+=C>>  MSK_DPAR_INTPNT_CO_TOL_REL_GAP 1e-10
+=C>>  MSK_DPAR_INTPNT_CO_TOL_INFEAS 1e-14
+=C>>  MSK_DPAR_INTPNT_CO_TOL_NEAR_REL 1
+=CFinished reading from "/home/lcadarso/TFM/HubSpokeNetworkDesign/red_iberia_simple/mosek.opt"
+
+=CExtraction of quadratics (ThreePass algorithm): 0.01s
+Setting up initial basis solution.
+70884 basis variables are expected but only 0 basis variables are specified.
+ (400)
+
+Return code - 0 [MSK_RES_OK]: No error occurred.

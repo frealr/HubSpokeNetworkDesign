@@ -159,8 +159,16 @@ def get_linearization(
     return lin_coef, bord, dmin
 
 
+def matlab_sprintf_d(val: float) -> str:
+    """Replicate MATLAB's sprintf('%d', val) behavior."""
+    if val == int(val) and abs(val) < 1e15:
+        return str(int(val))
+    else:
+        return f"{val:e}"
+
+
 def write_scalar(path: Path, value: float) -> None:
-    path.write_text(f"{value:.12g}", encoding="ascii")
+    path.write_text(matlab_sprintf_d(value), encoding="ascii")
 
 
 def write_gams_param_ii(path: Path, matrix: np.ndarray) -> None:
@@ -334,22 +342,28 @@ def compute_sim_mip(
     write_gams_param1d_full(export_dir / "s_prev.txt", s_prev)
     write_gams_param1d_full(export_dir / "sh_prev.txt", sh_prev)
 
+    output_dir.mkdir(exist_ok=True)
+    log_path = output_dir / f"log_budget={int(budget)}.txt"
+    
+    output_lines: list[str] = []
     if run_gams:
         cmd = [str(gams_exe), str(script_dir / "mip.gms")]
-        output_lines: list[str] = []
-        with subprocess.Popen(
-            cmd,
-            cwd=script_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1,
-        ) as process:
-            assert process.stdout is not None
-            for line in process.stdout:
-                print(line, end="", flush=True)
-                output_lines.append(line)
-            returncode = process.wait()
+        with log_path.open("w", encoding="utf-8") as log_file:
+            with subprocess.Popen(
+                cmd,
+                cwd=script_dir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+            ) as process:
+                assert process.stdout is not None
+                for line in process.stdout:
+                    print(line, end="", flush=True)
+                    log_file.write(line)
+                    log_file.flush()
+                    output_lines.append(line)
+                returncode = process.wait()
 
         if returncode != 0:
             raise RuntimeError(
@@ -362,8 +376,11 @@ def compute_sim_mip(
     a = read_matrix_sheet(workbook, "a_level", params.n)
     f = read_matrix_sheet(workbook, "f_level", params.n)
     fext = read_matrix_sheet(workbook, "fext_level", params.n)
-    mipgap = read_numeric_sheet(workbook, "mip_opt_gap").to_numpy(dtype=float)
-    comp_time = read_numeric_sheet(workbook, "solver_time").to_numpy(dtype=float)
+    mipgap_df = read_numeric_sheet(workbook, "mip_opt_gap")
+    mipgap = mipgap_df.to_numpy().flatten() if not mipgap_df.empty else np.array([0])
+    
+    comp_time_df = read_numeric_sheet(workbook, "solver_time")
+    comp_time = comp_time_df.to_numpy().flatten()[-1] if not comp_time_df.empty else 0
     fij = build_fij_tensor(script_dir / "fij_long.csv", params.n)
 
     obj_val, pax_obj, op_obj = get_obj_val(params.op_link_cost, params.prices, a, f, demand)
@@ -410,7 +427,7 @@ def parse_args() -> argparse.Namespace:
         "--budgets",
         type=float,
         nargs="*",
-        default=[3e4, 4e4, 5e4, 6e4, 7e4, 8e4],
+        default=[80000],
         help="Lista de presupuestos",
     )
     parser.add_argument(
