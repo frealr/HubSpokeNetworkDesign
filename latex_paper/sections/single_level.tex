@@ -1,84 +1,280 @@
-\section{Single-Level Multiobjective Formulation}
-This section presents the lower-level problem used inside the bilevel scheme. Let
-\begin{equation}
-x := \big(s,sh,a,f,f^{\mathrm{ext}},f^{od}_{ij}\big)
-\end{equation}
-collect the airport-capacity, hub-capacity, link-capacity, market-share, and route-flow variables. The lower level is a continuous airline network design model in which fixed deployment costs are approximated by reweighted penalties and the passenger split between the new airline and the outside option is induced through entropy regularization.
+\section{Continuous and Bilevel Formulation}
+\label{sec:single_level}
+This section presents the central methodological contribution of the paper. Starting from the mixed-integer nonlinear model introduced in the previous section, we build a continuous approximation that remains faithful to the economics of the airline design problem but whose computational cost is dominated by convex subproblems rather than by an exponentially growing branch-and-bound tree. The resulting lower-level model is convex for fixed input parameters and is therefore amenable to off-the-shelf interior-point solvers \cite{RealRojas2026TRB,RealRojas2025AIAA}. On top of that continuous approximation we then introduce a second decision layer whose role is to \emph{calibrate}, rather than re-design, the way the lower-level model values each market. This second layer is what turns the model into a bilevel program.
 
-To separate the market-wise bilevel hyperparameters from the scalar penalty coefficient used for deployment costs, we denote the former by $\widehat{\alpha}^{od}$ and $\widehat{\beta}^{od}$. The lower-level market weight for market $(o,d)$ is
-\begin{equation}
-W^{od} := \widehat{\alpha}^{od}\bigl(p^{od}q^{od}\bigr)^{\widehat{\beta}^{od}},
-\end{equation}
-where $q^{od}$ and $p^{od}$ denote demand and price. In the code, these quantities correspond to \texttt{alfa\_od} and \texttt{beta\_od}.
+The motivation for that second layer comes from an inherent limitation of the continuous lower-level formulation. The continuous model captures network design, capacity allocation and behaviorally meaningful market shares with a single convex problem, but it requires the modeller to choose how much importance each origin-destination market should have inside the lower-level objective. Different choices of these market-specific weights lead to very different network designs and, more importantly, to very different airline profits, even when the underlying constraints and resources are kept fixed. In a small benchmark instance the weights can be tuned by hand, but in a realistic airline planning context, where the number of markets is in the dozens or hundreds, that manual calibration becomes infeasible. The natural alternative is to make these weights a decision variable of the model itself, and to choose them so that the resulting design maximizes the airline's true profit. This is precisely the bilevel structure that we adopt: the lower level returns the continuous design induced by a given set of market weights, and the upper level selects those weights so that the airline-level profit is as large as possible.
 
-The lower-level objective is written as
+Viewed in simple terms, the proposed method combines two nested tasks that interact through the market-weight variables. The first task takes a set of market weights as input and produces, as output, a hub-and-spoke network, its installed capacities, the routing pattern of the captured demand, and the market shares induced by the resulting service offer under a smooth behavioral model. This task plays the role of an experienced planning department that, given the strategic priorities of the airline, returns a coherent operational design. The second task observes the result of the first one and modifies the strategic priorities, that is, the market weights themselves, in order to push the design toward higher airline profit. This task plays the role of a senior decision-maker who is not interested in flight schedules per se, but who decides how much each individual market should weigh in the planning department's objective. The fact that the second task does not directly choose the network but only the criteria under which the network is chosen is what makes the model bilevel.
+
+The remainder of the section is organized as follows. We first present the continuous lower-level model that is solved inside the nested scheme, redefine the variables and parameters used by the bilevel layer, and explain how entropy regularization recovers a logit-style market split through a convex-conjugate construction. We then introduce the reweighted $\ell_1$ approximation of fixed activation costs that is used to keep deployment decisions sparse. With those two ingredients in place we state the complete bilevel problem, including its objective and its constraint set. The penalty-based reformulation of the bilevel problem and the associated solution algorithm are deferred to the next section.
+
+\subsection{Continuous Design Model}
+\label{sec:continuous_design_model}
+Before stating the continuous lower-level model, we make explicit the change of perspective with respect to the mixed-integer formulation of Section~\ref{sec:problem_setting}. The continuous model retains the same set of physical decisions, namely airport capacities, hub capacities, link capacities, market shares and routing variables, but represents them through nonnegative continuous variables only. Integer activation variables are removed, and the build/no-build logic that they implement is recovered through a sparsity-inducing penalty on the capacity variables themselves. The same is done with the route-use indicators $F_{ij}^{od}$, which are relaxed from $\{0,1\}$ to $[0,1]$ and reinterpreted as the fraction of market $(o,d)$ that is routed through leg $(i,j)$. Finally, the binary service indicator $Z^{od}$ disappears altogether, because the flow-conservation equations are written directly in terms of the captured share $F^{od}$.
+
+Concretely, the continuous design variables are grouped in the vector
+\begin{equation}
+X:=\bigl(S,S^h,A,F,F^{\mathrm{ext}},\{F_{ij}^{od}\}_{(i,j),(o,d)}\bigr),
+\label{eq:single_level_X}
+\end{equation}
+where $S_i,S_i^h\ge 0$ are the spoke and hub capacities at airport $i$, $A_{ij}\ge 0$ is the service capacity assigned to leg $(i,j)$, $F^{od}\in[0,1]$ and $F^{\mathrm{ext},od}\in[0,1]$ are the market shares of the entrant and the outside alternative for market $(o,d)$, and $F_{ij}^{od}\in[0,1]$ are the route-share variables. All other parameters of the model—demand $w^{od}$, fare $p^{od}$, travel time $t_{ij}$, operating cost $c_{o_{ij}}$, fixed costs $c_{s_i},c_{h_i}$, variable capacity cost $\bar c_{s_i}$, fleet limit $a_{\max}$, budget $b$, scaling coefficients $\sigma,\sigma_i,a_{\mathrm{nom}},\tau$, utility coefficients $\omega_p,\omega_t$, hub-weight $\lambda$, smoothing constants $\varepsilon_S,\varepsilon_A$, and outside utilities $v_q^{od}$—coincide with those introduced in Section~\ref{sec:problem_setting} and keep their original meaning.
+
+In addition to those quantities, the bilevel layer introduces a pair of market-specific scalar coefficients $\widehat{\alpha}^{od}>0$ and $\widehat{\beta}^{od}>0$ for every market $(o,d)\in\mathcal{K}$. These coefficients do not modify the feasible set of the lower-level problem; their only role is to modulate the contribution of each market to the lower-level objective. Following the parametric form used in the implementation \cite{RealRojas2025AIAA}, the lower-level \emph{market weight} for market $(o,d)$ is defined as
+\begin{equation}
+\varphi^{od}(\widehat{\alpha},\widehat{\beta})
+:=\widehat{\alpha}^{od}\bigl(p^{od}w^{od}\bigr)^{\widehat{\beta}^{od}},
+\label{eq:phi_market_weight}
+\end{equation}
+so that the scaling factor $\widehat{\alpha}^{od}$ controls the linear sensitivity to the market and $\widehat{\beta}^{od}$ controls how strongly large-revenue markets are emphasized relative to small-revenue ones. Both coefficients are allowed to vary within bounded intervals, which will be made explicit below when the bilevel problem is stated.
+
+For fixed market coefficients, the continuous design model is
+\begin{equation}
+v(\widehat{\alpha},\widehat{\beta}):=
+\min_{X\in\mathcal{X}_c}\Phi_{\mathrm{c}}(X;\widehat{\alpha},\widehat{\beta}),
+\label{eq:value_function_single_level}
+\end{equation}
+where $\mathcal{X}_c$ denotes the continuous feasible set and the lower-level objective is
 \begin{align}
-\min_x \; \Phi_{\mathrm{LL}}(x;\widehat{\alpha},\widehat{\beta}) :=
-& \, OP(a) + DEP_\beta(s,sh,a) \nonumber \\
-& + U_{\mathrm{self}}(x) + U_{\mathrm{ext}}(x)
-+ H_{\mathrm{self}}(x) + H_{\mathrm{ext}}(x),
+\Phi_{\mathrm{c}}(X;\widehat{\alpha},\widehat{\beta})
+:=&\;
+\mathrm{OP}(A)
++\mathrm{DEP}(S,S^h,A)
+\nonumber\\
+&+\mathrm{U}_{\mathrm{self}}(X;\widehat{\alpha},\widehat{\beta})
++\mathrm{U}_{\mathrm{ext}}(X;\widehat{\alpha},\widehat{\beta})
+\nonumber\\
+&+\mathrm{H}_{\mathrm{self}}(X;\widehat{\alpha},\widehat{\beta})
++\mathrm{H}_{\mathrm{ext}}(X;\widehat{\alpha},\widehat{\beta}).
+\label{eq:continuous_objective}
 \end{align}
-where the different terms have the following meaning.
+The six terms have, respectively, the meaning of an operating cost, a sparse deployment cost that approximates the fixed-cost budget, a utility term for the entrant, a utility term for the outside alternative, and two entropy terms that regularize the market split. The deployment term is introduced in Section~\ref{sec:reweighted_l1}; the remaining four terms are detailed below.
 
 \paragraph{Operating costs.}
-The direct operating cost is modeled linearly as
+The direct flight operating cost is
 \begin{equation}
-OP(a) = \sum_{(i,j)\in\mathcal{A}} c_{o_{ij}} a_{ij}.
+\mathrm{OP}(A)=\sum_{(i,j)\in\mathcal{A}} c_{o_{ij}}A_{ij}.
+\label{eq:continuous_operating_cost}
 \end{equation}
-
-\paragraph{Reweighted deployment costs.}
-The deployment term penalizes airport activation, hub activation, and, at the formulation level, link deployment. Its generic structure is
-\begin{align}
-DEP_\beta(s,sh,a) = \beta \Bigg[
-& \sum_{(i,j)\in\mathcal{A}} \frac{c_{A_{ij}} a_{ij}}{a_{ij}^{\mathrm{prev}}+\varepsilon_A}
- + \sum_{i\in\mathcal{S}} \frac{c_{S_i}(s_i+sh_i)}{s_i^{\mathrm{prev}}+sh_i^{\mathrm{prev}}+\varepsilon_S} \nonumber \\
-& + \sum_{i\in\mathcal{S}} \lambda \frac{c_{H_i} sh_i}{sh_i^{\mathrm{prev}}+\varepsilon_S}
- + \sum_{(i,j)\in\mathcal{A}} \bar c_{A_{ij}} a_{ij}
- + \sum_{i\in\mathcal{S}} \bar c_{S_i}(s_i+sh_i)
-\Bigg].
-\end{align}
-Here $\beta$ is the scalar penalty coefficient associated with the deployment budget and $\lambda$ modulates the cost of activating hubs. In the current implementation, the reweighted fixed-cost approximation is concentrated on airport and hub capacities, which are the variables that dominate the fixed-cost nonsmoothness in the airline case.
+This term penalizes dense or high-capacity route structures and preserves the economic trade-off between market attractiveness and network operating effort.
 
 \paragraph{Utility terms.}
-The utility contribution of passengers traveling on the new airline is written as
-\begin{align}
-U_{\mathrm{self}}(x) =
-- \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od}
-\Bigg[
-& \omega_p p^{od} f^{od} \nonumber \\
-& + \omega_t \sum_{(i,j)\in\mathcal{A}}
-\bigl(t_{ij}+t^{od}_{ij,\mathrm{trans}}\bigr) f_{ij}^{od}
-\Bigg],
-\end{align}
-whereas the competing outside option contributes
+For market $(o,d)$, the systematic utility of the entrant is represented by
 \begin{equation}
-U_{\mathrm{ext}}(x) =
-- \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od}
-\bigl(\omega_t t^{od}_{\mathrm{ext}} + \omega_p p^{od}_{\mathrm{ext}}\bigr)f^{od}_{\mathrm{ext}}.
+u_{\mathrm{self}}^{od}(X):=
+\omega_p p^{od}
++\omega_t\sum_{(i,j)\in\mathcal{A}} t_{ij}F_{ij}^{od},
+\label{eq:self_utility}
 \end{equation}
-The multiplication by $p^{od}$ is essential in the airline setting because the lower level must distinguish not only between large-demand markets, but also between markets that generate different revenue levels.
+where $\omega_p$ and $\omega_t$ measure the sensitivity to fare and travel time. The utility contribution of the entrant in the lower-level objective is then written as
+\begin{equation}
+\mathrm{U}_{\mathrm{self}}(X;\widehat{\alpha},\widehat{\beta})=
+-\sum_{(o,d)\in\mathcal{K}}\varphi^{od}u_{\mathrm{self}}^{od}(X)F^{od},
+\label{eq:self_utility_term}
+\end{equation}
+while the outside alternative contributes
+\begin{equation}
+\mathrm{U}_{\mathrm{ext}}(X;\widehat{\alpha},\widehat{\beta})=
+-\sum_{(o,d)\in\mathcal{K}}\varphi^{od}v_{\mathrm{ext}}^{od}F^{\mathrm{ext},od}.
+\label{eq:ext_utility_term}
+\end{equation}
+Since the lower level is a minimization problem, the negative sign in both terms means that allocations with larger utility are preferred. The market weight $\varphi^{od}$ determines how strongly that preference influences the resulting network.
 
-\paragraph{Entropy terms and logit shares.}
-The logit split is induced by the entropy terms
+\paragraph{Entropy regularization and endogenous logit shares.}
+The continuous formulation also includes
 \begin{align}
-H_{\mathrm{self}}(x) &= \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od} f^{od}\bigl(\log(f^{od})-1\bigr), \\
-H_{\mathrm{ext}}(x) &= \sum_{(o,d)\in\mathcal{K}} W^{od} p^{od} f^{od}_{\mathrm{ext}}
-\left(\log\left(\frac{f^{od}_{\mathrm{ext}}}{n_{\mathrm{airlines}}}\right)-1\right).
+\mathrm{H}_{\mathrm{self}}(X;\widehat{\alpha},\widehat{\beta})
+&=
+\sum_{(o,d)\in\mathcal{K}}
+\varphi^{od}F^{od}\bigl(\log(F^{od})-1\bigr),
+\label{eq:self_entropy_term}
+\\
+\mathrm{H}_{\mathrm{ext}}(X;\widehat{\alpha},\widehat{\beta})
+&=
+\sum_{(o,d)\in\mathcal{K}}
+\varphi^{od}F^{\mathrm{ext},od}
+\left(\log\left(\frac{F^{\mathrm{ext},od}}{n_{\mathrm{airlines}}}\right)-1\right).
+\label{eq:ext_entropy_term}
 \end{align}
-These terms replace the explicit nonlinear logit constraints that would appear in a classical mixed-integer model and produce the market split through the optimality conditions of the continuous problem.
+These terms are much more than a smoothing device. They are precisely what replaces the explicit nonlinear logit equation \eqref{eq:logit_problem_setting} of the mixed-integer model by a convex variational representation of passenger choice. To make this point explicit, consider the simplex
+\begin{equation}
+\Delta^{od}:=\bigl\{(F^{od},F^{\mathrm{ext},od})\in\mathbb{R}_+^2 \;:\; F^{od}+F^{\mathrm{ext},od}=1\bigr\},
+\label{eq:market_simplex}
+\end{equation}
+which represents the set of admissible market splits in market $(o,d)$. Inside $\Delta^{od}$, the utility terms \eqref{eq:self_utility_term} and \eqref{eq:ext_utility_term} favor the alternative with the highest perceived utility, whereas the entropy terms \eqref{eq:self_entropy_term} and \eqref{eq:ext_entropy_term} penalize overly concentrated allocations and create a strictly convex trade-off. The combined effect is a smooth market split that avoids unrealistic all-or-nothing assignments and recovers the same qualitative logic as the logit model \eqref{eq:logit_probability}.
 
-\paragraph{Constraints.}
-The lower-level objective is minimized subject to:
+The formal justification of this construction is the convex-conjugate relation between the log-sum-exp aggregator and negative entropy \cite{RealRojas2026TRB}. For the choice probability vector $F\in\Delta^{od}$ and the deterministic utility vector $v$, the log-sum-exp function and its convex conjugate (the negative entropy) form a Legendre dual pair,
+\begin{equation}
+f(v)=\log\sum_{q}\exp(v_q),
+\qquad
+f^*(F)=\sum_{q}F_q\log F_q,
+\label{eq:convex_conjugate_pair}
+\end{equation}
+with the convention that $0\log 0=0$. A central property of convex conjugates is that, on the relative interior of their domains, the gradients $\nabla f$ and $\nabla f^*$ are inverse maps. In our setting, $\nabla f$ evaluated at the utility vector $v$ returns exactly the logit choice probabilities \eqref{eq:logit_probability}, while $\nabla f^*$ evaluated at the share vector $F$ returns the vector of logarithmic shares $\log F$. By Fenchel duality, the maximization
+\begin{equation}
+\max_{F\in\Delta^{od}}\;
+\sum_{q}F_q v_q^{od}-\sum_{q}F_q\log F_q
+\label{eq:fenchel_max}
+\end{equation}
+admits the log-sum-exp function as its optimal value and the logit probabilities as its unique maximizer. Changing signs to fit the minimization structure of the lower level, the maximization \eqref{eq:fenchel_max} becomes precisely the combination of utility and entropy terms written above. Therefore, the market shares are not imposed externally; they arise endogenously as the unique solution of the lower-level problem in the absence of binding capacity constraints. This convex-conjugate viewpoint is the same one that underpins the equivalence theorem in \cite{RealRojas2026TRB}: when the capacity constraints of the continuous design problem are inactive at the optimum, the entropy-regularized passenger-flow solution is an optimal solution of the corresponding mixed-integer passenger-assignment problem. The continuous model therefore preserves a behaviorally meaningful demand split while remaining smooth, convex, and computationally tractable.
+
+\paragraph{Structural constraints.}
+The continuous feasible set $\mathcal{X}_c$ is defined by the structural restrictions of the hub-and-spoke problem, with the binary decisions replaced by sparse capacities and the routing variables relaxed to continuous values. Specifically, $\mathcal{X}_c$ collects the link-capacity, station-capacity, hub-capacity, and direct-hub restrictions
+\begin{align}
+\sum_{(o,d)\in\mathcal{K}} w^{od}F_{ij}^{od}
+&\le a_{\mathrm{nom}}\tau A_{ij}
+&& \forall (i,j)\in\mathcal{A},
+\label{eq:cont_link_cap}
+\\
+\sigma\left(\sum_j A_{ji}+\sum_j A_{ij}\right)
+&\le S_i+S_i^h
+&& \forall i\in\mathcal{S},
+\label{eq:cont_station_cap}
+\\
+\sigma\left(
+\sum_{\substack{(o,d),j\\ o\neq i}}\frac{w^{od}F_{ij}^{od}}{a_{\mathrm{nom}}\tau}
++
+\sum_{\substack{(o,d),j\\ d\neq i}}\frac{w^{od}F_{ji}^{od}}{a_{\mathrm{nom}}\tau}
+\right)
+&\le S_i^h
+&& \forall i\in\mathcal{S},
+\label{eq:cont_hub_cap}
+\\
+\sigma\frac{w^{od}F_{od}^{od}}{a_{\mathrm{nom}}\tau}
+&\le S_o^h+S_d^h
+&& \forall (o,d)\in\mathcal{K},
+\label{eq:cont_direct_hub}
+\\
+A_{ij}&=A_{ji}
+&& \forall (i,j)\in\mathcal{A},
+\label{eq:cont_symmetry}
+\\
+\sum_{(i,j)\in\mathcal{A}} A_{ij}
+&\le a_{\max},
+\label{eq:cont_fleet}
+\end{align}
+together with flow-conservation and market-split restrictions,
+\begin{align}
+\sum_j F_{oj}^{od}-\sum_i F_{io}^{od}
+&=F^{od}
+&& \forall (o,d)\in\mathcal{K},
+\label{eq:cont_flow_start}
+\\
+\sum_j F_{dj}^{od}-\sum_i F_{id}^{od}
+&=-F^{od}
+&& \forall (o,d)\in\mathcal{K},
+\label{eq:cont_flow_end}
+\\
+\sum_j F_{ij}^{od}-\sum_j F_{ji}^{od}
+&=0
+&& \forall i\notin\{o,d\},\ (o,d)\in\mathcal{K},
+\label{eq:cont_flow_mid}
+\\
+F^{od}+F^{\mathrm{ext},od}
+&=1
+&& \forall (o,d)\in\mathcal{K},
+\label{eq:cont_split}
+\\
+w^{od}p^{od}F^{od}
+&\ge \sum_{(i,j)\in\mathcal{A}}
+\frac{w^{od}c_{o_{ij}}F_{ij}^{od}}{a_{\mathrm{nom}}\tau}
+&& \forall (o,d)\in\mathcal{K},
+\label{eq:cont_profitability}
+\end{align}
+and the nonnegativity and box restrictions
+\begin{align}
+0\le F_{ij}^{od}\le 1
+&& \forall (i,j)\in\mathcal{A},\ (o,d)\in\mathcal{K},
+\nonumber\\
+0\le F^{od}\le 1,\qquad
+0\le F^{\mathrm{ext},od}\le 1
+&& \forall (o,d)\in\mathcal{K},
+\nonumber\\
+S_i,S_i^h\ge 0
+&& \forall i\in\mathcal{S},
+\nonumber\\
+A_{ij}\ge 0
+&& \forall (i,j)\in\mathcal{A}.
+\label{eq:cont_domains}
+\end{align}
+Comparing with the mixed-integer formulation \eqref{eq:mip_full_obj}, three structural differences are apparent. First, the binary activation variables $S_i^{\mathfrak b},S_i^{h\mathfrak b},Z^{od}$ have disappeared, together with their big-$M$ activation constraints; their build/no-build effect is taken over by the deployment term $\mathrm{DEP}$ inside the objective and by the natural behavior of sparsity-inducing penalties. Second, the route-use variables are continuous and convexly relaxed, which makes the flow-conservation equations linear and removes the bilinear terms $F^{od}F_{ij}^{od}$ that affected the mixed-integer leg-capacity constraints. Third, the explicit nonconvex logit equation \eqref{eq:logit_problem_setting} is no longer needed, because the combination of utility and entropy terms in the objective produces the same multinomial-logit shares through optimality conditions. The resulting model is convex for fixed market coefficients $(\widehat{\alpha},\widehat{\beta})$, and the only remaining piece needed to specify it completely is the sparse deployment term $\mathrm{DEP}$.
+
+\subsection{Reweighted $\ell_1$ Approximation of Fixed Costs}
+\label{sec:reweighted_l1}
+The original airline design problem contains fixed costs associated with activating airports and hubs. Those costs are naturally related to an $\ell_0$-type activation mechanism: once a facility is used, a discrete cost must be paid. The $\ell_0$ counting pseudonorm,
+\begin{equation}
+\|z\|_0:=\sum_i \mathbf{1}_{\{z_i\neq 0\}},
+\label{eq:l0_definition}
+\end{equation}
+is the exact mathematical object that captures this build/no-build accounting, but it is discontinuous and nonconvex, and it is not amenable to gradient-based optimization. The best plain convex surrogate of $\|\cdot\|_0$ is the $\ell_1$ norm $\|z\|_1=\sum_i|z_i|$, but on its own the $\ell_1$ penalty does not adapt to the magnitude of the underlying decision: it charges every unit of capacity at the same rate, and it cannot reproduce the qualitatively different behavior of fixed versus variable cost contributions.
+
+To circumvent these limitations, we approximate fixed costs through a reweighted $\ell_1$ procedure derived from a logarithmic surrogate of $\|\cdot\|_0$ \cite{CandesWakinBoyd2008}. For a generic nonnegative scalar capacity $z\ge 0$, we consider
+\begin{equation}
+g(z)=\kappa\,\log\!\left(1+\frac{z}{\varepsilon}\right),
+\qquad \varepsilon>0,\ \kappa>0.
+\label{eq:log_fixed_cost_surrogate}
+\end{equation}
+The function \eqref{eq:log_fixed_cost_surrogate} is concave on $\mathbb{R}_+$, strictly increasing, and behaves very differently from a linear penalty in the two regimes of interest. Near the origin, $g(z)\approx (\kappa/\varepsilon)\,z$, so that small new capacities are charged a steep marginal price, mimicking the fact that turning on a previously inactive variable should be expensive. Far from the origin, $g(z)\approx\kappa\log(z/\varepsilon)$, so that already-active capacities are charged a much milder marginal price, which is consistent with the intuition that scaling up an already-active resource should not cost as much as turning it on. The function therefore behaves as a smooth interpolation between an $\ell_0$ activation cost and a linear capacity cost.
+
+Because $g$ is concave, it admits a majorization at any iterate $z^{(k-1)}\ge 0$, namely
+\begin{equation}
+g(z)\le g(z^{(k-1)})+g'(z^{(k-1)})\bigl(z-z^{(k-1)}\bigr),
+\label{eq:majorization_log}
+\end{equation}
+which, dropping constants, yields the weighted linear term
+\begin{equation}
+\widetilde g_k(z)=\kappa\,\frac{z}{z^{(k-1)}+\varepsilon}.
+\label{eq:reweighted_l1_term}
+\end{equation}
+Replacing the nonconvex log surrogate \eqref{eq:log_fixed_cost_surrogate} by its majorant \eqref{eq:reweighted_l1_term} and minimizing iteratively defines a majorization-minimization (MM) algorithm \cite{CandesWakinBoyd2008,RealRojas2026TRB}. Each MM iteration is a convex problem in which small previous values $z^{(k-1)}\approx 0$ produce large weights and encourage sparsity, while large previous values produce moderate weights and let active components grow.
+
+Once the MM iteration has converged ($z\approx z^{(k-1)}$), two regimes emerge naturally:
 \begin{itemize}
-\item link-capacity constraints relating traffic and frequencies;
-\item airport-capacity constraints for arrivals and departures;
-\item hub-capacity constraints for transfer traffic;
-\item direct-flight and connectivity constraints induced by the hub-and-spoke structure;
-\item symmetry constraints on operated links;
-\item flow-conservation constraints for every market;
-\item market split constraints $f^{od}+f^{od}_{\mathrm{ext}}=1$;
-\item profitability constraints ensuring that route revenue dominates operating cost;
-\item nonnegativity and candidate-link restrictions.
+\item active components, with $z\gg\varepsilon$, are charged $\widetilde g_k(z)\approx\kappa\,z/z=\kappa$, i.e.\ the fixed activation cost;
+\item pruned components, with $z=0$, are charged $\widetilde g_k(0)=0$ regardless of the reference value.
 \end{itemize}
+In other words, the reweighted $\ell_1$ regularizer behaves as a convex continuous proxy of the $\ell_0$ activation pseudonorm: fixed costs are paid if the capacity is active and avoided if it is pruned, while ordinary variable capacity costs remain linear and additive on top.
 
-This lower-level problem is the model that the bilevel scheme repeatedly solves and reweights. The role of the upper level is not to change the feasible set, but to learn the coefficients $\widehat{\alpha}^{od}$ and $\widehat{\beta}^{od}$ that determine how the lower-level passenger terms value each market.
+In the proposed airline model this mechanism is applied to airport and hub capacities, which dominate the fixed-cost nonsmoothness of the formulation. Concretely, the deployment term in the lower-level objective \eqref{eq:continuous_objective} reads
+\begin{align}
+\mathrm{DEP}(S,S^h,A)
+&=
+\sum_{i\in\mathcal{S}}\frac{c_{s_i}\bigl(S_i+S_i^h\bigr)}{\bar S_i+\bar S_i^h+\varepsilon_S}
+\;+\;\sum_{i\in\mathcal{S}}\lambda\,\frac{c_{h_i}S_i^h}{\bar S_i^h+\varepsilon_S}
+\nonumber\\
+&\quad+\sum_{i\in\mathcal{S}}\bar c_{s_i}\bigl(S_i+S_i^h\bigr)
+\;+\;\sum_{(i,j)\in\mathcal{A}}\bar c_{a_{ij}}A_{ij},
+\label{eq:dep_term}
+\end{align}
+where $\bar S_i,\bar S_i^h,\bar A_{ij}\ge 0$ are the reference capacities maintained by the outer MM loop and $\varepsilon_S,\varepsilon_A>0$ are the smoothing constants of the surrogate. The first two summands implement the reweighted $\ell_1$ activation cost for airports and hubs, the third summand is the linear variable cost of installed airport capacity, and the fourth summand is the linear variable cost of installed arc capacity. As the outer iteration proceeds, the reference capacities $\bar S_i,\bar S_i^h$ are refreshed from the latest lower-level solution and the deployment term becomes a progressively tighter approximation of the underlying $\ell_0$ fixed-cost structure. With the deployment term \eqref{eq:dep_term} the continuous lower-level model \eqref{eq:value_function_single_level}--\eqref{eq:cont_domains} is fully specified, and the budget restriction of the original mixed-integer problem is replaced by the penalty $\mathrm{DEP}$ inside the objective. This is the only remaining piece needed to state the bilevel problem in its complete form.
+
+\subsection{Complete Bilevel Problem}
+\label{sec:bilevel_complete}
+With the continuous lower-level model fully specified, the bilevel layer can now be defined. The role of the upper level is to choose the market coefficients $(\widehat{\alpha}^{od},\widehat{\beta}^{od})_{(o,d)\in\mathcal{K}}$ so that the design returned by the lower level performs as well as possible under the true airline profit function
+\begin{equation}
+\Pi(X):=
+\sum_{(o,d)\in\mathcal{K}} p^{od}w^{od}F^{od}
+-\sum_{(i,j)\in\mathcal{A}} c_{o_{ij}}A_{ij}.
+\label{eq:true_profit}
+\end{equation}
+The expression \eqref{eq:true_profit} is independent of the market weights $\varphi^{od}$, so that the upper-level objective measures profit on the same economic terms used by the airline itself, regardless of how the lower-level model values each market internally. The set of admissible market coefficients is restricted to the box
+\begin{equation}
+\mathcal{H}:=
+\bigl\{(\widehat{\alpha},\widehat{\beta}):
+\underline{\alpha}\le \widehat{\alpha}^{od}\le \overline{\alpha},\;
+\underline{\beta}\le \widehat{\beta}^{od}\le \overline{\beta},\;
+\forall (o,d)\in\mathcal{K}\bigr\},
+\label{eq:hyperparameter_box}
+\end{equation}
+whose lower and upper bounds are chosen to keep $\varphi^{od}$ in an economically meaningful range and to prevent the iterative updates from drifting toward degenerate values.
+
+Putting the upper and lower levels together, the complete bilevel problem reads
+\begin{align}
+\max_{(\widehat{\alpha},\widehat{\beta})\in\mathcal{H},\;X}
+\quad & \Pi(X) \label{eq:bilevel_main_a}\\
+\text{s.t.}\quad &
+X\in\arg\min_{Y\in\mathcal{X}_c}\Phi_{\mathrm{c}}(Y;\widehat{\alpha},\widehat{\beta}),
+\label{eq:bilevel_main_b}
+\end{align}
+with $\mathcal{X}_c$ collecting the structural constraints \eqref{eq:cont_link_cap}--\eqref{eq:cont_domains}, the lower-level objective $\Phi_{\mathrm{c}}$ given by \eqref{eq:continuous_objective} with the deployment term \eqref{eq:dep_term}, and the bilevel feasibility expressed implicitly through the lower-level optimality condition \eqref{eq:bilevel_main_b}. Problem \eqref{eq:bilevel_main_a}--\eqref{eq:bilevel_main_b} therefore couples three families of decisions: (i) the strategic market priorities $(\widehat{\alpha},\widehat{\beta})$, chosen by the upper level inside the box $\mathcal{H}$; (ii) the physical design variables $S,S^h,A$, returned by the lower level for the current priorities; and (iii) the behavioral variables $F,F^{\mathrm{ext}},\{F_{ij}^{od}\}$, which arise as the optimality response of passenger choice to the offered network.
+
+This is the formulation that the rest of the paper aims to solve. The lower-level optimality condition \eqref{eq:bilevel_main_b} is implicit and difficult to handle directly. The next section addresses this issue through a value-function penalty reformulation in the spirit of \cite{Ye1997Exact,LuMei2024,Jiang2024Primal}, and then presents the implemented solution algorithm together with the computational experiments performed on Spanish synthetic networks of increasing size and on a realistic Madrid-centred international instance.

@@ -1,19 +1,224 @@
 \section{Problem Setting}
-We consider a set of candidate airports indexed by $i,j \in \mathcal{S}$ and a set of origin-destination markets indexed by $(o,d) \in \mathcal{K}$, with $o \neq d$. For each market, the new airline competes against an outside alternative representing incumbent competitors already operating in the market. The network to be designed follows a hub-and-spoke structure: some airports only support local traffic, while others are assigned additional transfer capacity and operate as hubs.
+\label{sec:problem_setting}
+We consider the strategic design of a hub-and-spoke air transportation network for a private airline that enters a competitive market. The objective is to decide simultaneously which airports must be activated, which of those airports must additionally be upgraded to hubs, what spoke and hub capacities must be installed at each location, and what service capacity must be assigned to each candidate flight leg. Together, these decisions determine the topology of the network, its physical scale, and its operational footprint. Because the operator is a private firm rather than a public planner, all the design choices are driven by profit maximization: a network is attractive only insofar as the revenue extracted from passenger markets exceeds the cost of activating and operating the corresponding infrastructure.
 
-The main continuous design variables are:
+Formally, let $\mathcal{S}$ denote the set of candidate airports, $\mathcal{A}\subseteq\mathcal{S}\times\mathcal{S}$ the set of candidate flight legs, and $\mathcal{K}$ the set of origin-destination markets with positive demand. Each market $(o,d)\in\mathcal{K}$ corresponds to a real travel need from origin $o$ to destination $d$, characterized by a fixed demand volume and a fare charged by the airline. For every such market, the entrant competes against an outside alternative that aggregates incumbent airlines operating directly or with one stop, ground transportation modes when relevant, and the no-travel option. The airline does not modify the offered alternatives of the outside option; it only decides whether and how to compete with them, both in terms of the network structure offered and in terms of the implicit pricing of time and fare embedded in passenger choice.
 
+The network being designed follows a strict hub-and-spoke architecture. Some airports may be activated as pure spokes, in which case they only support local departures and arrivals to and from one or more hubs. Others may also receive additional transfer capacity and operate as hubs, processing connecting itineraries on top of their local activity. This distinction is central in the airline setting because local airport activity and transfer activity generate different physical resource requirements (gates, slots, ground handling, baggage transfer) and different unit costs. As a result, the design problem must decide not only which airports are active, but also which of them are upgraded to hubs, how much spoke capacity and how much hub capacity is installed at each airport, and how much service capacity is assigned to each candidate connection. The model also forces flight services to be symmetric, $A_{ij}=A_{ji}$, which is a stylized but realistic representation of the fact that aircraft must overnight at hubs and operate balanced rotations.
+
+Passenger behavior is endogenous to the model. For every market $(o,d)$, the airline does not impose a captured volume; instead, it determines the demand share that the entrant captures and the itinerary used to serve that demand inside the designed network. Passenger flow variables are not interpreted as direct operational controls---the airline does not decide which specific passenger boards which specific flight---but as a modeling device through which the optimization model internalizes the interaction between network attractiveness and revenue generation. The captured share in a market depends on a perceived utility that combines the fare the airline charges and the total travel time of the chosen itinerary, and is compared with the analogous utility offered by the outside alternative. Whenever the airline cannot produce a sufficiently attractive utility, demand collapses to the outside alternative and the corresponding revenue is lost.
+
+Beyond the airline-specific design choices, the model is subject to a number of structural restrictions that reflect the resource limits and the operational logic of a real airline. The total number of flights cannot exceed the available fleet, the local airport capacity must be sufficient to absorb the workload of departures and arrivals, the hub capacity at any airport must accommodate transfer passengers in addition to local traffic, and direct services between two airports are admissible only if at least one of the endpoints is operated as a hub. In addition, the model includes a budget restriction that bounds the total expenditure on airport activation, hub activation and installed capacities. Together with the fleet limit and the capacity restrictions, this budget constraint represents the strategic envelope inside which the airline must build a profitable competitive network. The remainder of this section formalizes these elements as a mixed-integer optimization model that will serve as a baseline for the continuous bilevel reformulation developed in the rest of the paper.
+
+\subsection{Sets, Parameters, and Variables}
+To state the model precisely, we use the following notation.
+
+\bigskip
+\noindent \textit{Sets:}
 \begin{itemize}
-\item airport-capacity variables $s_i$ and hub-capacity variables $sh_i$, corresponding to the non-hub and hub components of installed airport capacity;
-\item link-capacity or frequency variables $a_{ij}$ for each potential flight leg $(i,j)$;
-\item market-share variables $f_{od}$ and $f^{\mathrm{ext}}_{od}$, representing the proportions of market $(o,d)$ captured by the new airline and by the outside alternative, respectively;
-\item routing variables $f_{ij}^{od}$, which determine how the demand captured by the airline is assigned over the arcs of the designed network.
+\item $\mathcal{S}$ is the set of candidate airports.
+\item $\mathcal{A}\subseteq\mathcal{S}\times\mathcal{S}$ is the set of candidate flight legs.
+\item $\mathcal{K}$ is the set of origin-destination markets with positive demand.
+\item $\mathcal{Q}_{\mathrm{ext}}^{od}$ is the set of outside alternatives available in market $(o,d)$.
+\item $\mathcal{N}_{\mathrm{in}}(i)$ and $\mathcal{N}_{\mathrm{out}}(i)$ denote the incoming and outgoing neighbors of airport $i$.
 \end{itemize}
 
-The state data include market demand, ticket prices, travel times, operating cost coefficients, airport deployment costs, hub costs, and the set of candidate direct connections. Given these quantities, the optimization determines the network topology, the installed capacities, the market shares, and the route assignment of the captured demand.
+\bigskip
+\noindent \textit{Parameters:}
+\begin{itemize}
+\item $w^{od}$ is the demand in market $(o,d)$ and $p^{od}$ is the fare charged by the entrant in that market.
+\item $v_q^{od}$ is the utility of outside alternative $q\in\mathcal{Q}_{\mathrm{ext}}^{od}$, with $p^{od}_{\mathrm{ext},q}$ and $t^{od}_{\mathrm{ext},q}$ denoting the corresponding fare and travel time.
+\item $t_{ij}$ is the travel time associated with leg $(i,j)$, and $t^{od}_{ij,\mathrm{trans}}$ is the transfer time induced at the connecting airport when leg $(i,j)$ is used inside the itinerary of market $(o,d)$.
+\item $c_{s_i}$ and $c_{h_i}$ are the fixed costs of activating airport $i$ as a spoke and as a hub, respectively.
+\item $\bar c_{s_i}$ is the variable cost of installing airport capacity at node $i$, $\bar c_{a_{ij}}$ is the variable cost of installing service capacity on leg $(i,j)$, and $c_{o_{ij}}$ is the operating cost of leg $(i,j)$.
+\item $a_{\mathrm{nom}}$ is the nominal aircraft capacity, $\tau$ is the route load factor, and $\sigma$ and $\sigma_i$ are scaling coefficients for transfer and airport processing capacity.
+\item $\lambda$ weights hub fixed costs inside the budget, $a_{\max}$ is the total fleet limit, $b$ is the available budget, and $M$ is a sufficiently large constant.
+\item $\omega_p$ and $\omega_t$ are the coefficients associated with fare and travel time in the passenger utility model, and $n_{\mathrm{airlines}}=|\mathcal{Q}_{\mathrm{ext}}^{od}|$ is the number of outside alternatives used in the entropy regularizer.
+\item $\varepsilon_S$ and $\varepsilon_A$ are small positive smoothing constants used in the reweighted $\ell_1$ approximation of station and arc fixed costs, respectively.
+\end{itemize}
 
-Passenger behavior is modeled through a two-alternative choice between the new airline and the outside option. Rather than imposing the corresponding logit split through an explicit nonlinear constraint, the model introduces entropy and utility terms in the objective. The optimality conditions of the lower-level problem then yield the market split endogenously.
+\bigskip
+\noindent \textit{Decision variables:}
+\begin{itemize}
+\item $S_i^{\mathfrak b}\in\{0,1\}$ indicates whether airport $i$ is active, and $S_i^{h\mathfrak b}\in\{0,1\}$ indicates whether airport $i$ operates as a hub.
+\item $S_i\ge 0$ and $S_i^h\ge 0$ are the spoke and hub capacities installed at airport $i$.
+\item $A_{ij}\ge 0$ is the service capacity assigned to leg $(i,j)$.
+\item $F^{od}\in[0,1]$ is the share of market $(o,d)$ captured by the entrant.
+\item $F_{ij}^{od}$ indicates whether the itinerary used by market $(o,d)$ traverses leg $(i,j)$.
+\item $Z^{od}$ indicates whether market $(o,d)$ is served by the entrant.
+\end{itemize}
 
-The hub-and-spoke structure is enforced through dedicated capacity constraints. Airport capacity must sustain departures and arrivals, hub capacity must sustain connecting traffic, and direct service between two airports is allowed only when the corresponding endpoints have sufficient hub capacity. In addition, market-specific profitability constraints are introduced in the airline model so that the network only captures traffic on markets whose revenue covers the associated operating cost.
+For compactness, the design variables are grouped as
+\begin{equation}
+\mathcal{X}_{\mathrm{ser}}
+=
+\bigl\{S_i^{\mathfrak b},S_i^{h\mathfrak b},S_i,S_i^h,A_{ij}\bigr\},
+\end{equation}
+whereas the passenger and routing variables are grouped as
+\begin{equation}
+\mathcal{X}_{\mathrm{pax}}
+=
+\bigl\{F^{od},F_{ij}^{od},Z^{od}\bigr\}.
+\end{equation}
 
-Finally, deployment decisions remain continuous but are intended to behave sparsely. Positive values of $s_i$, $sh_i$, or $a_{ij}$ indicate that the corresponding resource is activated, while zero values indicate that it is not used. This is the mechanism through which the continuous model emulates the discrete build-or-not-build logic of the original mixed-integer problem.
+\subsection{Mixed-Integer Viewpoint}
+To motivate the continuous reformulation developed later, we first describe the underlying mixed-integer viewpoint. In this section, capital letters denote the classical design variables: $S_i$ and $S_i^h$ are the spoke and hub capacities installed at airport $i$, $A_{ij}$ is the service capacity assigned to leg $(i,j)$, $S_i^{\mathfrak b}$ indicates whether airport $i$ is active, and $S_i^{h\mathfrak b}$ indicates whether airport $i$ operates as a hub. For passenger assignment, $F^{od}$ denotes the share of market $(o,d)$ captured by the entrant, and $F_{ij}^{od}$ indicates whether the itinerary used by market $(o,d)$ traverses leg $(i,j)$.
+
+Since the operator is private, the natural objective is profit maximization. Equivalently, the model can be written as the minimization of negative profit:
+\begin{equation}
+\min \; -\sum_{(o,d)\in\mathcal{K}} w^{od}p^{od}F^{od}
++\sum_{(i,j)\in\mathcal{A}} c_{o_{ij}}A_{ij},
+\label{eq:profit_mip_view}
+\end{equation}
+where the first term represents passenger revenue and the second term represents the operating cost of the flights offered by the entrant. The design therefore balances market capture against the cost of supplying the corresponding air service.
+
+\subsection{Constraint Families}
+The mixed-integer viewpoint combines infrastructure activation decisions, service-capacity constraints, passenger-routing constraints, and demand-capture constraints. For clarity, we discuss these restrictions by family.
+
+\subsubsection{Airport Activation and Budget Constraints}
+The hub-and-spoke structure requires two airport-capacity variables. Spoke capacity $S_i$ accounts for local departures and arrivals, whereas hub capacity $S_i^h$ accounts for transfer activity. Their binary activation variables satisfy
+\begin{align}
+S_i &\le M S_i^{\mathfrak b}
+&& \forall i\in\mathcal{S}, \label{eq:airport_bigM_spoke}\\
+S_i^h &\le M S_i^{h\mathfrak b}
+&& \forall i\in\mathcal{S}, \label{eq:airport_bigM_hub}\\
+S_i^{h\mathfrak b} &\le S_i^{\mathfrak b}
+&& \forall i\in\mathcal{S}, \label{eq:hub_implies_airport}
+\end{align}
+Constraint \eqref{eq:airport_bigM_spoke} activates spoke capacity only when airport $i$ is opened, and \eqref{eq:airport_bigM_hub} plays the same role for hub capacity. Constraint \eqref{eq:hub_implies_airport} enforces the hierarchical logic of the design: an airport can operate as a hub only if it is already active in the network. In contrast, we do not impose a big-$M$ activation relation on route capacities, because the current airline formulation does not associate fixed costs with arcs.
+
+The infrastructure budget must account for spoke activation, hub activation, and installed airport capacity. This leads to
+\begin{equation}
+\sum_{i\in\mathcal{S}} c_{s_i}S_i^{\mathfrak b}
++ \lambda \sum_{i\in\mathcal{S}} c_{h_i}S_i^{h\mathfrak b}
++ \sum_{i\in\mathcal{S}} \bar c_{s_i}\bigl(S_i+S_i^h\bigr)
+\le b,
+\label{eq:hub_budget}
+\end{equation}
+where $\lambda$ modulates the relative cost of opening hubs. This restriction captures the strategic trade-off between enlarging the airport system and preserving enough resources to support flight operations. The total number of flights is also limited by the available fleet:
+\begin{equation}
+\sum_{(i,j)\in\mathcal{A}} A_{ij} \le a_{\max}.
+\label{eq:total_fleet}
+\end{equation}
+Constraint \eqref{eq:total_fleet} prevents the model from assigning more service capacity than can be supported by the available aircraft. Because aircraft are assumed to overnight at hubs, the service pattern must also be symmetric, which yields
+\begin{equation}
+A_{ij}=A_{ji}
+\qquad \forall (i,j)\in\mathcal{A}.
+\label{eq:symmetric_capacity}
+\end{equation}
+This symmetry condition is a stylized representation of the hub-and-spoke operating pattern and avoids one-way capacity imbalances that would be unrealistic in the strategic design stage.
+
+\subsubsection{Leg and Airport Capacity Constraints}
+Service capacity, airport capacity, and transfer capacity are jointly constrained by the hub-and-spoke logic. The capacity of each leg must be sufficient to transport the demand assigned to it:
+\begin{equation}
+\sum_{(o,d)\in\mathcal{K}} w^{od}F^{od}F_{ij}^{od}
+\le a_{\mathrm{nom}}\tau A_{ij}
+\qquad \forall (i,j)\in\mathcal{A},
+\label{eq:leg_capacity}
+\end{equation}
+where $a_{\mathrm{nom}}$ is the nominal aircraft capacity and $\tau$ is the load factor. Constraint \eqref{eq:leg_capacity} therefore ensures that the aggregate number of passengers routed through leg $(i,j)$ does not exceed the effective transport capacity supplied on that leg.
+
+Local airport capacity is enforced through the aggregate arrival and departure workload,
+\begin{equation}
+\sigma_i \sum_{j\in\mathcal{N}_{\mathrm{in}}(i)} A_{ji}
++ \sigma_i \sum_{j\in\mathcal{N}_{\mathrm{out}}(i)} A_{ij}
+\le S_i + S_i^h
+\qquad \forall i\in\mathcal{S},
+\label{eq:airport_capacity_hs}
+\end{equation}
+which states that the total local workload induced by incoming and outgoing flights must be supported by the installed airport capacity. Since hubs process not only local traffic but also connecting passengers, transfer activity is limited separately through
+\begin{align}
+\sigma \Bigg(
+& \sum_{j\in\mathcal{N}_{\mathrm{out}}(i)} \;
+\sum_{\substack{(o,d)\in\mathcal{K}\\ o\neq i}}
+\frac{w^{od}F^{od}F_{ij}^{od}}{a_{\mathrm{nom}}\tau}
+\nonumber\\
++& \sum_{j\in\mathcal{N}_{\mathrm{in}}(i)} \;
+\sum_{\substack{(o,d)\in\mathcal{K}\\ d\neq i}}
+\frac{w^{od}F^{od}F_{ji}^{od}}{a_{\mathrm{nom}}\tau}
+\Bigg)
+\le S_i^h
+\qquad \forall i\in\mathcal{S}.
+\label{eq:hub_transfer_capacity}
+\end{align}
+Constraint \eqref{eq:hub_transfer_capacity} captures the fact that connecting passengers can only be processed if the corresponding airport has enough hub capacity. This is one of the defining structural features of the model, because it distinguishes the role of a spoke from the role of a hub. In addition, a direct service between the endpoints of a market is allowed only if at least one of those endpoints is operated as a hub:
+\begin{equation}
+\sigma \frac{w^{od}F^{od}F_{od}^{od}}{a_{\mathrm{nom}}\tau}
+\le S_o^h + S_d^h
+\qquad \forall (o,d)\in\mathcal{K}.
+\label{eq:direct_hub_condition}
+\end{equation}
+Constraint \eqref{eq:direct_hub_condition} prevents the model from generating direct services that are incompatible with the hub-and-spoke architecture.
+
+\subsubsection{Passenger Routing and Market Feasibility Constraints}
+The passenger flow variables must satisfy the usual conservation equations. If $Z^{od}$ denotes whether market $(o,d)$ is served by the entrant, then
+\begin{equation}
+\sum_{j\in\mathcal{N}_{\mathrm{out}}(i)} F_{ij}^{od}
+- \sum_{j\in\mathcal{N}_{\mathrm{in}}(i)} F_{ji}^{od}
+=
+\begin{cases}
+\;\; Z^{od}, & i=o,\\
+- Z^{od}, & i=d,\\
+\;\; 0, & \text{otherwise},
+\end{cases}
+\label{eq:flow_conservation_problem_setting}
+\end{equation}
+for every $i\in\mathcal{S}$ and $(o,d)\in\mathcal{K}$. Constraint \eqref{eq:flow_conservation_problem_setting} ensures that each served market has a valid path from its origin to its destination and that no artificial creation or destruction of flow occurs at intermediate nodes.
+
+To avoid attracting markets that are not profitable, the revenue collected on each served market must dominate the operating cost induced by its itinerary:
+\begin{equation}
+w^{od}p^{od}F^{od}
+\ge
+\sum_{(i,j)\in\mathcal{A}}
+\frac{w^{od}c_{o_{ij}}F^{od}F_{ij}^{od}}{a_{\mathrm{nom}}\tau}
+\qquad \forall (o,d)\in\mathcal{K}.
+\label{eq:market_profitability}
+\end{equation}
+Constraint \eqref{eq:market_profitability} filters out unattractive itineraries by requiring each captured market to be self-supporting from the airline's viewpoint.
+
+\subsubsection{Demand-Capture Constraint}
+Passenger choice is represented through a logit-type capture rule. The utility of the entrant in market $(o,d)$ combines the fare charged by the airline and the total travel time of the selected itinerary, namely
+\begin{equation}
+u^{od}_{\mathrm{self}}
+=
+\omega_p p^{od}
++ \omega_t \sum_{(i,j)\in\mathcal{A}} t_{ij}F_{ij}^{od}.
+\label{eq:entrant_utility}
+\end{equation}
+The captured share is then constrained by
+\begin{equation}
+F^{od}
+\le
+\frac{\exp\bigl(u^{od}_{\mathrm{self}}\bigr)}
+{\exp\bigl(u^{od}_{\mathrm{self}}\bigr)
++ \sum_{q\in\mathcal{Q}_{\mathrm{ext}}^{od}} \exp(v_q^{od})}
+\qquad \forall (o,d)\in\mathcal{K},
+\label{eq:logit_problem_setting}
+\end{equation}
+Constraint \eqref{eq:logit_problem_setting} couples network design with passenger behavior in a nonconvex way. The share captured by the entrant depends on the utility generated by the network that has just been designed, while that same utility depends on the routing pattern selected for the market.
+
+\subsection{Compact MIP Statement and Computational Limitations}
+\label{sec:mip_compact_statement}
+Putting all the constraint families together, the airline hub-and-spoke network design problem can be written compactly as
+\begin{align}
+\min_{\mathcal{X}_{\mathrm{ser}},\mathcal{X}_{\mathrm{pax}}}
+\quad &
+-\sum_{(o,d)\in\mathcal{K}} w^{od}p^{od}F^{od}
++\sum_{(i,j)\in\mathcal{A}} c_{o_{ij}}A_{ij}
+\label{eq:mip_full_obj}\\
+\text{s.t.}\quad &
+\eqref{eq:airport_bigM_spoke}\text{--}\eqref{eq:hub_implies_airport},\;
+\eqref{eq:hub_budget}\text{--}\eqref{eq:symmetric_capacity},
+\nonumber\\
+&\eqref{eq:leg_capacity}\text{--}\eqref{eq:direct_hub_condition},\;
+\eqref{eq:flow_conservation_problem_setting}\text{--}\eqref{eq:market_profitability},\;
+\eqref{eq:entrant_utility}\text{--}\eqref{eq:logit_problem_setting},
+\nonumber\\
+& S_i^{\mathfrak b},S_i^{h\mathfrak b},Z^{od}\in\{0,1\},\;
+S_i,S_i^h,A_{ij}\ge 0,\;
+F^{od}\in[0,1].
+\nonumber
+\end{align}
+Problem \eqref{eq:mip_full_obj} is a mixed-integer nonlinear program with three sources of structural difficulty. First, the activation variables $S_i^{\mathfrak b}$, $S_i^{h\mathfrak b}$, and the per-market service indicator $Z^{od}$ generate a binary count that grows linearly with the number of candidate airports and quadratically with the number of markets. Second, the routing constraints couple capacity and flow variables through the bilinear products $F^{od}F_{ij}^{od}$, which already make the feasible set nonconvex even before the demand-capture constraint enters the picture. Third, the logit equation \eqref{eq:logit_problem_setting} introduces the exponential structure of multinomial choice into an otherwise mixed-integer model, breaking convexity at the very point where the model becomes economically meaningful.
+
+In practice, the standard remedy is to replace the closed-form logit relation by a piecewise-linear approximation of either the right-hand side of \eqref{eq:logit_problem_setting} or the underlying log-sum-exp utility aggregator \cite{Vielma2015}, which yields an MILP that can in principle be solved by a state-of-the-art branch-and-bound code. Each piece of the linearization, however, requires its own auxiliary binary variable per market, and the number of pieces needed to obtain an accurate approximation grows quickly with the demand and utility ranges of the instance. As a consequence, the binary count of the MILP scales not only with the network size but also with the desired fidelity of the demand model, and the resulting solver branch tree becomes computationally prohibitive far before instances of practical industrial size are reached. Convex exponential-cone reformulations \cite{LubinYamangilBentVielma2018} avoid the binary inflation but couple every market through cone constraints whose interior-point exploration is itself expensive, so they are likewise unable to scale to the airline instances that motivate this work. Empirically, even moderate Spanish synthetic networks of six to eight airports already push commercial branch-and-bound solvers into the multi-hour regime, while real Iberia-style international instances with several dozen candidate airports lie well beyond what a direct mixed-integer solve can handle in any reasonable time. The next section addresses these computational obstacles by replacing the explicit nonlinear demand-capture equation by an equivalent continuous viewpoint, in which fixed costs are approximated through sparsity-inducing penalties and the logit split is recovered through entropy regularization.

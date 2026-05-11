@@ -1,0 +1,41 @@
+\section{Estado del arte} \label{S:intro_aero}
+
+Los aspectos más innovadores abordados en este capítulo en comparación con los anteriores incluyen la inclusión de un operador privado y la exploración de una configuración en \emph{hub $\&$ spoke}. En esta sección, se lleva a cabo una revisión histórica detallada de estos dos elementos, dedicando especial énfasis al último, el cual representa un desafío significativo en términos de optimización.
+
+En las últimas décadas, el notable crecimiento de los sistemas de transporte y la intensa competencia en el sector han llevado a la exploración de diversas estrategias cooperativas, incluyendo alianzas y coaliciones, sobre las cuales se han realizado numerosos estudios. En este contexto,
+las redes basadas en estructuras de concentrador y radio (\emph{i.e.}, \emph{hub $\&$ spoke}) han recibido especial atención, ofreciendo oportunidades para compartir capacidad de forma eficiente y gestionar flotas en diferentes tramos de
+las rutas de transporte \cite{adler2007hub}. 
+
+
+
+Las redes \emph{hub $\&$ spoke} se  utilizan ampliamente en diversos sistemas de transporte para optimizar el envío de mercancías o pasajeros entre múltiples puntos de origen y destino, pero destaca su proliferación en el sector aéreo. Un elemento distintivo de estas redes es la presencia de nodos de transbordo o consolidación (\emph{i.e.}, \emph{hubs}), que permiten conectar numerosos pares origen/destino utilizando solo unos pocos enlaces. Este tipo de red hace más fácil agrupar mercancías o pasajeros que salen de orígenes similares pero que se dirigen a destinos diferentes. Esto ayuda a centralizar las operaciones de gestión y clasificación, reducir costes y aprovechar las ventajas de manejar grandes volúmenes de tráfico. 
+El objetivo principal en una red de este tipo es minimizar los costes totales, maximizar la utilización de la capacidad y mejorar el nivel de servicio, siendo estas herramientas cruciales en la planificación por parte de las aerolíneas.
+
+Desde una perspectiva estructural, las redes de \emph{hub $\&$ spoke} pueden entenderse como redes jerárquicas con dos niveles fundamentales: una red de acceso, que conecta los nodos origen/destino con los \emph{hubs}, y una subred de concentración, que enlaza los \emph{hubs} entre sí.
+Una vez determinados los \emph{hubs}, los nodos radio (\emph{spoke}) se asignan a ellos para dirigir el flujo a través de la subred de concentración que incluye todos los nodos \emph{hubs} y los enlaces que los conectan.
+El esquema de asignación puede ser único o múltiple, dependiendo de la aplicación específica.
+En un esquema de asignación única, cada nodo de radio se asigna a un solo \emph{hub},
+mientras que en un esquema de asignación múltiple esta restricción se relaja. Esta estructura
+de \emph{hub $\&$ spoke} evita el viaje directo, lo que conduce a una infrautilización (o, al menos,
+una utilización muy ocasional) de la capacidad en algunos (o quizás muchos) de los enlaces
+directos, y favorece la concentración del flujo en los enlaces entre \emph{hubs} para una mejor utilización de las infraestructuras. Como resultado, se pueden aprovechar las economías de escala
+mediante el uso más eficiente de los enlaces entre \emph{hubs}. En aplicaciones como el transporte aéreo, la estructura de la subred de nivel de \emph{hub} desempeña un papel fundamental en el nivel de servicio ofrecido a los usuarios y es determinante para la sostenibilidad del negocio en entornos muy competitivos \cite{belobaba2015global}.
+Los problemas de diseño de redes \emph{hub $\&$ spoke} (HNDPs, por sus siglas en inglés \textit{Hub $\&$ Spoke Network Design Problems}) representan una categoría desafiante de problemas de optimización que involucran dos tipos de decisiones de diseño: la localización de los nodos \emph{hub} y, la activación de diversos enlaces para conectar los puntos de origen/destino y los nodos \emph{hub}. Dada la compleja naturaleza de la interacción entre estos dos tipos de decisiones, los HNDPs fueron inicialmente abordados desde una perspectiva centrada en la localización de los \emph{hubs}. La mayoría de estos problemas se basan en un conjunto de suposiciones que simplifican las decisiones de diseño y enrutamiento, hasta el punto en que quedan completamente determinadas por las decisiones de asignación de nodos origen/destino a los \emph{hubs}. Cuando estas suposiciones simplificadas se flexibilizan, los HNDPs se vinculan más estrechamente con los problemas de diseño de redes multiartículo. De hecho, los HNDPs constituyen una categoría específica de los problemas de diseño de redes multiartículo en la que se consideran las decisiones de localización de nodos. La amplia gama de aplicaciones existentes ha dado lugar a HNDPs con topologías específicas y a modelos más generales que involucran decisiones de diseño en ambos niveles, tanto de \emph{hubs} como de \emph{spokes}, así como decisiones adicionales de selección de nodos.
+En los HNDPs clásicos, se suelen considerar cuatro suposiciones principales \cite{Nickel2001}:
+\begin{itemize}
+    \item La red de nivel de \emph{hub} es completa.
+    \item El coste por unidad de utilizar conexiones entre \emph{hubs} es menor que el coste de utilizar conexiones de radio.
+    \item No se permiten conexiones directas entre nodos de radio.
+    \item Se cumple la desigualdad triangular en la estructura de costes, y los costes son proporcionales a la distancia.
+\end{itemize}
+
+En cuanto a las publicaciones del estado del arte, uno de los primeros trabajos en el campo es \cite{goldman1969optimal}, donde se proponen modelos para el problema de encontrar $P$-\emph{hubs} entre un conjunto de candidatos y asignar flujos de acuerdo a los \emph{hubs} designados, minimizando el coste de
+transporte. Este es conocido como el problema de la $P$-mediana, que se define como un problema de optimización basado en distancias en el que $P$ infraestructuras deben localizarse y asignarse a los puntos de demanda de manera que: i) cada punto de demanda se asigne a un único \emph{hub} y ii) la suma de la distancia ponderada entre todos los puntos de demanda y los \emph{hubs} correspondientes se minimice.
+Los problemas de localización de \emph{hubs} se abordan por primera vez en \cite{o1986location,o1986activity}. En el ámbito discreto, el primer trabajo se atribuye a \cite{o1987quadratic}, donde se propone un modelo cuadrático para el problema de $P$-\emph{hub} mediana de asignación única, mientras que la primera formulación basada en MIP se propone en \cite{campbell1994integer}. Existen múltiples trabajos dedicados a redes discretas. Entre ellos, destacan las revisiones \cite{campbell2002hub,alumur2008network} y las referencias incluidas en ellas. Muchos de los trabajos en el estado del arte no consideran limitaciones de capacidad en la red y trabajan con hipótesis de asignación única, como por ejemplo \cite{skorin1996tight} y \cite{sohn1998efficient}. El primer modelo para el problema de asignación múltiple se encuentra en \cite{campbell1992location}. 
+En \cite{ernst1996efficient} se presenta una formulación lineal que requiere menos variables y restricciones y en \cite{o1996hub} se emplean otras formulaciones que mejoran el esquema de linealización tanto para asignaciones individuales como múltiples. 
+
+Tratando de hacer que el número de \emph{hubs} sea una parte endógena del problema, se puede hacer explícito el coste operativo o considerar un presupuesto limitado para la localización. En \cite{o1992hub} se introduce por primera vez  el modelado de costes fijos y costes de localización de los nodos \emph{hub}, mientras que \cite{campbell1994integer} también incorpora costes fijos para los enlaces. En \cite{sohn1998efficient} se proponen formulaciones MIP mejoradas donde se consideran costes fijos para los enlaces entre los nodos \emph{hubs}.
+En casos donde el número de \emph{hubs} no está fijado \emph{a priori}, además de los esquemas de
+asignación única y múltiple, también pueden existir políticas de capacidad. Estos
+casos se estudian en 
+\cite{campbell1994integer,aykin1994lagrangian,labbe2005branch, yaman2005solving,marin2005formulating}.
