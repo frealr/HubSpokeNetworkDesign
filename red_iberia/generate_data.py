@@ -5,10 +5,11 @@ Adaptado de 6node_spain/generate_data_8nodemapto6.py.
 
 Genera:
   - distance.csv   : matriz n×n de distancias haversine (km), sin cabecera
-  - prices.csv     : matriz n×n de precios (yield × distancia, EUR/pax), sin cabecera
+  - prices.csv     : matriz n×n de precios ((yield/100) × distancia, EUR/pax), sin cabecera
   - export_txt/    : todos los parámetros en formato GAMS .txt
 
 Yield por mercado: media de las observaciones disponibles en yield.xlsx.
+La yield de entrada está en céntimos por km y se convierte a EUR por km.
 Mercados sin yield: se les asigna la media global (ver mercados_sin_yield.md).
 """
 import os
@@ -22,6 +23,13 @@ import pandas as pd
 import scipy.io as sio
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+COMPETITION_XLSX = os.path.join(BASE_DIR, 'vuelos_directos_competencia.xlsx')
+NODE_PRIORITY = ('MAD', 'BCN')
+SPANISH_AIRPORTS = {
+    'ACE', 'AGP', 'ALC', 'BCN', 'BIO', 'EAS', 'FUE', 'GRX', 'IBZ', 'LCG',
+    'LEI', 'LPA', 'MAD', 'MAH', 'MLN', 'OVD', 'PMI', 'PNA', 'SCQ', 'SDR',
+    'SVQ', 'TFN', 'TFS', 'VGO', 'VLC', 'XRY',
+}
 
 # ─── helpers (idénticos al original) ─────────────────────────────────────────
 
@@ -85,6 +93,12 @@ def write_gams_param_ii_path(path, M):
 def write_gams_param1d_path(path, v):
     write_gams_param1d_full(path, v)
 
+
+def write_gams_set_1d(filename, labels):
+    with open(filename, 'w') as fid:
+        fid.write("\n".join(labels))
+        fid.write("\n")
+
 def parse_matrix(output_xlsx, name, n):
     m_df = read_gams_csv_robust(output_xlsx, symbol_name=name)
     if m_df is None or len(m_df) == 0:
@@ -136,6 +150,61 @@ def haversine_km(lat1, lon1, lat2, lon2):
     a = np.sin(dphi/2)**2 + np.cos(phi1)*np.cos(phi2)*np.sin(dlam/2)**2
     return 2 * R * np.arcsin(np.sqrt(a))
 
+
+def order_nodes(iata_codes):
+    """Ordena nodos con prioridad MAD=i1 y BCN=i2; resto alfabético."""
+    priority_rank = {iata: rank for rank, iata in enumerate(NODE_PRIORITY)}
+    return sorted(set(iata_codes), key=lambda iata: (priority_rank.get(iata, len(NODE_PRIORITY)), iata))
+
+
+def load_competitor_direct_flights(nodes):
+    """Lee el Excel de competencia y devuelve enlaces directos por aerolínea.
+
+    Cada hoja representa una aerolínea. Las dos primeras columnas contienen
+    origen y destino en IATA, sin depender de los nombres de cabecera.
+    Los pares se consideran simétricos.
+    """
+    if not os.path.exists(COMPETITION_XLSX):
+        raise FileNotFoundError(
+            f'No se encuentra el fichero de competencia: {COMPETITION_XLSX}'
+        )
+
+    valid_nodes = set(nodes)
+    iata_re = re.compile(r'^[A-Z]{3}$')
+    xls = pd.ExcelFile(COMPETITION_XLSX)
+    airline_direct_pairs = {}
+
+    for sheet_name in xls.sheet_names:
+        df = pd.read_excel(COMPETITION_XLSX, sheet_name=sheet_name, header=None)
+        direct_pairs = set()
+        if df.shape[1] < 2:
+            airline_direct_pairs[sheet_name] = direct_pairs
+            continue
+
+        for _, row in df.iloc[:, :2].iterrows():
+            origin = str(row.iloc[0]).strip().upper()
+            destination = str(row.iloc[1]).strip().upper()
+            if not iata_re.match(origin) or not iata_re.match(destination):
+                continue
+            if origin not in valid_nodes or destination not in valid_nodes:
+                continue
+            if origin == destination:
+                continue
+            direct_pairs.add((origin, destination))
+            direct_pairs.add((destination, origin))
+
+        airline_direct_pairs[sheet_name] = direct_pairs
+
+    return airline_direct_pairs
+
+
+def get_competitor_airline_count():
+    if not os.path.exists(COMPETITION_XLSX):
+        raise FileNotFoundError(
+            f'No se encuentra el fichero de competencia: {COMPETITION_XLSX}'
+        )
+    return len(pd.ExcelFile(COMPETITION_XLSX).sheet_names)
+
 # ─── construcción de la red ───────────────────────────────────────────────────
 
 def assign_yield(y_market, global_mean):
@@ -178,12 +247,14 @@ def build_network():
             dd['Destino'].apply(lambda x: bool(iata_re.match(str(x))))]
     dd = dd[dd['Promedio de Suma de Demanda'] > 0]
 
-    # Nodos activos (orden alfabético)
-    active_nodes = sorted(set(dd['Origen'].tolist() + dd['Destino'].tolist()))
+    # Nodos activos (MAD=i1, BCN=i2, resto alfabético)
+    active_nodes = order_nodes(dd['Origen'].tolist() + dd['Destino'].tolist())
 
     # Actualizar airports.csv con los 99 nodos activos
     all_airports_full = pd.read_csv(os.path.join(BASE_DIR, 'airports_full.csv'))
-    airports = all_airports_full[all_airports_full['iata'].isin(active_nodes)].sort_values('iata').reset_index(drop=True)
+    airports = all_airports_full[all_airports_full['iata'].isin(active_nodes)].copy()
+    airports['order_key'] = airports['iata'].map({iata: k for k, iata in enumerate(active_nodes)})
+    airports = airports.sort_values('order_key').drop(columns='order_key').reset_index(drop=True)
     airports.to_csv(os.path.join(BASE_DIR, 'airports.csv'), index=False)
 
     nodes = airports['iata'].tolist()
@@ -208,14 +279,14 @@ def build_network():
             if i != j:
                 dist[i, j] = haversine_km(lats[i], lons[i], lats[j], lons[j])
 
-    # ── Precios: yield asignado × distancia ──────────────────────────────────
+    # ── Precios: (yield en centimos/km) / 100 × distancia ────────────────────
     prices = np.zeros((n, n))
     for i, o in enumerate(nodes):
         for j, d in enumerate(nodes):
             if i == j:
                 continue
             y, _ = get_yield(o, d)
-            prices[i, j] = y * dist[i, j]
+            prices[i, j] = (y / 100.0) * dist[i, j]
 
     # ── Demanda (pax/semana) ──────────────────────────────────────────────────
     demand = np.zeros((n, n))
@@ -227,7 +298,12 @@ def build_network():
     # ── Parámetros operativos (misma lógica que 6node / 8node) ───────────────
     omega_t = -0.02
     omega_p = -0.02
-    n_airlines = 5
+    airline_direct_pairs = load_competitor_direct_flights(nodes)
+    airline_names = list(airline_direct_pairs.keys())
+    n_airlines = len(airline_names)
+    if n_airlines <= 0:
+        raise ValueError('El Excel de competencia no contiene hojas de aerolíneas.')
+    print(f'  Aerolíneas competidoras consideradas: {n_airlines}')
 
     link_cost = 10.0 * dist
     np.fill_diagonal(link_cost, 1e4)
@@ -252,17 +328,34 @@ def build_network():
     travel_time = cruise_time + takeoff_time + landing_time + taxi_time
     np.fill_diagonal(travel_time, 0)
 
-    # Utilidad alternativa (misma semilla que el original)
-    np.random.seed(123)
-    p_escala = 0.4
+    # Utilidad alternativa basada en red directa observada por aerolínea.
+    rng = np.random.default_rng(123)
+    p_direct_if_missing = 0.0
+    connection_time_scale = 2.0
     alt_utility = np.zeros((n, n))
     for i in range(n):
         for j in range(i + 1, n):
-            escala = np.random.rand(n_airlines) < p_escala
-            alt_time_vec  = travel_time[i, j] * (1 + 0.5 * escala) + 60 * escala
-            alt_price_vec = prices[i, j] + 0.3 * prices[i, j] * (np.random.rand(n_airlines) - 0.5)
-            alt_u = (np.log(np.sum(np.exp(omega_p * alt_price_vec + omega_t * alt_time_vec)))
-                     - np.log(n_airlines))
+            origin = nodes[i]
+            destination = nodes[j]
+            has_direct_vec = np.zeros(n_airlines, dtype=bool)
+
+            for k, airline in enumerate(airline_names):
+                direct_pairs = airline_direct_pairs[airline]
+                has_direct_vec[k] = (
+                    (origin, destination) in direct_pairs
+                    or rng.random() < p_direct_if_missing
+                )
+
+            connection_vec = ~has_direct_vec
+            # Si el competidor no tiene directo, aproximamos una conexión
+            # con un tiempo total equivalente a dos tramos de la misma escala.
+            alt_time_vec = travel_time[i, j] * (
+                1.0 + (connection_time_scale - 1.0) * connection_vec.astype(float)
+            )
+            alt_price_vec = prices[i, j] + 0.3 * prices[i, j] * (rng.random(n_airlines) - 0.5)
+            alt_terms = omega_p * alt_price_vec + omega_t * alt_time_vec
+            max_term = np.max(alt_terms)
+            alt_u = max_term + np.log(np.sum(np.exp(alt_terms - max_term))) - np.log(n_airlines)
             alt_utility[i, j] = alt_u
             alt_utility[j, i] = alt_u
     np.fill_diagonal(alt_utility, 0)
@@ -347,7 +440,7 @@ if __name__ == '__main__':
     # ── Linearización PWL ────────────────────────────────────────────────────
     nreg      = 20
     vals_regs = np.linspace(0.005, 0.995, nreg - 1)
-    n_airlines = 5
+    n_airlines = get_competitor_airline_count()
     lin_coef, bord, b = get_linearization(n, nreg, alt_utility, vals_regs, n_airlines)
 
     alfa_od = np.ones((n, n))
@@ -378,6 +471,9 @@ if __name__ == '__main__':
     write_gams_param1d_full(f'{txt}/station_capacity_slope.txt', station_capacity_slope)
     write_gams_param1d_full(f'{txt}/congestion_coefs_stations.txt', congestion_coef_stations)
 
+    spanish_airport_labels = [f'i{k+1}' for k, iata in enumerate(nodes) if iata in SPANISH_AIRPORTS]
+    write_gams_set_1d(f'{txt}/spanish_airports.txt', spanish_airport_labels)
+
     a_prev  = 1e4 * np.ones((n, n))
     s_prev  = 1e4 * np.ones(n)
     sh_prev = 1e-3 * s_prev
@@ -388,6 +484,7 @@ if __name__ == '__main__':
 
     write_txt_param('gamma',  gamma)
     write_txt_param('niters', 40)
+    write_txt_param('n_airlines', n_airlines)
 
     print('  export_txt/ generado.')
     print('Listo.')

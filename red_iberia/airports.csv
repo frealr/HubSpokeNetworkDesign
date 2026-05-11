@@ -1,4 +1,6 @@
 iata,name,lat,lon
+MAD,Madrid,40.4719,-3.5626
+BCN,Barcelona,41.2971,2.0785
 ACE,Lanzarote,28.9455,-13.6052
 AGP,Malaga,36.6749,-4.4991
 ALC,Alicante,38.2822,-0.5582
@@ -7,7 +9,6 @@ AMS,Amsterdam,52.3086,4.7639
 ARN,Stockholm,59.6519,17.9186
 ATH,Athens,37.9364,23.9445
 ATL,Atlanta,33.6367,-84.4281
-BCN,Barcelona,41.2971,2.0785
 BIO,Bilbao,43.301,-2.9106
 BOG,Bogota,4.7016,-74.1469
 BOS,Boston,42.3656,-71.0096
@@ -55,7 +56,6 @@ LIS,Lisbon,38.7813,-9.1359
 LOS,Lagos,6.5774,3.3214
 LPA,Las Palmas,27.9319,-15.3866
 LYS,Lyon,45.7256,5.0811
-MAD,Madrid,40.4719,-3.5626
 MAH,Menorca,39.8626,4.2186
 MAN,Manchester,53.3537,-2.275
 MCO,Orlando,28.4294,-81.3089

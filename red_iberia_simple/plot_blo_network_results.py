@@ -23,12 +23,13 @@ import numpy as np
 import pandas as pd
 import scipy.io as sio
 
+from generate_data import build_network, TRANSATLANTIC_AIRPORTS
+
 
 BASE_DIR = Path(__file__).resolve().parent
 MAT_DIR = BASE_DIR / "hs_prueba_v0_blo"
 OUT_DIR = BASE_DIR / "plots_blo"
 PROJ = ccrs.PlateCarree()
-MAP_EXTENT = [-100, 20, 18, 62]
 IATA_RE = re.compile(r"^[A-Z]{3}$")
 
 
@@ -63,33 +64,78 @@ def _great_circle_pts(lon1, lat1, lon2, lat2, n_pts=100):
     return lons, lats
 
 
-def load_node_order():
-    node_map = pd.read_csv(BASE_DIR / "node_mapping.csv")
-    return node_map["iata"].tolist()
+def load_network_context():
+    (
+        n,
+        nodes,
+        idx,
+        dist,
+        link_cost,
+        station_cost,
+        hub_cost,
+        link_capacity_slope,
+        station_capacity_slope,
+        demand,
+        prices,
+        load_factor,
+        op_link_cost,
+        congestion_coef_stations,
+        congestion_coef_links,
+        travel_time,
+        alt_utility,
+        a_nom,
+        tau,
+        eta,
+        a_max,
+        candidates,
+        omega_t,
+        omega_p,
+    ) = build_network()
+    del (
+        n,
+        idx,
+        dist,
+        link_cost,
+        station_cost,
+        hub_cost,
+        link_capacity_slope,
+        station_capacity_slope,
+        load_factor,
+        congestion_coef_stations,
+        congestion_coef_links,
+        travel_time,
+        alt_utility,
+        eta,
+        a_max,
+        candidates,
+        omega_t,
+        omega_p,
+    )
+    return nodes, demand, prices, op_link_cost, a_nom, tau
 
 
-def load_airports():
-    airports = pd.read_csv(BASE_DIR / "airports.csv")
-    return airports.set_index("iata").to_dict("index")
+def load_airports(nodes):
+    airports = pd.read_csv(BASE_DIR / "airports_full.csv")
+    airports = airports[airports["iata"].isin(nodes)].copy()
+    airports = airports.drop_duplicates(subset=["iata"]).set_index("iata")
+    missing = [iata for iata in nodes if iata not in airports.index]
+    if missing:
+        raise ValueError(f"Missing airport coordinates for: {missing}")
+    airports = airports.loc[nodes]
+    return airports.to_dict("index")
 
 
-def load_demand(nodes):
-    df = pd.read_excel(BASE_DIR / "demanda.xlsx", sheet_name="demanda_completa")
-    df = df.dropna(subset=["Origen", "Destino"])
-    df = df[
-        df["Origen"].apply(lambda x: bool(IATA_RE.match(str(x))))
-        & df["Destino"].apply(lambda x: bool(IATA_RE.match(str(x))))
+def compute_map_extent(airports):
+    lons = np.array([airport["lon"] for airport in airports.values()], dtype=float)
+    lats = np.array([airport["lat"] for airport in airports.values()], dtype=float)
+    lon_pad = max(8.0, 0.12 * (lons.max() - lons.min()))
+    lat_pad = max(6.0, 0.18 * (lats.max() - lats.min()))
+    return [
+        float(lons.min() - lon_pad),
+        float(lons.max() + lon_pad),
+        float(lats.min() - lat_pad),
+        float(lats.max() + lat_pad),
     ]
-    df = df[df["Promedio de Suma de Demanda"] > 0]
-    df = df[df["Origen"].isin(nodes) & df["Destino"].isin(nodes)]
-
-    idx = {iata: i for i, iata in enumerate(nodes)}
-    demand = np.zeros((len(nodes), len(nodes)))
-    for _, row in df.iterrows():
-        demand[idx[row["Origen"]], idx[row["Destino"]]] = float(
-            row["Promedio de Suma de Demanda"]
-        )
-    return demand
 
 
 def load_result(mat_path):
@@ -123,8 +169,8 @@ def compute_connection_percentages(fij, demand):
     return percentages, total_traffic, connection_traffic
 
 
-def add_map_background(ax):
-    ax.set_extent(MAP_EXTENT, crs=PROJ)
+def add_map_background(ax, map_extent):
+    ax.set_extent(map_extent, crs=PROJ)
     ax.add_feature(cfeature.OCEAN.with_scale("110m"), color="#c8e6f5", zorder=0)
     ax.add_feature(cfeature.LAND.with_scale("110m"), color="#f5f0e8", zorder=1)
     ax.add_feature(
@@ -146,7 +192,7 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
     OUT_DIR.mkdir(exist_ok=True)
     fig = plt.figure(figsize=(18, 10))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.Robinson(central_longitude=-12))
-    add_map_background(ax)
+    add_map_background(ax, compute_map_extent(airports))
 
     max_a = float(np.max(a)) if np.max(a) > 1e-12 else 1.0
     hub_mask = sh > 1e-2
@@ -263,7 +309,40 @@ def plot_hub_connection_percentages(
     return out_path, rows
 
 
-def process_mat(mat_path, nodes, airports, demand):
+def compute_market_profitability(nodes, demand, prices, op_link_cost, a_nom, tau, f, fij):
+    """Rentabilidad por pasajero y mercado para una solución dada."""
+    n = len(nodes)
+    rows = []
+    for o in range(n):
+        for d in range(n):
+            if o == d or demand[o, d] <= 0 or f[o, d] < 1e-3:
+                continue
+            revenue_per_pax = prices[o, d]
+            cost_per_pax = float(np.sum(
+                fij[:, :, o, d] * op_link_cost / (a_nom * tau)
+            ))
+            margin_per_pax = revenue_per_pax - cost_per_pax
+            pax_served = demand[o, d] * f[o, d]
+            is_transatl = (nodes[o] in TRANSATLANTIC_AIRPORTS
+                           or nodes[d] in TRANSATLANTIC_AIRPORTS)
+            rows.append({
+                "origin": nodes[o],
+                "destination": nodes[d],
+                "type": "transatlantic" if is_transatl else "regional",
+                "f_iberia": float(f[o, d]),
+                "demand_pax_week": float(demand[o, d]),
+                "pax_served_week": float(pax_served),
+                "price_eur": float(revenue_per_pax),
+                "op_cost_per_pax": float(cost_per_pax),
+                "margin_per_pax": float(margin_per_pax),
+                "total_revenue_week": float(revenue_per_pax * pax_served),
+                "total_op_cost_week": float(cost_per_pax * pax_served),
+                "total_margin_week": float(margin_per_pax * pax_served),
+            })
+    return pd.DataFrame(rows).sort_values("total_margin_week", ascending=False).reset_index(drop=True)
+
+
+def process_mat(mat_path, nodes, airports, demand, prices, op_link_cost, a_nom, tau):
     result = load_result(mat_path)
     map_path = plot_network_map(mat_path, nodes, airports, result["sh"], result["a"])
     percentages, total_traffic, connection_traffic = compute_connection_percentages(
@@ -282,28 +361,54 @@ def process_mat(mat_path, nodes, airports, demand):
     print(f"  map: {map_path}")
     if pct_result is None:
         print("  hub connection chart: no hubs found")
-        return
+    else:
+        chart_path, rows = pct_result
+        print(f"  hub connection chart: {chart_path}")
+        for code, pct, total, conn in rows:
+            print(
+                f"    {code}: {pct:5.1f}%  "
+                f"(connection={conn:10.2f}, total={total:10.2f})"
+            )
 
-    chart_path, rows = pct_result
-    print(f"  hub connection chart: {chart_path}")
-    for code, pct, total, conn in rows:
-        print(
-            f"    {code}: {pct:5.1f}%  "
-            f"(connection={conn:10.2f}, total={total:10.2f})"
-        )
+    df_prof = compute_market_profitability(
+        nodes, demand, prices, op_link_cost, a_nom, tau,
+        result["f"], result["fij"]
+    )
+    if len(df_prof) > 0:
+        print(f"\n  --- Rentabilidad por mercado (top 10 por margen total) ---")
+        print(f"  {'OD':<12} {'Tipo':<14} {'f':>5} {'Pax/sem':>8} "
+              f"{'€/pax':>8} {'Cost/pax':>9} {'Margen/pax':>11} {'Margen total':>13}")
+        print(f"  {'-'*85}")
+        for _, r in df_prof.head(10).iterrows():
+            od = f"{r['origin']}-{r['destination']}"
+            print(f"  {od:<12} {r['type']:<14} {r['f_iberia']:5.3f} "
+                  f"{r['pax_served_week']:8.0f} {r['price_eur']:8.0f} "
+                  f"{r['op_cost_per_pax']:9.0f} {r['margin_per_pax']:11.0f} "
+                  f"{r['total_margin_week']:13.0f}")
+        tot_rev = df_prof["total_revenue_week"].sum()
+        tot_cost = df_prof["total_op_cost_week"].sum()
+        tot_margin = df_prof["total_margin_week"].sum()
+        print(f"\n  TOTAL semana — Ingresos: {tot_rev:,.0f} € | "
+              f"Costes op: {tot_cost:,.0f} € | Margen: {tot_margin:,.0f} €")
+        avg_margin = tot_margin / df_prof["pax_served_week"].sum() if df_prof["pax_served_week"].sum() > 0 else 0
+        print(f"  Margen medio por pasajero: {avg_margin:.0f} €/pax")
+
+        OUT_DIR.mkdir(exist_ok=True)
+        csv_path = OUT_DIR / f"{mat_path.stem}_rentabilidad.csv"
+        df_prof.to_csv(csv_path, index=False)
+        print(f"  CSV guardado: {csv_path}")
 
 
 def main():
-    nodes = load_node_order()
-    airports = load_airports()
-    demand = load_demand(nodes)
+    nodes, demand, prices, op_link_cost, a_nom, tau = load_network_context()
+    airports = load_airports(nodes)
 
     mat_files = sorted(MAT_DIR.glob("*.mat"))
     if not mat_files:
         raise FileNotFoundError(f"No MAT files found in {MAT_DIR}")
 
     for mat_path in mat_files:
-        process_mat(mat_path, nodes, airports, demand)
+        process_mat(mat_path, nodes, airports, demand, prices, op_link_cost, a_nom, tau)
 
 
 if __name__ == "__main__":

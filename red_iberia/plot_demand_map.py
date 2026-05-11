@@ -117,6 +117,7 @@ AIRPORTS = {
 }
 
 PROJ = ccrs.PlateCarree()
+NODE_PRIORITY = ('MAD', 'BCN')
 
 
 def _great_circle_pts(lon1, lat1, lon2, lat2, n_pts=80):
@@ -144,6 +145,12 @@ def _great_circle_pts(lon1, lat1, lon2, lat2, n_pts=80):
     return lons, lats
 
 
+def order_nodes(iata_codes):
+    """Ordena nodos con prioridad MAD=i1 y BCN=i2; resto alfabético."""
+    priority_rank = {iata: rank for rank, iata in enumerate(NODE_PRIORITY)}
+    return sorted(set(iata_codes), key=lambda iata: (priority_rank.get(iata, len(NODE_PRIORITY)), iata))
+
+
 def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     xlsx_path = os.path.join(base_dir, 'demanda.xlsx')
@@ -156,7 +163,7 @@ def main():
             df['Destino'].apply(lambda x: bool(iata_re.match(str(x))))]
     df = df[df['Promedio de Suma de Demanda'] > 0]
 
-    all_nodes = sorted(set(df['Origen'].tolist() + df['Destino'].tolist()))
+    all_nodes = order_nodes(df['Origen'].tolist() + df['Destino'].tolist())
 
     # ── Write CSV ─────────────────────────────────────────────────────────────
     rows = []

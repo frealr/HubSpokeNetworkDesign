@@ -422,6 +422,11 @@ sfix(i)=1;
 
 f.fx(o,d)$(ffix(o,d)=1)=0;
 sh.fx(i)$(sfix(i)=1)=0;
+* Aerolinea espanola: solo se permiten hubs en aeropuertos espanoles.
+Set spanish_airport(i) /
+$include "%TXTDIR%/spanish_airports.txt"
+/;
+sh.fx(i)$(not spanish_airport(i)) = 0;
 
 Parameter conecta(i);
 conecta(i) = 0;

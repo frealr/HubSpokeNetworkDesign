@@ -130,7 +130,9 @@ sigma = 0.3;
 a_nom = 171;
 a_max = 1e7;
 M = 1e5;
-n_airlines = 5;
+n_airlines =
+$include "%TXTDIR%/n_airlines.txt"
+;
 
 Scalar n; n = card(i);
 

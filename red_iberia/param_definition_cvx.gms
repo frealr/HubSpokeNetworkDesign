@@ -120,7 +120,10 @@ $include "%TXTDIR%/niters.txt"
 
 Scalar logit_coef; logit_coef = 0.02;
 
-Scalar n_airlines; n_airlines = 5;
+Scalar n_airlines
+/
+$include "%TXTDIR%/n_airlines.txt"
+/;
 
 Scalar epsi_f; epsi_f = 1e-4;
 

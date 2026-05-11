@@ -1,0 +1,5 @@
+Input=/home/lcadarso/TFM/HubSpokeNetworkDesign/red_iberia_simple/cvx-sl.gms
+ScrDir=225b
+SysDir=/opt/gams/gams49.6_linux_x64_64_sfx
+ScriptNext=225b/gamsnext.sh
+NetLicense=225b/gamslice.dat

@@ -24,6 +24,12 @@ import scipy.io as sio
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 COMPETITION_XLSX = os.path.join(BASE_DIR, 'vuelos_directos_competencia.xlsx')
+NODE_PRIORITY = ('MAD', 'BCN')
+SPANISH_AIRPORTS = {
+    'ACE', 'AGP', 'ALC', 'BCN', 'BIO', 'EAS', 'FUE', 'GRX', 'IBZ', 'LCG',
+    'LEI', 'LPA', 'MAD', 'MAH', 'MLN', 'OVD', 'PMI', 'PNA', 'SCQ', 'SDR',
+    'SVQ', 'TFN', 'TFS', 'VGO', 'VLC', 'XRY',
+}
 
 # ─── helpers (idénticos al original) ─────────────────────────────────────────
 
@@ -87,6 +93,12 @@ def write_gams_param_ii_path(path, M):
 def write_gams_param1d_path(path, v):
     write_gams_param1d_full(path, v)
 
+
+def write_gams_set_1d(filename, labels):
+    with open(filename, 'w') as fid:
+        fid.write("\n".join(labels))
+        fid.write("\n")
+
 def parse_matrix(output_xlsx, name, n):
     m_df = read_gams_csv_robust(output_xlsx, symbol_name=name)
     if m_df is None or len(m_df) == 0:
@@ -137,6 +149,12 @@ def haversine_km(lat1, lon1, lat2, lon2):
     dlam = np.radians(lon2 - lon1)
     a = np.sin(dphi/2)**2 + np.cos(phi1)*np.cos(phi2)*np.sin(dlam/2)**2
     return 2 * R * np.arcsin(np.sqrt(a))
+
+
+def order_nodes(iata_codes):
+    """Ordena nodos con prioridad MAD=i1 y BCN=i2; resto alfabético."""
+    priority_rank = {iata: rank for rank, iata in enumerate(NODE_PRIORITY)}
+    return sorted(set(iata_codes), key=lambda iata: (priority_rank.get(iata, len(NODE_PRIORITY)), iata))
 
 
 def load_competitor_direct_flights(nodes):
@@ -194,37 +212,73 @@ def assign_yield(y_market, global_mean):
 
     Prioridad:
       1. Yield directo del mercado en yield.xlsx
-      2. Media del yield O→MAD y MAD→D (conexión vía Madrid)
+      2. Minimo entre O→MAD, MAD→D, MAD→O y D→MAD
+         (cota conservadora bidireccional vía Madrid)
       3. Media global de todos los yields disponibles
     """
     def get(o, d):
         if (o, d) in y_market.index:
             return y_market[(o, d)], 'directo'
-        if (o, 'MAD') in y_market.index and ('MAD', d) in y_market.index:
-            y = (y_market[(o, 'MAD')] + y_market[('MAD', d)]) / 2
+        via_mad_keys = ((o, 'MAD'), ('MAD', d), ('MAD', o), (d, 'MAD'))
+        if all(key in y_market.index for key in via_mad_keys):
+            y = min(y_market[key] for key in via_mad_keys)
             return y, 'via_mad'
         return global_mean, 'media_global'
     return get
 
 
 TOP_N = 25  # número de aeropuertos a incluir
+FORCED_INCLUDE_AIRPORTS = {"EZE", "MEX", "GRU", "LIM"}
+FORCED_EXCLUDE_AIRPORTS = {"DUS", "ORD", "LGW"}
+
+# Aeropuertos transatlánticos (EEUU y Latinoamérica): usan avión grande B350
+TRANSATLANTIC_AIRPORTS = {"EZE", "GRU", "JFK", "LIM", "MEX"}
+A_NOM_NARROW = 171.0    # capacidad A321 (pax)
+A_NOM_WIDE   = 320.0    # capacidad B350 para transatlánticos (pax)
+OP_COST_NARROW = 7600.0  # EUR/hora bloque A321
+OP_COST_WIDE   = 12350.0 # EUR/hora bloque B350
 
 
 def top_n_airports(dd_full, n=TOP_N):
-    """Devuelve los n aeropuertos con mayor demanda total acumulada."""
+    """Devuelve los n aeropuertos con mayor demanda total acumulada.
+
+    Aplica inclusiones y exclusiones forzadas para ajustar la red base.
+    """
     from collections import defaultdict
     dem = defaultdict(float)
     for _, r in dd_full.iterrows():
         dem[r['Origen']] += r['Promedio de Suma de Demanda']
         dem[r['Destino']] += r['Promedio de Suma de Demanda']
-    return set(sorted(dem, key=dem.get, reverse=True)[:n])
+    ranked = [airport for airport, _ in sorted(dem.items(), key=lambda kv: kv[1], reverse=True)]
+
+    selected = []
+    forced_include = [airport for airport in ranked if airport in FORCED_INCLUDE_AIRPORTS]
+    for airport in forced_include:
+        if airport not in selected:
+            selected.append(airport)
+
+    for airport in ranked:
+        if airport in FORCED_EXCLUDE_AIRPORTS or airport in selected:
+            continue
+        selected.append(airport)
+        if len(selected) == n:
+            break
+
+    if len(selected) < n:
+        raise ValueError(
+            f'No hay suficientes aeropuertos para construir una red de {n} nodos '
+            f'tras aplicar inclusiones/exclusiones forzadas.'
+        )
+
+    return set(selected[:n])
 
 
 def build_network():
     """Lee datos fuente y devuelve todos los parámetros de la red.
 
     Solo incluye los TOP_N aeropuertos por demanda total y los mercados
-    entre ellos. Yield: directo > vía MAD > media global.
+    entre ellos, con inclusiones/exclusiones forzadas. Yield: directo >
+    vía MAD > media global.
     """
     iata_re = re.compile(r'^[A-Z]{3}$')
 
@@ -243,14 +297,18 @@ def build_network():
     dd_full = dd_full[dd_full['Promedio de Suma de Demanda'] > 0]
 
     top_nodes = top_n_airports(dd_full, TOP_N)
+    print(f'  Inclusiones forzadas: {sorted(FORCED_INCLUDE_AIRPORTS)}')
+    print(f'  Exclusiones forzadas: {sorted(FORCED_EXCLUDE_AIRPORTS)}')
     dd = dd_full[dd_full['Origen'].isin(top_nodes) & dd_full['Destino'].isin(top_nodes)]
 
-    # Nodos activos (orden alfabético)
-    active_nodes = sorted(set(dd['Origen'].tolist() + dd['Destino'].tolist()))
+    # Nodos activos (MAD=i1, BCN=i2, resto alfabético)
+    active_nodes = order_nodes(dd['Origen'].tolist() + dd['Destino'].tolist())
 
     # Actualizar airports.csv con los 99 nodos activos
     all_airports_full = pd.read_csv(os.path.join(BASE_DIR, 'airports_full.csv'))
-    airports = all_airports_full[all_airports_full['iata'].isin(active_nodes)].sort_values('iata').reset_index(drop=True)
+    airports = all_airports_full[all_airports_full['iata'].isin(active_nodes)].copy()
+    airports['order_key'] = airports['iata'].map({iata: k for k, iata in enumerate(active_nodes)})
+    airports = airports.sort_values('order_key').drop(columns='order_key').reset_index(drop=True)
     airports.to_csv(os.path.join(BASE_DIR, 'airports.csv'), index=False)
 
     nodes = airports['iata'].tolist()
@@ -292,8 +350,8 @@ def build_network():
             demand[idx[o], idx[d]] = row['Promedio de Suma de Demanda']
 
     # ── Parámetros operativos (misma lógica que 6node / 8node) ───────────────
-    omega_t = -0.015
-    omega_p = -0.015
+    omega_t = -0.02
+    omega_p = -0.02
     airline_direct_pairs = load_competitor_direct_flights(nodes)
     airline_names = list(airline_direct_pairs.keys())
     n_airlines = len(airline_names)
@@ -326,31 +384,27 @@ def build_network():
 
     # Utilidad alternativa basada en red directa observada por aerolínea.
     rng = np.random.default_rng(123)
-    p_direct_if_missing = 0.05
-    p_direct_if_missing_jfk_lhr = 0.50
+    p_direct_if_missing = 0.0
+    connection_time_scale = 2.0
     alt_utility = np.zeros((n, n))
     for i in range(n):
         for j in range(i + 1, n):
             origin = nodes[i]
             destination = nodes[j]
-            fallback_direct_prob = (
-                p_direct_if_missing_jfk_lhr
-                if ('JFK' in (origin, destination) or 'LHR' in (origin, destination))
-                else p_direct_if_missing
-            )
             has_direct_vec = np.zeros(n_airlines, dtype=bool)
 
             for k, airline in enumerate(airline_names):
                 direct_pairs = airline_direct_pairs[airline]
                 has_direct_vec[k] = (
                     (origin, destination) in direct_pairs
-                    or rng.random() < fallback_direct_prob
+                    or rng.random() < p_direct_if_missing
                 )
 
             connection_vec = ~has_direct_vec
-            alt_time_vec = (
-                travel_time[i, j] * (1 + 0.5 * connection_vec.astype(float))
-                + 60 * connection_vec.astype(float)
+            # Si el competidor no tiene directo, aproximamos una conexión
+            # con un tiempo total equivalente a dos tramos de la misma escala.
+            alt_time_vec = travel_time[i, j] * (
+                1.0 + (connection_time_scale - 1.0) * connection_vec.astype(float)
             )
             alt_price_vec = prices[i, j] + 0.3 * prices[i, j] * (rng.random(n_airlines) - 0.5)
             alt_terms = omega_p * alt_price_vec + omega_t * alt_time_vec
@@ -361,11 +415,19 @@ def build_network():
             alt_utility[j, i] = alt_u
     np.fill_diagonal(alt_utility, 0)
 
-    op_link_cost = 7600.0 * travel_time / 60.0
+    is_transatlantic = np.array([
+        [nodes[i] in TRANSATLANTIC_AIRPORTS or nodes[j] in TRANSATLANTIC_AIRPORTS
+         for j in range(n)]
+        for i in range(n)
+    ])
+    op_cost_rate = np.where(is_transatlantic, OP_COST_WIDE, OP_COST_NARROW)
+    op_link_cost = op_cost_rate * travel_time / 60.0
+
+    a_nom_ij = np.where(is_transatlantic, A_NOM_WIDE, A_NOM_NARROW)
 
     candidates = np.ones((n, n)) - np.eye(n)
 
-    a_nom = 171
+    a_nom = a_nom_ij
     tau   = 0.85
     eta   = 0.3
     a_max = 1e9
@@ -462,6 +524,7 @@ if __name__ == '__main__':
     write_gams_param_ii(f'{txt}/link_capacity_slope.txt',    link_capacity_slope)
     write_gams_param_ii(f'{txt}/prices.txt',                 prices)
     write_gams_param_ii(f'{txt}/op_link_cost.txt',           op_link_cost)
+    write_gams_param_ii(f'{txt}/a_nom.txt',                  a_nom)
     write_gams_param_ii(f'{txt}/candidates.txt',             candidates)
     write_gams_param_ii(f'{txt}/congestion_coefs_links.txt', congestion_coef_links)
     write_gams_param_ii(f'{txt}/alfa_od.txt',                alfa_od)
@@ -471,6 +534,9 @@ if __name__ == '__main__':
     write_gams_param1d_full(f'{txt}/hub_cost.txt',               hub_cost)
     write_gams_param1d_full(f'{txt}/station_capacity_slope.txt', station_capacity_slope)
     write_gams_param1d_full(f'{txt}/congestion_coefs_stations.txt', congestion_coef_stations)
+
+    spanish_airport_labels = [f'i{k+1}' for k, iata in enumerate(nodes) if iata in SPANISH_AIRPORTS]
+    write_gams_set_1d(f'{txt}/spanish_airports.txt', spanish_airport_labels)
 
     a_prev  = 1e4 * np.ones((n, n))
     s_prev  = 1e4 * np.ones(n)
