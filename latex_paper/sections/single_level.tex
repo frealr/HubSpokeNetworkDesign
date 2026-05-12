@@ -80,7 +80,7 @@ while the outside alternative contributes
 Since the lower level is a minimization problem, the negative sign in both terms means that allocations with larger utility are preferred. The market weight $\varphi^{od}$ determines how strongly that preference influences the resulting network.
 
 \paragraph{Entropy regularization and endogenous logit shares.}
-The continuous formulation also includes
+The continuous formulation also includes 
 \begin{align}
 \mathrm{H}_{\mathrm{self}}(X;\widehat{\alpha},\widehat{\beta})
 &=
@@ -102,20 +102,7 @@ These terms are much more than a smoothing device. They are precisely what repla
 \end{equation}
 which represents the set of admissible market splits in market $(o,d)$. Inside $\Delta^{od}$, the utility terms \eqref{eq:self_utility_term} and \eqref{eq:ext_utility_term} favor the alternative with the highest perceived utility, whereas the entropy terms \eqref{eq:self_entropy_term} and \eqref{eq:ext_entropy_term} penalize overly concentrated allocations and create a strictly convex trade-off. The combined effect is a smooth market split that avoids unrealistic all-or-nothing assignments and recovers the same qualitative logic as the logit model \eqref{eq:logit_probability}.
 
-The formal justification of this construction is the convex-conjugate relation between the log-sum-exp aggregator and negative entropy \cite{RealRojas2026TRB}. For the choice probability vector $F\in\Delta^{od}$ and the deterministic utility vector $v$, the log-sum-exp function and its convex conjugate (the negative entropy) form a Legendre dual pair,
-\begin{equation}
-f(v)=\log\sum_{q}\exp(v_q),
-\qquad
-f^*(F)=\sum_{q}F_q\log F_q,
-\label{eq:convex_conjugate_pair}
-\end{equation}
-with the convention that $0\log 0=0$. A central property of convex conjugates is that, on the relative interior of their domains, the gradients $\nabla f$ and $\nabla f^*$ are inverse maps. In our setting, $\nabla f$ evaluated at the utility vector $v$ returns exactly the logit choice probabilities \eqref{eq:logit_probability}, while $\nabla f^*$ evaluated at the share vector $F$ returns the vector of logarithmic shares $\log F$. By Fenchel duality, the maximization
-\begin{equation}
-\max_{F\in\Delta^{od}}\;
-\sum_{q}F_q v_q^{od}-\sum_{q}F_q\log F_q
-\label{eq:fenchel_max}
-\end{equation}
-admits the log-sum-exp function as its optimal value and the logit probabilities as its unique maximizer. Changing signs to fit the minimization structure of the lower level, the maximization \eqref{eq:fenchel_max} becomes precisely the combination of utility and entropy terms written above. Therefore, the market shares are not imposed externally; they arise endogenously as the unique solution of the lower-level problem in the absence of binding capacity constraints. This convex-conjugate viewpoint is the same one that underpins the equivalence theorem in \cite{RealRojas2026TRB}: when the capacity constraints of the continuous design problem are inactive at the optimum, the entropy-regularized passenger-flow solution is an optimal solution of the corresponding mixed-integer passenger-assignment problem. The continuous model therefore preserves a behaviorally meaningful demand split while remaining smooth, convex, and computationally tractable.
+The formal justification rests on the convex-conjugate duality between the log-sum-exp aggregator and the negative entropy \cite{Oppenheim1993,RealRojas2026TRB}: the unique minimizer of the combined utility--entropy objective over $\Delta^{od}$ recovers exactly the logit probabilities \eqref{eq:logit_probability}. Consequently, market shares are not imposed externally but arise endogenously from the lower-level optimality conditions, while the model remains smooth, convex, and computationally tractable.
 
 \paragraph{Structural constraints.}
 The continuous feasible set $\mathcal{X}_c$ is defined by the structural restrictions of the hub-and-spoke problem, with the binary decisions replaced by sparse capacities and the routing variables relaxed to continuous values. Specifically, $\mathcal{X}_c$ collects the link-capacity, station-capacity, hub-capacity, and direct-hub restrictions
