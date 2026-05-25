@@ -50,21 +50,21 @@ def load_scalar(data: dict, key: str) -> float | None:
 
 
 def combo_label(row: pd.Series) -> str:
+    if row["mu_alfa"] == 0.0 and row["mu_beta"] == 0.0:
+        return "mu_al=0e+00, mu_b=0e+00"
     base = f"mu_al={row['mu_alfa']:.0e}, mu_b={row['mu_beta']:.0e}"
     if row["is_longrun"]:
-        return f"{base} longrun"
-    if np.isclose(row["mu_alfa"], 1e-8) and np.isclose(row["mu_beta"], 1e-3):
-        return f"{base} bliters=3"
-    return base
+        return f"{base} bliters=10"
+    return f"{base} bliters=3"
 
 
 def series_label(row: pd.Series) -> str:
+    if row["mu_alfa"] == 0.0 and row["mu_beta"] == 0.0:
+        return "mu_al=0e+00 | mu_b=0e+00"
     base = f"mu_al={row['mu_alfa']:.0e} | mu_b={row['mu_beta']:.0e}"
     if row["is_longrun"]:
-        return f"{base} | longrun"
-    if np.isclose(row["mu_alfa"], 1e-8) and np.isclose(row["mu_beta"], 1e-3):
-        return f"{base} | bliters=3"
-    return base
+        return f"{base} | bliters=10"
+    return f"{base} | bliters=3"
 
 
 def load_results() -> pd.DataFrame:
@@ -278,12 +278,124 @@ def plot_longrun_improvement_vs_mu0(df: pd.DataFrame) -> None:
         plt.close(fig)
 
 
+def plot_comp_time_by_budget(df: pd.DataFrame) -> None:
+    # Filter for lam=10 and budget <= 5e5
+    df_lam = df[(df["lam"] == 10.0) & (df["budget"] <= 5e5)].copy()
+    if df_lam.empty:
+        return
+
+    # Unique budgets and unique series
+    budgets = sorted(df_lam["budget"].unique())
+    series_list = sorted(df_lam["series"].unique())
+    
+    # Sort groups so they are consistently ordered in the legend and bars
+    series_props = {}
+    for s in series_list:
+        sub = df_lam[df_lam["series"] == s]
+        if not sub.empty:
+            row = sub.iloc[0]
+            series_props[s] = (
+                bool(row["is_longrun"]),
+                float(row["mu_alfa"]),
+                float(row["mu_beta"])
+            )
+        else:
+            series_props[s] = (False, 0.0, 0.0)
+            
+    series_list = sorted(series_list, key=lambda s: series_props[s])
+
+    # Position of bars
+    n_budgets = len(budgets)
+    n_series = len(series_list)
+    
+    # Width of a single bar (0.8 of the total category width is distributed among series)
+    width = 0.8 / n_series
+    
+    # x positions for groups
+    x = np.arange(n_budgets)
+
+    fig, ax = plt.subplots(figsize=(12, 6.5))
+
+    for i, series in enumerate(series_list):
+        df_series = df_lam[df_lam["series"] == series]
+        # Map budgets to the values they have, filling with 0 if missing
+        times = []
+        for b in budgets:
+            match = df_series[df_series["budget"] == b]
+            if not match.empty:
+                times.append(float(match["comp_time"].iloc[0]))
+            else:
+                times.append(0.0)
+
+        # Offset for the current series bar inside the budget group
+        offset = (i - (n_series - 1) / 2) * width
+        
+        # Style/Color matching our professional design system
+        first_row = df_series.iloc[0] if not df_series.empty else None
+        is_longrun = bool(first_row["is_longrun"]) if first_row is not None else False
+        mu_al = float(first_row["mu_alfa"]) if first_row is not None else 0.0
+        mu_bet = float(first_row["mu_beta"]) if first_row is not None else 0.0
+
+        if mu_al == 0.0 and mu_bet == 0.0:
+            color = "#7f7f7f"  # Grey for Baseline
+            hatch = ""
+        else:
+            # Color represents bliters (is_longrun)
+            color = "#e67e22" if is_longrun else "#1f77b4"  # Orange for bliters=10, Blue for bliters=3
+            
+            # Hatch represents mu_alfa and mu_beta values
+            if np.isclose(mu_al, 1e-8) and np.isclose(mu_bet, 1e-3):
+                hatch = "//"
+            elif np.isclose(mu_al, 1e-7) and np.isclose(mu_bet, 5e-3):
+                hatch = "xx"
+            else:
+                hatch = ""
+
+        ax.bar(
+            x + offset,
+            times,
+            width,
+            label=series,
+            color=color,
+            hatch=hatch,
+            edgecolor="black",
+            linewidth=0.7,
+            alpha=0.85
+        )
+
+    # Helper function to format budget labels beautifully (e.g. 100000 -> 100k)
+    def format_budget(b: float) -> str:
+        if b >= 1e6:
+            return f"{b/1e6:g}M"
+        elif b >= 1e3:
+            return f"{b/1e3:g}k"
+        return f"{b:g}"
+
+    ax.set_xticks(x)
+    ax.set_xticklabels([format_budget(b) for b in budgets], fontsize=10, fontweight="bold")
+    ax.set_xlabel("Budget", fontsize=11, fontweight="bold", labelpad=10)
+    ax.set_ylabel("Computational Time (seconds)", fontsize=11, fontweight="bold", labelpad=10)
+    ax.set_title("red_iberia_simple: Computational Time Comparison by Budget (lam=10)", fontsize=13, fontweight="bold", pad=15)
+    
+    # Grid lines behind the bars
+    ax.grid(True, which="major", axis="y", linestyle="--", alpha=0.35)
+    ax.set_axisbelow(True)
+    
+    ax.legend(fontsize=9, loc="upper left", framealpha=0.9)
+    fig.tight_layout()
+    
+    # Save the plot
+    fig.savefig(OUT_DIR / "comp_time_by_budget_lam_10.png", dpi=180)
+    plt.close(fig)
+
+
 def main() -> None:
     df = load_results()
     save_tables(df)
     plot_objective_by_budget(df)
     plot_longrun_delta(df)
     plot_longrun_improvement_vs_mu0(df)
+    plot_comp_time_by_budget(df)
 
     longrun = df[df["is_longrun"]].sort_values(["lam", "budget"])
     if longrun.empty:
