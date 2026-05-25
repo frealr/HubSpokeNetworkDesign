@@ -200,6 +200,7 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
                 marker = "o"
                 linewidth = 1.8
                 markersize = 6
+                zorder = 2
             elif np.isclose(mu_al, 1e-8) and np.isclose(mu_bet, 1e-3):
                 color = "#e67e22" if is_longrun else "#1f77b4"  # Orange for bliters=10, Blue for bliters=3
                 if is_longrun:
@@ -207,11 +208,13 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
                     marker = "^"
                     linewidth = 2.4
                     markersize = 7
+                    zorder = 8
                 else:
                     linestyle = "-."
                     marker = "v"
                     linewidth = 1.8
                     markersize = 6
+                    zorder = 4
             elif np.isclose(mu_al, 1e-7) and np.isclose(mu_bet, 5e-3):
                 color = "#e67e22" if is_longrun else "#1f77b4"  # Orange for bliters=10, Blue for bliters=3
                 if is_longrun:
@@ -219,17 +222,20 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
                     marker = "D"
                     linewidth = 2.4
                     markersize = 7
+                    zorder = 10
                 else:
                     linestyle = "--"
                     marker = "s"
                     linewidth = 1.8
                     markersize = 6
+                    zorder = 5
             else:
                 color = "#2ca02c"  # Fallback green
                 linestyle = "-" if is_longrun else "--"
                 marker = "x"
                 linewidth = 1.8
                 markersize = 6
+                zorder = 3
 
             # Jittering to avoid overlapping lines and points on the log-scale x-axis
             jitter_factor = 1.0 + (i - (num_series - 1) / 2) * 0.035
@@ -244,6 +250,7 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
                 linewidth=linewidth,
                 markersize=markersize,
                 label=series,
+                zorder=zorder,
             )
 
         ax.set_xscale("log")
