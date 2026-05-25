@@ -150,6 +150,10 @@ def plot_results(results, output_path):
     blo_vs_mip_gap = np.array([item["blo_vs_mip_gap"] for item in results], dtype=float)
     mip_reported_gap = np.array([item["mip_reported_gap"] for item in results], dtype=float)
 
+    # Clamp extremely small numerical noise to exactly 0.0
+    blo_vs_mip_gap[np.abs(blo_vs_mip_gap) < 1e-12] = 0.0
+    mip_reported_gap[np.abs(mip_reported_gap) < 1e-12] = 0.0
+
     fig, ax = plt.subplots(figsize=(9.5, 5.8))
     
     if len(budgets) > 1:
