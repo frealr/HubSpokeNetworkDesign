@@ -176,6 +176,10 @@ def save_tables(df: pd.DataFrame) -> None:
 
 def plot_objective_by_budget(df: pd.DataFrame) -> None:
     for lam, df_lam in df.groupby("lam"):
+        # Filter for budgets <= 5e5 (500k)
+        df_lam = df_lam[df_lam["budget"] <= 5e5].copy()
+        if df_lam.empty:
+            continue
         fig, ax = plt.subplots(figsize=(10, 6))
         
         # Sort groups so jittering is consistently ordered by parameters/is_longrun
