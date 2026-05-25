@@ -202,7 +202,8 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
                 markersize = 6
                 zorder = 2
             elif np.isclose(mu_al, 1e-8) and np.isclose(mu_bet, 1e-3):
-                color = "#e67e22" if is_longrun else "#1f77b4"  # Orange for bliters=10, Blue for bliters=3
+                # Light Orange for bliters=10, Light Blue for bliters=3
+                color = "#f5b041" if is_longrun else "#5dade2"
                 if is_longrun:
                     linestyle = "-"
                     marker = "^"
@@ -216,7 +217,8 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
                     markersize = 6
                     zorder = 4
             elif np.isclose(mu_al, 1e-7) and np.isclose(mu_bet, 5e-3):
-                color = "#e67e22" if is_longrun else "#1f77b4"  # Orange for bliters=10, Blue for bliters=3
+                # Dark Orange/Rust for bliters=10, Dark Blue for bliters=3
+                color = "#d35400" if is_longrun else "#1f77b4"
                 if is_longrun:
                     linestyle = "-"
                     marker = "D"
@@ -237,8 +239,9 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
                 markersize = 6
                 zorder = 3
 
-            # Jittering to avoid overlapping lines and points on the log-scale x-axis
-            jitter_factor = 1.0 + (i - (num_series - 1) / 2) * 0.035
+            # Tiny jittering (1% step) to avoid overlapping lines and points on log-scale x-axis 
+            # without distorting visual budget-efficiency
+            jitter_factor = 1.0 + (i - (num_series - 1) / 2) * 0.01
             jittered_budgets = df_series["budget"] * jitter_factor
 
             ax.plot(
