@@ -181,9 +181,10 @@ def plot_results(results, output_path):
 
     ax.set_xlabel("Budget", fontsize=11, fontweight="bold")
     ax.set_ylabel("Gap [%]", fontsize=11, fontweight="bold")
+    ax.set_yscale("symlog", linthresh=0.01)
     ax.set_title("8-node Spain: Optimality Gap Comparison", fontsize=13, fontweight="bold", pad=15)
     ax.set_xticks(budgets)
-    ax.grid(True, which="major", axis="y", linestyle="--", alpha=0.3)
+    ax.grid(True, which="both", axis="y", linestyle="--", alpha=0.3)
     ax.set_axisbelow(True)
     ax.legend(loc="upper right", fontsize=9)
 
