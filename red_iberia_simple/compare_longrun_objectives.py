@@ -193,21 +193,52 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
             mu_al = float(first_row["mu_alfa"])
             mu_bet = float(first_row["mu_beta"])
             
-            # Premium & distinct line/marker styles
-            if is_longrun:
-                linestyle, marker, linewidth, markersize = "-", "D", 2.6, 7
-            elif mu_al == 0.0 and mu_bet == 0.0:
-                linestyle, marker, linewidth, markersize = ":", "o", 1.8, 5
-            elif mu_al == 1e-7 and mu_bet == 5e-3:
-                linestyle, marker, linewidth, markersize = "--", "s", 1.8, 5
+            # Premium & distinct line/marker styles matching the color scheme of computational times
+            if mu_al == 0.0 and mu_bet == 0.0:
+                color = "#7f7f7f"  # Grey for Baseline
+                linestyle = ":"
+                marker = "o"
+                linewidth = 1.8
+                markersize = 6
             elif np.isclose(mu_al, 1e-8) and np.isclose(mu_bet, 1e-3):
-                linestyle, marker, linewidth, markersize = "-.", "v", 1.8, 5
+                color = "#e67e22" if is_longrun else "#1f77b4"  # Orange for bliters=10, Blue for bliters=3
+                if is_longrun:
+                    linestyle = "-"
+                    marker = "^"
+                    linewidth = 2.4
+                    markersize = 7
+                else:
+                    linestyle = "-."
+                    marker = "v"
+                    linewidth = 1.8
+                    markersize = 6
+            elif np.isclose(mu_al, 1e-7) and np.isclose(mu_bet, 5e-3):
+                color = "#e67e22" if is_longrun else "#1f77b4"  # Orange for bliters=10, Blue for bliters=3
+                if is_longrun:
+                    linestyle = "-"
+                    marker = "D"
+                    linewidth = 2.4
+                    markersize = 7
+                else:
+                    linestyle = "--"
+                    marker = "s"
+                    linewidth = 1.8
+                    markersize = 6
             else:
-                linestyle, marker, linewidth, markersize = "-.", "^", 1.8, 5
+                color = "#2ca02c"  # Fallback green
+                linestyle = "-" if is_longrun else "--"
+                marker = "x"
+                linewidth = 1.8
+                markersize = 6
+
+            # Jittering to avoid overlapping lines and points on the log-scale x-axis
+            jitter_factor = 1.0 + (i - (num_series - 1) / 2) * 0.035
+            jittered_budgets = df_series["budget"] * jitter_factor
 
             ax.plot(
-                df_series["budget"],
+                jittered_budgets,
                 df_series["obj_val"],
+                color=color,
                 linestyle=linestyle,
                 marker=marker,
                 linewidth=linewidth,
