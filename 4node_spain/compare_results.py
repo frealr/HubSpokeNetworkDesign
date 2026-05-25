@@ -188,61 +188,46 @@ def compare_budget(budget, lam, alfa, mu_alfa, mu_beta, demand, prices, op_link_
 
 
 def plot_results(results, output_path):
-    budgets = [int(round(item["budget"])) for item in results]
-    blo_vs_mip_gap = [item["blo_vs_mip_gap"] for item in results]
-    mip_reported_gap = [item["mip_reported_gap"] for item in results]
+    budgets = np.array([int(round(item["budget"])) for item in results], dtype=float)
+    blo_vs_mip_gap = np.array([item["blo_vs_mip_gap"] for item in results], dtype=float)
+    mip_reported_gap = np.array([item["mip_reported_gap"] for item in results], dtype=float)
 
-    fig, ax_gap = plt.subplots(figsize=(9.5, 5.8))
-    ax_mip = ax_gap.twinx()
-
+    fig, ax = plt.subplots(figsize=(9.5, 5.8))
+    
     if len(budgets) > 1:
-        bar_width = 0.55 * min(np.diff(budgets))
+        width = 0.35 * min(np.diff(budgets))
     else:
-        bar_width = 5000
+        width = 5000
 
-    bars = ax_mip.bar(
-        budgets,
+    # Grouped bars side-by-side
+    bars_mip = ax.bar(
+        budgets - width / 2,
         mip_reported_gap,
-        width=bar_width,
+        width=width,
         color="#1f77b4",
-        alpha=0.18,
-        edgecolor="#1f77b4",
-        linewidth=1.5,
+        alpha=0.8,
+        edgecolor="black",
+        linewidth=0.7,
         label="Optimality gap MIP (.mat)",
-        zorder=1,
     )
-
-    (line,) = ax_gap.plot(
-        budgets,
+    bars_blo = ax.bar(
+        budgets + width / 2,
         blo_vs_mip_gap,
-        "x-",
-        linewidth=2,
-        markersize=8,
+        width=width,
         color="#2e7d32",
+        alpha=0.8,
+        edgecolor="black",
+        linewidth=0.7,
         label="Gap BLO vs MIP",
-        zorder=3,
     )
 
-    gap_min = min(blo_vs_mip_gap)
-    gap_max = max(blo_vs_mip_gap)
-    gap_span = max(gap_max - gap_min, 0.25)
-    gap_pad = 0.2 * gap_span
-
-    ax_gap.set_xlabel("Budget")
-    ax_gap.set_ylabel("Gap BLO vs MIP [%]", color="#2e7d32")
-    ax_gap.set_ylim(gap_min - gap_pad, gap_max + gap_pad)
-    ax_gap.tick_params(axis="y", colors="#2e7d32")
-    ax_gap.set_xticks(budgets)
-    ax_gap.grid(True, alpha=0.3)
-    ax_gap.set_axisbelow(True)
-
-    ax_mip.set_ylabel("Optimality gap MIP [%]", color="#1f77b4")
-    ax_mip.tick_params(axis="y", colors="#1f77b4")
-    mip_upper = max(mip_reported_gap) * 1.08 if mip_reported_gap else 1.0
-    ax_mip.set_ylim(0, mip_upper if mip_upper > 0 else 1.0)
-
-    ax_gap.set_title("4-node Spain: BLO vs MIP and MIP optimality gap")
-    ax_gap.legend([line, bars], [line.get_label(), bars.get_label()], loc="upper right")
+    ax.set_xlabel("Budget", fontsize=11, fontweight="bold")
+    ax.set_ylabel("Gap [%]", fontsize=11, fontweight="bold")
+    ax.set_title("4-node Spain: Optimality Gap Comparison", fontsize=13, fontweight="bold", pad=15)
+    ax.set_xticks(budgets)
+    ax.grid(True, which="major", axis="y", linestyle="--", alpha=0.3)
+    ax.set_axisbelow(True)
+    ax.legend(loc="upper right", fontsize=9)
 
     fig.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
