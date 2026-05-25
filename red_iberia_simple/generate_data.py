@@ -227,6 +227,16 @@ def assign_yield(y_market, global_mean):
     return get
 
 
+def get_via_mad_price(o, d, idx, dist, y_market):
+    """Precio medio de los cuatro mercados radiales usados para imputar O-D."""
+    via_mad_keys = ((o, 'MAD'), ('MAD', d), ('MAD', o), (d, 'MAD'))
+    radial_prices = [
+        (y_market[key] / 100.0) * dist[idx[key[0]], idx[key[1]]]
+        for key in via_mad_keys
+    ]
+    return float(np.mean(radial_prices))
+
+
 TOP_N = 25  # número de aeropuertos a incluir
 FORCED_INCLUDE_AIRPORTS = {"EZE", "MEX", "GRU", "LIM"}
 FORCED_EXCLUDE_AIRPORTS = {"DUS", "ORD", "LGW"}
@@ -235,8 +245,8 @@ FORCED_EXCLUDE_AIRPORTS = {"DUS", "ORD", "LGW"}
 TRANSATLANTIC_AIRPORTS = {"EZE", "GRU", "JFK", "LIM", "MEX"}
 A_NOM_NARROW = 171.0    # capacidad A321 (pax)
 A_NOM_WIDE   = 320.0    # capacidad B350 para transatlánticos (pax)
-OP_COST_NARROW = 7600.0  # EUR/hora bloque A321
-OP_COST_WIDE   = 12350.0 # EUR/hora bloque B350
+OP_COST_NARROW = 7600.0 * 0.95  # EUR/hora bloque A321  (-5%)
+OP_COST_WIDE   = 12350.0 * 0.80 # EUR/hora bloque B350  (-20%)
 
 
 def top_n_airports(dd_full, n=TOP_N):
@@ -276,8 +286,8 @@ def top_n_airports(dd_full, n=TOP_N):
 def build_network():
     """Lee datos fuente y devuelve todos los parámetros de la red.
 
-    Solo incluye los TOP_N aeropuertos por demanda total y los mercados
-    entre ellos, con inclusiones/exclusiones forzadas. Yield: directo >
+    Usa la misma selección fija de nodos que red_iberia_MAD, pero sin
+    filtrar los mercados a solo los de yield directo. Yield: directo >
     vía MAD > media global.
     """
     iata_re = re.compile(r'^[A-Z]{3}$')
@@ -288,7 +298,12 @@ def build_network():
     global_mean = dy['Yield-PKT'].mean()
     get_yield = assign_yield(y_market, global_mean)
 
-    # ── Demanda completa → top-N nodos → filtrar mercados ────────────────────
+    # ── Aeropuertos permitidos: lista fija en node_mapping.csv ───────────────
+    node_mapping = pd.read_csv(os.path.join(BASE_DIR, 'node_mapping.csv'))
+    allowed_nodes = set(node_mapping['iata'].tolist())
+    all_airports_full = pd.read_csv(os.path.join(BASE_DIR, 'airports_full.csv'))
+
+    # ── Demanda: mismos nodos que red_iberia_MAD, sin filtrar por yield ─────
     dd_full = pd.read_excel(os.path.join(BASE_DIR, 'demanda.xlsx'),
                             sheet_name='demanda_completa')
     dd_full = dd_full.dropna(subset=['Origen', 'Destino'])
@@ -296,16 +311,10 @@ def build_network():
                       dd_full['Destino'].apply(lambda x: bool(iata_re.match(str(x))))]
     dd_full = dd_full[dd_full['Promedio de Suma de Demanda'] > 0]
 
-    top_nodes = top_n_airports(dd_full, TOP_N)
-    print(f'  Inclusiones forzadas: {sorted(FORCED_INCLUDE_AIRPORTS)}')
-    print(f'  Exclusiones forzadas: {sorted(FORCED_EXCLUDE_AIRPORTS)}')
-    dd = dd_full[dd_full['Origen'].isin(top_nodes) & dd_full['Destino'].isin(top_nodes)]
+    dd = dd_full[dd_full['Origen'].isin(allowed_nodes) & dd_full['Destino'].isin(allowed_nodes)].copy()
 
-    # Nodos activos (MAD=i1, BCN=i2, resto alfabético)
+    # Nodos activos presentes en la demanda filtrada (orden: MAD=i1, BCN=i2, resto alfab.)
     active_nodes = order_nodes(dd['Origen'].tolist() + dd['Destino'].tolist())
-
-    # Actualizar airports.csv con los 99 nodos activos
-    all_airports_full = pd.read_csv(os.path.join(BASE_DIR, 'airports_full.csv'))
     airports = all_airports_full[all_airports_full['iata'].isin(active_nodes)].copy()
     airports['order_key'] = airports['iata'].map({iata: k for k, iata in enumerate(active_nodes)})
     airports = airports.sort_values('order_key').drop(columns='order_key').reset_index(drop=True)
@@ -323,7 +332,7 @@ def build_network():
     for _, row in dd.iterrows():
         _, cat = get_yield(row['Origen'], row['Destino'])
         counts[cat] += 1
-    print(f'  Nodos: {n}  |  Mercados: {len(dd)}')
+    print(f'  Nodos: {n}  |  Mercados (allowed_nodes, sin filtrar por yield): {len(dd)}')
     print(f'  Yield directo: {counts["directo"]}  |  Vía MAD: {counts["via_mad"]}  |  Media global: {counts["media_global"]}')
 
     # ── Distancias (km) ───────────────────────────────────────────────────────
@@ -333,14 +342,17 @@ def build_network():
             if i != j:
                 dist[i, j] = haversine_km(lats[i], lons[i], lats[j], lons[j])
 
-    # ── Precios: (yield en centimos/km) / 100 × distancia ────────────────────
+    # ── Precios: yield directa por distancia; si se imputa via MAD, precio medio radial
     prices = np.zeros((n, n))
     for i, o in enumerate(nodes):
         for j, d in enumerate(nodes):
             if i == j:
                 continue
-            y, _ = get_yield(o, d)
-            prices[i, j] = (y / 100.0) * dist[i, j]
+            y, yield_source = get_yield(o, d)
+            if yield_source == 'via_mad':
+                prices[i, j] = get_via_mad_price(o, d, idx, dist, y_market)
+            else:
+                prices[i, j] = (y / 100.0) * dist[i, j]
 
     # ── Demanda (pax/semana) ──────────────────────────────────────────────────
     demand = np.zeros((n, n))
@@ -480,7 +492,7 @@ def get_linearization(n, nreg, alt_utility, vals_regs, n_airlines):
 if __name__ == '__main__':
     os.makedirs(os.path.join(BASE_DIR, 'export_txt'), exist_ok=True)
 
-    print('Construyendo red iberia (99 nodos)…')
+    print('Construyendo red iberia simple (mismos nodos que MAD, sin filtro de mercados por yield)…')
     (n, nodes, idx, distance,
      link_cost, station_cost, hub_cost,
      link_capacity_slope, station_capacity_slope,

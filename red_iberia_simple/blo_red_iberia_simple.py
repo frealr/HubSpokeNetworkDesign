@@ -125,7 +125,7 @@ def prepare_gams_run_dir():
 
 
 def run_single_start(start_name, sh_prev_init, lam, alfa, budget, mu_alfa, mu_beta,
-                     net_params, niters=40, bliters=1, gamma=20):
+                     net_params, niters=30, bliters=10, gamma=20):
     run_dir = prepare_gams_run_dir()
     try:
         result = compute_blo(
@@ -140,7 +140,7 @@ def run_single_start(start_name, sh_prev_init, lam, alfa, budget, mu_alfa, mu_be
 
 
 def run_budget_multistart(lam, alfa, budget, mu_alfa, mu_beta, net_params,
-                          high_value, niters=40, bliters=1, gamma=20):
+                          high_value, niters=40, bliters=10, gamma=20):
     """Ejecuta las tres inicializaciones en paralelo y conserva la mejor."""
     nodes = net_params[1]
     starts = build_sh_multistarts(nodes, high_value)
@@ -190,7 +190,7 @@ def run_budget_multistart(lam, alfa, budget, mu_alfa, mu_beta, net_params,
 
 
 def run_budget_case(budget, lam, alfa, mu_alfa, mu_beta, net_params,
-                    sh_init_high_value, out_dir, niters=40, bliters=1, gamma=20):
+                    sh_init_high_value, out_dir, niters=40, bliters=10, gamma=20):
     print(f'\n=== budget={budget:.0e} ===', flush=True)
     result = run_budget_multistart(
         lam, alfa, budget, mu_alfa, mu_beta, net_params,
@@ -198,7 +198,7 @@ def run_budget_case(budget, lam, alfa, mu_alfa, mu_beta, net_params,
     )
 
     fname = (f'bud={budget:.2e}_lam={lam}_alfa={alfa}'
-             f'_mu_al={mu_alfa:.2e}_mu_bet={mu_beta:.2e}_python.mat')
+             f'_mu_al={mu_alfa:.2e}_mu_bet={mu_beta:.2e}_python_longrun.mat')
     sio.savemat(os.path.join(out_dir, fname), result)
     print(
         f'  best_start={result["selected_start"]}  '
@@ -260,7 +260,7 @@ def read_outputs(out_xlsx, n):
 # ─── BLO ──────────────────────────────────────────────────────────────────────
 
 def compute_blo(lam, alfa, budget, mu_alfa, mu_beta, sh_prev_init,
-                net_params, niters=40, bliters=1, gamma=20, work_dir=None):
+                net_params, niters=40, bliters=10, gamma=20, work_dir=None):
     (n, nodes, idx, distance,
      link_cost, station_cost, hub_cost,
      link_capacity_slope, station_capacity_slope,
@@ -483,13 +483,19 @@ if __name__ == '__main__':
     # Parámetros BLO
     lam = 10
     alfa = 0.1
-    #mu_alfa = 1e-7
-    #mu_beta = 0.01
-    mu_alfa = 0
-    mu_beta = 0
+    mu_alfa = 1e-7
+    mu_beta = 0.005
+    mu_alfa = 1e-8
+    mu_beta = 1e-3
+
 
     # 4 presupuestos por décadas
     budgets = [1e5,1.5e5,2e5,3e5,5e5,1e6,5e6]
+    #pongo solo los que faltan
+    budgets = [1e4,2.5e4,5e4,7.5e4,2.5e5]
+
+    #estos serian todos
+    budgets = [1e4,2.5e4,5e4,7.5e4,1e5,1.5e5,2e5,2.5e5,3e5,5e5]
 
     out_dir = os.path.join(BASE_DIR, 'hs_prueba_v0_blo')
     os.makedirs(out_dir, exist_ok=True)

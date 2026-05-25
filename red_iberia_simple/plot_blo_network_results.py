@@ -140,12 +140,15 @@ def compute_map_extent(airports):
 
 def load_result(mat_path):
     data = sio.loadmat(mat_path)
-    return {
+    result = {
         "s": np.ravel(data["s"]),
         "sh": np.ravel(data["sh"]),
         "a": np.asarray(data["a"], dtype=float),
         "fij": np.asarray(data["fij"], dtype=float),
     }
+    if "f" in data:
+        result["f"] = np.asarray(data["f"], dtype=float)
+    return result
 
 
 def compute_connection_percentages(fij, demand):
@@ -312,6 +315,20 @@ def plot_hub_connection_percentages(
 def compute_market_profitability(nodes, demand, prices, op_link_cost, a_nom, tau, f, fij):
     """Rentabilidad por pasajero y mercado para una solución dada."""
     n = len(nodes)
+    columns = [
+        "origin",
+        "destination",
+        "type",
+        "f_iberia",
+        "demand_pax_week",
+        "pax_served_week",
+        "price_eur",
+        "op_cost_per_pax",
+        "margin_per_pax",
+        "total_revenue_week",
+        "total_op_cost_week",
+        "total_margin_week",
+    ]
     rows = []
     for o in range(n):
         for d in range(n):
@@ -339,7 +356,12 @@ def compute_market_profitability(nodes, demand, prices, op_link_cost, a_nom, tau
                 "total_op_cost_week": float(cost_per_pax * pax_served),
                 "total_margin_week": float(margin_per_pax * pax_served),
             })
-    return pd.DataFrame(rows).sort_values("total_margin_week", ascending=False).reset_index(drop=True)
+    if not rows:
+        return pd.DataFrame(columns=columns)
+
+    return pd.DataFrame(rows, columns=columns).sort_values(
+        "total_margin_week", ascending=False
+    ).reset_index(drop=True)
 
 
 def process_mat(mat_path, nodes, airports, demand, prices, op_link_cost, a_nom, tau):
@@ -369,6 +391,10 @@ def process_mat(mat_path, nodes, airports, demand, prices, op_link_cost, a_nom, 
                 f"    {code}: {pct:5.1f}%  "
                 f"(connection={conn:10.2f}, total={total:10.2f})"
             )
+
+    if "f" not in result:
+        print("  rentabilidad por mercado: omitida (campo 'f' no disponible en el MAT)")
+        return
 
     df_prof = compute_market_profitability(
         nodes, demand, prices, op_link_cost, a_nom, tau,
