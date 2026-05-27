@@ -203,7 +203,7 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.Robinson(central_longitude=-12))
     add_map_background(ax, compute_map_extent(airports))
 
-    max_a = float(np.max(a)) if np.max(a) > 1e-12 else 1.0
+    A_REF = 6.0  # Fixed reference for absolute arc thickness scaling (global max_a is ~5.65)
     hub_mask = sh > 1e-2
     hub_scale = float(np.max(sh[hub_mask])) if np.any(hub_mask) else 1.0
 
@@ -221,7 +221,7 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
                 airport_j["lon"],
                 airport_j["lat"],
             )
-            rel = aij / max_a
+            rel = min(aij / A_REF, 1.0)
             lw = 0.6 + 5.4 * rel
             alpha = 0.25 + 0.55 * rel
             ax.plot(

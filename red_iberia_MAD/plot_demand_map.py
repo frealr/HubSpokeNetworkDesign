@@ -205,8 +205,8 @@ def main():
     ax.add_feature(cfeature.COASTLINE.with_scale('110m'), linewidth=0.5,
                    edgecolor='#666666', zorder=2)
 
-    # Arc demand: normalise thickness by demand
-    max_demand = df['Promedio de Suma de Demanda'].max()
+    # Arc demand: absolute thickness by demand
+    DEMAND_REF = 4000.0  # Fixed reference for absolute demand scaling (global max demand is ~3600)
 
     for _, row in df.iterrows():
         o, d = row['Origen'], row['Destino']
@@ -216,15 +216,15 @@ def main():
         _, lat2, lon2 = AIRPORTS[d]
         lons, lats = _great_circle_pts(lon1, lat1, lon2, lat2)
         demand = row['Promedio de Suma de Demanda']
-        lw = 0.3 + 2.0 * (demand / max_demand)
-        alpha = 0.25 + 0.55 * (demand / max_demand)
+        lw = 0.3 + 2.0 * min(demand / DEMAND_REF, 1.0)
+        alpha = 0.25 + 0.55 * min(demand / DEMAND_REF, 1.0)
         ax.plot(lons, lats, color='steelblue', linewidth=lw, alpha=alpha,
                 transform=PROJ, zorder=3)
 
     out_dir = os.path.join(base_dir, 'plots')
     os.makedirs(out_dir, exist_ok=True)
 
-    max_demand = df['Promedio de Suma de Demanda'].max()
+    DEMAND_REF = 4000.0  # Fixed reference for absolute demand scaling (global max demand is ~3600)
 
     def _draw_map(ax, nodes, demand_df, label_offset=1.0, node_ms=6, arc_lw_max=2.0, fontsize=5.5):
         ax.add_feature(cfeature.OCEAN.with_scale('110m'),    color='#c8e6f5', zorder=0)
@@ -242,8 +242,8 @@ def main():
             _, lat2, lon2 = AIRPORTS[d]
             lons, lats = _great_circle_pts(lon1, lat1, lon2, lat2)
             demand = row['Promedio de Suma de Demanda']
-            lw = 0.3 + arc_lw_max * (demand / max_demand)
-            alpha = 0.25 + 0.55 * (demand / max_demand)
+            lw = 0.3 + arc_lw_max * min(demand / DEMAND_REF, 1.0)
+            alpha = 0.25 + 0.55 * min(demand / DEMAND_REF, 1.0)
             ax.plot(lons, lats, color='steelblue', linewidth=lw, alpha=alpha,
                     transform=PROJ, zorder=3)
 
