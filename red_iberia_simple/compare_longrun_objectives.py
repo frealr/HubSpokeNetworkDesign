@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'DejaVu Sans'
 import numpy as np
 import pandas as pd
 import scipy.io as sio
@@ -51,8 +52,8 @@ def load_scalar(data: dict, key: str) -> float | None:
 
 def combo_label(row: pd.Series) -> str:
     if row["mu_alfa"] == 0.0 and row["mu_beta"] == 0.0:
-        return "mu_al=0e+00, mu_b=0e+00"
-    base = f"mu_al={row['mu_alfa']:.0e}, mu_b={row['mu_beta']:.0e}"
+        return "single level"
+    base = r"$\mu_\alpha$=" + f"{row['mu_alfa']:.0e}" + r", $\mu_\beta$=" + f"{row['mu_beta']:.0e}"
     if row["is_longrun"]:
         return f"{base} bliters=10"
     return f"{base} bliters=3"
@@ -60,8 +61,8 @@ def combo_label(row: pd.Series) -> str:
 
 def series_label(row: pd.Series) -> str:
     if row["mu_alfa"] == 0.0 and row["mu_beta"] == 0.0:
-        return "mu_al=0e+00 | mu_b=0e+00"
-    base = f"mu_al={row['mu_alfa']:.0e} | mu_b={row['mu_beta']:.0e}"
+        return "single level"
+    base = r"$\mu_\alpha$=" + f"{row['mu_alfa']:.0e}" + r" | $\mu_\beta$=" + f"{row['mu_beta']:.0e}"
     if row["is_longrun"]:
         return f"{base} | bliters=10"
     return f"{base} | bliters=3"
@@ -263,9 +264,9 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
         ax.set_xscale("log")
         ax.set_xlabel("Budget")
         ax.set_ylabel("Objective value (lower is better)")
-        ax.set_title(f"red_iberia_simple: objective by budget (lam={lam:g})")
+        ax.set_title(r"Objective comparison between single level and bilevel schemes ($\lambda$ = " + f"{lam:g})", fontsize=13, fontweight="bold")
         ax.grid(True, which="both", linestyle="--", alpha=0.35)
-        ax.legend(fontsize=9)
+        ax.legend(fontsize=12)
         fig.tight_layout()
         fig.savefig(OUT_DIR / f"objective_by_budget_lam_{lam:g}_with_longrun_longrun.png", dpi=180)
         plt.close(fig)
@@ -290,7 +291,7 @@ def plot_longrun_delta(df: pd.DataFrame) -> None:
         ax.set_xscale("log")
         ax.set_xlabel("Budget")
         ax.set_ylabel("best regular obj - longrun obj")
-        ax.set_title(f"Longrun improvement vs best regular run (lam={lam:g})")
+        ax.set_title(r"Longrun improvement vs best regular run ($\lambda$ = " + f"{lam:g})", fontweight="bold")
         ax.grid(True, which="both", linestyle="--", alpha=0.35)
         fig.tight_layout()
         fig.savefig(OUT_DIR / f"longrun_improvement_vs_best_regular_lam_{lam:g}_longrun.png", dpi=180)
@@ -315,8 +316,8 @@ def plot_longrun_improvement_vs_mu0(df: pd.DataFrame) -> None:
         ax.axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
         ax.set_xscale("log")
         ax.set_xlabel("Budget")
-        ax.set_ylabel("Improvement vs mu_al=0, mu_b=0 [%]")
-        ax.set_title(f"Longrun improvement vs mu=0 baseline (lam={lam:g})")
+        ax.set_ylabel("Improvement vs single level baseline [%]")
+        ax.set_title(r"Longrun improvement vs single level baseline ($\lambda$ = " + f"{lam:g})", fontweight="bold")
         ax.grid(True, which="both", linestyle="--", alpha=0.35)
         fig.tight_layout()
         fig.savefig(OUT_DIR / f"longrun_improvement_pct_vs_mu0_lam_{lam:g}_longrun.png", dpi=180)
@@ -420,13 +421,13 @@ def plot_comp_time_by_budget(df: pd.DataFrame) -> None:
     ax.set_xticklabels([format_budget(b) for b in budgets], fontsize=10, fontweight="bold")
     ax.set_xlabel("Budget", fontsize=11, fontweight="bold", labelpad=10)
     ax.set_ylabel("Computational Time (seconds)", fontsize=11, fontweight="bold", labelpad=10)
-    ax.set_title("red_iberia_simple: Computational Time Comparison by Budget (lam=10)", fontsize=13, fontweight="bold", pad=15)
+    ax.set_title(r"Computational Time Comparison by Budget ($\lambda$ = 10)", fontsize=13, fontweight="bold", pad=15)
     
     # Grid lines behind the bars
     ax.grid(True, which="major", axis="y", linestyle="--", alpha=0.35)
     ax.set_axisbelow(True)
     
-    ax.legend(fontsize=9, loc="upper left", framealpha=0.9)
+    ax.legend(fontsize=12, loc="upper left", framealpha=0.9)
     fig.tight_layout()
     
     # Save the plot

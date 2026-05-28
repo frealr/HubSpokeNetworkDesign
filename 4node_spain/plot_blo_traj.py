@@ -3,6 +3,7 @@ import os
 import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'DejaVu Sans'
 import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import cartopy.crs as ccrs
@@ -136,10 +137,10 @@ def plot_network_topology(mat_path, show=True):
                       alpha=0.75, label='Link'),
     ]
     ax.legend(handles=legend_handles, loc='upper right',
-              fontsize=9, framealpha=0.9)
+              fontsize=12, framealpha=0.9)
 
     title = mat_path.split('/')[-1].replace('.mat', '')
-    ax.set_title(f'Network topology – {title}', fontsize=10, pad=8)
+    ax.set_title(f'Network topology – {title}', fontsize=12, fontweight='bold', pad=8)
 
     out_path = _out_path(mat_path, '_map.png')
     plt.savefig(out_path, dpi=150, bbox_inches='tight')
@@ -161,7 +162,7 @@ def plot_sh_trajectory(mat_path, show=True):
 
     fig, ax = plt.subplots(figsize=(8, 5))
     title = mat_path.split('/')[-1].replace('.mat', '')
-    fig.suptitle(title, fontsize=9)
+    fig.suptitle(title, fontsize=11, fontweight='bold')
 
     for i in range(n):
         values = np.where(sh_traj[:, i] > 1e-2,
@@ -177,8 +178,8 @@ def plot_sh_trajectory(mat_path, show=True):
 
     ax.set_xlabel('Outer iteration')
     ax.set_ylabel('s + sh  (hub active)  /  sh  (otherwise)')
-    ax.set_title('Hub/station capacity trajectory')
-    ax.legend(fontsize=9)
+    ax.set_title('Hub/station capacity trajectory', fontsize=12, fontweight='bold')
+    ax.legend(fontsize=12)
     ax.grid(True, linestyle='--', alpha=0.4)
     plt.tight_layout()
 
@@ -205,7 +206,7 @@ def plot_f_trajectory(mat_path, show=True):
 
     fig, ax = plt.subplots(figsize=(10, 6))
     title = mat_path.split('/')[-1].replace('.mat', '')
-    fig.suptitle(title, fontsize=9)
+    fig.suptitle(title, fontsize=11, fontweight='bold')
 
     for idx, (o, d) in enumerate(od_pairs):
         o_iata = NODE_ORDER[o] if o < len(NODE_ORDER) else str(o + 1)
@@ -219,8 +220,8 @@ def plot_f_trajectory(mat_path, show=True):
 
     ax.set_xlabel('Outer iteration')
     ax.set_ylabel('f$^{od}$  (market share)')
-    ax.set_title('Market share trajectory per OD pair')
-    ax.legend(ncol=3, fontsize=8, loc='best')
+    ax.set_title('Market share trajectory per OD pair', fontsize=12, fontweight='bold')
+    ax.legend(ncol=3, fontsize=10, loc='best')
     ax.grid(True, linestyle='--', alpha=0.4)
     plt.tight_layout()
 

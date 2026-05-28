@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'DejaVu Sans'
 import numpy as np
 import scipy.io as sio
 
@@ -232,7 +233,7 @@ def plot_results(results, output_path):
     ax.set_xticks(budgets)
     ax.grid(True, which="both", axis="y", linestyle="--", alpha=0.3)
     ax.set_axisbelow(True)
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="upper right", fontsize=12)
 
     fig.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -271,10 +272,10 @@ def plot_time_results(results, output_path):
     ax.set_yscale("log")
     ax.set_xlabel("Budget")
     ax.set_ylabel("Computation time [s]")
-    ax.set_title("4-node Spain: computation time BLO vs MIP")
+    ax.set_title("4-node Spain: Computation Time BLO vs MIP", fontsize=13, fontweight="bold", pad=15)
     ax.set_xticks(budgets)
     ax.grid(True, which="both", axis="y", alpha=0.3)
-    ax.legend(loc="upper right")
+    ax.legend(loc="upper right", fontsize=12)
 
     fig.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)

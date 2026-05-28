@@ -5,6 +5,7 @@ from urllib.request import urlopen
 import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'DejaVu Sans'
 import matplotlib.lines as mlines
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -224,10 +225,10 @@ def _build_network_topology_figure(mat_path, use_google_tiles=True):
     ]
     ax.legend(handles=legend_handles, loc='upper left',
               bbox_to_anchor=(1.01, 1.0), borderaxespad=0.0,
-              fontsize=9, framealpha=0.9)
+              fontsize=12, framealpha=0.9)
 
     title = mat_path.split('/')[-1].replace('.mat', '')
-    ax.set_title(f'Network topology – {title}', fontsize=10, pad=8)
+    ax.set_title(f'Network topology – {title}', fontsize=12, fontweight='bold', pad=8)
     return fig
 
 
@@ -254,7 +255,7 @@ def plot_sh_trajectory(mat_path, show=True):
 
     fig, ax = plt.subplots(figsize=(9.5, 5))
     title = mat_path.split('/')[-1].replace('.mat', '')
-    fig.suptitle(title, fontsize=9)
+    fig.suptitle(title, fontsize=11, fontweight='bold')
 
     for i in range(n):
         values = np.where(sh_traj[:, i] > 1e-2,
@@ -270,8 +271,8 @@ def plot_sh_trajectory(mat_path, show=True):
 
     ax.set_xlabel('Outer iteration')
     ax.set_ylabel('s + sh  (hub active)  /  sh  (otherwise)')
-    ax.set_title('Hub/station capacity trajectory')
-    ax.legend(fontsize=9, loc='upper left',
+    ax.set_title('Hub/station capacity trajectory', fontsize=12, fontweight='bold')
+    ax.legend(fontsize=12, loc='upper left',
               bbox_to_anchor=(1.01, 1.0), borderaxespad=0.0,
               framealpha=0.95)
     ax.grid(True, linestyle='--', alpha=0.4)
@@ -300,7 +301,7 @@ def plot_f_trajectory(mat_path, show=True):
 
     fig, ax = plt.subplots(figsize=(12, 6.5))
     title = mat_path.split('/')[-1].replace('.mat', '')
-    fig.suptitle(title, fontsize=9)
+    fig.suptitle(title, fontsize=11, fontweight='bold')
 
     for idx, (o, d) in enumerate(od_pairs):
         o_iata = NODE_ORDER[o] if o < len(NODE_ORDER) else str(o + 1)
@@ -314,8 +315,8 @@ def plot_f_trajectory(mat_path, show=True):
 
     ax.set_xlabel('Outer iteration')
     ax.set_ylabel('f$^{od}$  (market share)')
-    ax.set_title('Market share trajectory per OD pair')
-    ax.legend(ncol=2, fontsize=7, loc='center left',
+    ax.set_title('Market share trajectory per OD pair', fontsize=12, fontweight='bold')
+    ax.legend(ncol=2, fontsize=9, loc='center left',
               bbox_to_anchor=(1.01, 0.5), borderaxespad=0.0,
               framealpha=0.95)
     ax.grid(True, linestyle='--', alpha=0.4)

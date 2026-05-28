@@ -19,6 +19,8 @@ from pathlib import Path
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
+plt.rcParams['font.family'] = 'DejaVu Sans'
 import numpy as np
 import pandas as pd
 import scipy.io as sio
@@ -31,6 +33,14 @@ MAT_DIR = BASE_DIR / "hs_prueba_v0_blo"
 OUT_DIR = BASE_DIR / "plots_blo"
 PROJ = ccrs.PlateCarree()
 IATA_RE = re.compile(r"^[A-Z]{3}$")
+MAT_RE = re.compile(
+    r"^bud=(?P<budget>[^_]+)"
+    r"_lam=(?P<lam>[^_]+)"
+    r"_alfa=(?P<alfa>[^_]+)"
+    r"_mu_al=(?P<mu_alfa>[^_]+)"
+    r"_mu_bet=(?P<mu_beta>[^_]+)"
+    r"_python(?P<longrun>_longrun)?$"
+)
 
 
 def _great_circle_pts(lon1, lat1, lon2, lat2, n_pts=100):
@@ -256,8 +266,38 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
             zorder=6,
         )
 
-    title = mat_path.stem
-    ax.set_title(f"Network map - {title}", fontsize=12, pad=10)
+    legend_handles = [
+        mlines.Line2D([], [], color='red', marker='o', ms=12,
+                      linestyle='None', label='Hub'),
+        mlines.Line2D([], [], color='#24476b', marker='o', ms=10,
+                      linestyle='None', label='Spoke'),
+        mlines.Line2D([], [], color='steelblue', linewidth=1.8,
+                      alpha=0.75, label='Link'),
+    ]
+    ax.legend(handles=legend_handles, loc='upper left',
+              bbox_to_anchor=(1.01, 1.0), borderaxespad=0.0,
+              fontsize=12, framealpha=0.9)
+
+    match = MAT_RE.match(mat_path.stem)
+    if match:
+        g = match.groupdict()
+        budget_val = float(g["budget"])
+        lam_val = float(g["lam"])
+        mu_alfa_val = float(g["mu_alfa"])
+        mu_beta_val = float(g["mu_beta"])
+        is_longrun = bool(g["longrun"])
+        bliters_val = 10 if is_longrun else 3
+        
+        title_str = (
+            r"Network Map: $\lambda$ = " + f"{lam_val:g}"
+            + r", Budget = " + f"{budget_val:,.0f}"
+            + r", $\mu_\alpha$ = " + f"{mu_alfa_val:.0e}"
+            + r", $\mu_\beta$ = " + f"{mu_beta_val:.0e}"
+            + f", bliters = {bliters_val}"
+        )
+    else:
+        title_str = f"Network Map - {mat_path.stem}"
+    ax.set_title(title_str, fontsize=12, fontweight="bold", pad=10)
     out_path = OUT_DIR / f"{mat_path.stem}_map.png"
     fig.savefig(out_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -292,7 +332,7 @@ def plot_hub_connection_percentages(
     ax.set_ylim(0, 100)
     ax.set_ylabel("Connection traffic share (%)")
     ax.set_xlabel("Hub")
-    ax.set_title(f"Connection traffic handled by hub - {mat_path.stem}", fontsize=12)
+    ax.set_title(f"Connection traffic handled by hub - {mat_path.stem}", fontsize=12, fontweight="bold")
     ax.grid(axis="y", linestyle="--", linewidth=0.5, alpha=0.35)
 
     for bar, value in zip(bars, values):
