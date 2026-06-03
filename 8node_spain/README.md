@@ -6,7 +6,8 @@ Red de 8 aeropuertos españoles: MAD, BCN, PMI, AGP, ALC, LPA, TFS, IBZ.
 
 ```
 8node_spain/
-├── generate_data.py          # Genera parámetros y lanza las simulaciones
+├── export_params.py          # Escribe export_txt/ sin lanzar GAMS (punto de entrada recomendado)
+├── generate_data.py          # Genera parámetros y lanza las simulaciones completas
 ├── compare_results.py        # Compara resultados MIP vs BLO y genera gráficas
 ├── param_definition.gms      # Definición de parámetros para GAMS (incluye export_txt/)
 ├── mip.gms                   # Modelo MIP en GAMS
@@ -66,6 +67,29 @@ Definidos dentro de `parameters_8node_network()` en `generate_data.py`:
 | `n_airlines` | `5` | Número de aerolíneas alternativas en el modelo logit |
 
 ## Cómo generar los datos y lanzar las simulaciones
+
+### 0. Solo generar los parámetros (sin ejecutar GAMS)
+
+```bash
+cd 8node_spain
+python3 export_params.py --budget 40000 --lam 4 --alfa 0.1
+```
+
+Escribe todos los archivos de `export_txt/` que GAMS lee vía `$include`. No lanza ningún
+subproceso. Tras ejecutarlo, se puede llamar a GAMS directamente sobre cualquiera de los
+tres modelos (`mip.gms`, `cvx-ll.gms`, `cvx-sl.gms`).
+
+Opciones disponibles:
+
+```
+--budget    FLOAT   Presupuesto diario en €/día (obligatorio)
+--lam       FLOAT   Multiplicador coste hub (default: 4)
+--alfa      FLOAT   Peso demanda en objetivo BLO (default: 0.1)
+--dm-pax    FLOAT   Pendiente demanda pasajeros en MIP (default: 0.01)
+--dm-op     FLOAT   Pendiente costes operativos en MIP (default: 0.008)
+--gamma     FLOAT   Parámetro gamma del método BLO (default: 20)
+--niters    INT     Iteraciones externas BLO (default: 20)
+```
 
 ### 1. Generar parámetros y ejecutar ambos métodos (MIP + BLO)
 
