@@ -201,11 +201,66 @@ def add_map_background(ax, map_extent):
     ax.gridlines(draw_labels=False, linewidth=0.25, color="white", alpha=0.35)
 
 
+def format_step_latex(val: float) -> str:
+    if val == 0.0:
+        return "0"
+    s = f"{val:.0e}"
+    match = re.match(r"^([0-9.]+)[eE]([-+]?[0-9]+)$", s)
+    if not match:
+        return s
+    coeff, exp = match.groups()
+    exp_int = int(exp)
+    if float(coeff) == 1.0:
+        return f"10^{{{exp_int}}}"
+    else:
+        c_int = int(float(coeff))
+        return f"{c_int} \\times 10^{{{exp_int}}}"
+
+
 def plot_network_map(mat_path, nodes, airports, sh, a):
     OUT_DIR.mkdir(exist_ok=True)
     fig = plt.figure(figsize=(18, 10))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.Robinson(central_longitude=-12))
     add_map_background(ax, compute_map_extent(airports))
+
+    def _in_europe(lon, lat):
+        # Europe extent: [-10.5, 14.0, 35.5, 52.5] (Canary Islands excluded, MUC and LHR included)
+        return (-10.5 <= lon <= 14.0) and (35.5 <= lat <= 52.5)
+
+    # Force a draw to calculate the correct post-aspect ratio Bbox of the main axes
+    fig.canvas.draw()
+    pos = ax.get_position()
+    
+    # Position: aligning the bottom-right corner of the inset with that of the main axes (smaller size 0.22)
+    width = 0.22
+    height = 0.22
+    left = pos.x1 - width
+    bottom = pos.y0
+    ax_ins = fig.add_axes([left, bottom, width, height], projection=ccrs.PlateCarree())
+    europe_extent = [-10.5, 14.0, 35.5, 52.5]  # lon_min, lon_max, lat_min, lat_max
+    ax_ins.set_extent(europe_extent, crs=PROJ)
+    
+    # Background for the Europe inset (50m resolution for sharper look when zoomed in)
+    ax_ins.add_feature(cfeature.OCEAN.with_scale("50m"), color="#c8e6f5", zorder=0)
+    ax_ins.add_feature(cfeature.LAND.with_scale("50m"), color="#f5f0e8", zorder=1)
+    ax_ins.add_feature(
+        cfeature.BORDERS.with_scale("50m"),
+        linewidth=0.4,
+        edgecolor="#888888",
+        zorder=2,
+    )
+    ax_ins.add_feature(
+        cfeature.COASTLINE.with_scale("50m"),
+        linewidth=0.5,
+        edgecolor="#666666",
+        zorder=2,
+    )
+    ax_ins.gridlines(draw_labels=False, linewidth=0.25, color="white", alpha=0.35)
+    
+    # Styled border for the inset map
+    for spine in ax_ins.spines.values():
+        spine.set_edgecolor("#16324f")
+        spine.set_linewidth(1.5)
 
     A_REF = 6.0  # Fixed reference for absolute arc thickness scaling (global max_a is ~5.65)
     hub_mask = sh > 1e-2
@@ -228,6 +283,8 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
             rel = min(aij / A_REF, 1.0)
             lw = 0.6 + 5.4 * rel
             alpha = 0.25 + 0.55 * rel
+            
+            # Plot on the main map
             ax.plot(
                 lons,
                 lats,
@@ -237,6 +294,18 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
                 transform=PROJ,
                 zorder=3,
             )
+            
+            # Plot on the Europe inset map only if both endpoints are within Europe
+            if _in_europe(airport_i["lon"], airport_i["lat"]) and _in_europe(airport_j["lon"], airport_j["lat"]):
+                ax_ins.plot(
+                    lons,
+                    lats,
+                    color="steelblue",
+                    linewidth=lw,
+                    alpha=alpha,
+                    transform=PROJ,
+                    zorder=3,
+                )
 
     for i, iata in enumerate(nodes):
         airport = airports[iata]
@@ -245,6 +314,8 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
         size = 40
         if is_hub:
             size = 85 + 180 * sh[i] / hub_scale
+            
+        # Draw on main map
         ax.scatter(
             airport["lon"],
             airport["lat"],
@@ -265,6 +336,31 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
             transform=PROJ,
             zorder=6,
         )
+        
+        # Draw on Europe inset map if the airport is within Europe
+        if _in_europe(airport["lon"], airport["lat"]):
+            ax_ins.scatter(
+                airport["lon"],
+                airport["lat"],
+                s=size,
+                color=color,
+                edgecolor="black",
+                linewidth=0.7 if is_hub else 0.5,
+                transform=PROJ,
+                zorder=5,
+            )
+            # Sligthly smaller offsets and fontsize for the inset zoom, with clipping enabled
+            ax_ins.text(
+                airport["lon"] + 0.3,
+                airport["lat"] + 0.2,
+                iata,
+                fontsize=5.5,
+                fontweight="bold" if is_hub else "normal",
+                color="darkred" if is_hub else "#16324f",
+                transform=PROJ,
+                zorder=6,
+                clip_on=True,
+            )
 
     legend_handles = [
         mlines.Line2D([], [], color='red', marker='o', ms=12,
@@ -289,11 +385,11 @@ def plot_network_map(mat_path, nodes, airports, sh, a):
         bliters_val = 10 if is_longrun else 3
         
         title_str = (
-            r"Network Map: $\lambda$ = " + f"{lam_val:g}"
+            r"Network Map: $\lambda = " + f"{lam_val:g}" + r"$"
             + r", Budget = " + f"{budget_val:,.0f}"
-            + r", $\mu_\alpha$ = " + f"{mu_alfa_val:.0e}"
-            + r", $\mu_\beta$ = " + f"{mu_beta_val:.0e}"
-            + f", bliters = {bliters_val}"
+            + r", $\mu_\alpha = " + format_step_latex(mu_alfa_val) + r"$"
+            + r", $\mu_\beta = " + format_step_latex(mu_beta_val) + r"$"
+            + f", T = {bliters_val}"
         )
     else:
         title_str = f"Network Map - {mat_path.stem}"
