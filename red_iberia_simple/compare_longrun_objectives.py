@@ -50,22 +50,38 @@ def load_scalar(data: dict, key: str) -> float | None:
     return float(value.squeeze())
 
 
+def format_step_latex(val: float) -> str:
+    if val == 0.0:
+        return "0"
+    s = f"{val:.0e}"
+    match = re.match(r"^([0-9.]+)[eE]([-+]?[0-9]+)$", s)
+    if not match:
+        return s
+    coeff, exp = match.groups()
+    exp_int = int(exp)
+    if float(coeff) == 1.0:
+        return f"10^{{{exp_int}}}"
+    else:
+        c_int = int(float(coeff))
+        return f"{c_int} \\times 10^{{{exp_int}}}"
+
+
 def combo_label(row: pd.Series) -> str:
     if row["mu_alfa"] == 0.0 and row["mu_beta"] == 0.0:
         return "single level"
-    base = r"$\mu_\alpha$=" + f"{row['mu_alfa']:.0e}" + r", $\mu_\beta$=" + f"{row['mu_beta']:.0e}"
+    base = r"$\mu_\alpha = " + format_step_latex(row['mu_alfa']) + r"$, $\mu_\beta = " + format_step_latex(row['mu_beta']) + r"$"
     if row["is_longrun"]:
-        return f"{base} bliters=10"
-    return f"{base} bliters=3"
+        return f"{base} T=10"
+    return f"{base} T=3"
 
 
 def series_label(row: pd.Series) -> str:
     if row["mu_alfa"] == 0.0 and row["mu_beta"] == 0.0:
         return "single level"
-    base = r"$\mu_\alpha$=" + f"{row['mu_alfa']:.0e}" + r" | $\mu_\beta$=" + f"{row['mu_beta']:.0e}"
+    base = r"$\mu_\alpha = " + format_step_latex(row['mu_alfa']) + r"$ | $\mu_\beta = " + format_step_latex(row['mu_beta']) + r"$"
     if row["is_longrun"]:
-        return f"{base} | bliters=10"
-    return f"{base} | bliters=3"
+        return f"{base} | T=10"
+    return f"{base} | T=3"
 
 
 def load_results() -> pd.DataFrame:
@@ -262,11 +278,25 @@ def plot_objective_by_budget(df: pd.DataFrame) -> None:
             )
 
         ax.set_xscale("log")
-        ax.set_xlabel("Budget")
-        ax.set_ylabel("Objective value (lower is better)")
-        ax.set_title(r"Objective comparison between single level and bilevel schemes ($\lambda$ = " + f"{lam:g})", fontsize=13, fontweight="bold")
+        budgets_ticks = sorted(df_lam["budget"].unique())
+        ax.set_xticks(budgets_ticks)
+        
+        def format_budget(b: float) -> str:
+            if b >= 1e6:
+                return f"{b/1e6:g}M"
+            elif b >= 1e3:
+                return f"{b/1e3:g}k"
+            return f"{b:g}"
+        
+        ax.set_xticklabels([format_budget(b) for b in budgets_ticks])
+        ax.yaxis.set_major_locator(plt.MaxNLocator(nbins=10))
+        
+        ax.tick_params(axis="both", which="both", labelsize=12)
+        ax.set_xlabel("Budget", fontsize=14, fontweight="bold")
+        ax.set_ylabel("Objective value (lower is better)", fontsize=14, fontweight="bold")
+        ax.set_title(r"Objective comparison between single level and bilevel schemes ($\lambda$ = " + f"{lam:g})", fontsize=16, fontweight="bold", pad=15)
         ax.grid(True, which="both", linestyle="--", alpha=0.35)
-        ax.legend(fontsize=12)
+        ax.legend(fontsize=13)
         fig.tight_layout()
         fig.savefig(OUT_DIR / f"objective_by_budget_lam_{lam:g}_with_longrun_longrun.png", dpi=180)
         plt.close(fig)
@@ -289,9 +319,23 @@ def plot_longrun_delta(df: pd.DataFrame) -> None:
         )
         ax.axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
         ax.set_xscale("log")
-        ax.set_xlabel("Budget")
-        ax.set_ylabel("best regular obj - longrun obj")
-        ax.set_title(r"Longrun improvement vs best regular run ($\lambda$ = " + f"{lam:g})", fontweight="bold")
+        budgets_ticks = sorted(df_lam["budget"].unique())
+        ax.set_xticks(budgets_ticks)
+        
+        def format_budget(b: float) -> str:
+            if b >= 1e6:
+                return f"{b/1e6:g}M"
+            elif b >= 1e3:
+                return f"{b/1e3:g}k"
+            return f"{b:g}"
+        
+        ax.set_xticklabels([format_budget(b) for b in budgets_ticks])
+        ax.yaxis.set_major_locator(plt.MaxNLocator(nbins=10))
+        
+        ax.tick_params(axis="both", which="both", labelsize=12)
+        ax.set_xlabel("Budget", fontsize=14, fontweight="bold")
+        ax.set_ylabel("best regular obj - longrun obj", fontsize=14, fontweight="bold")
+        ax.set_title(r"Longrun improvement vs best regular run ($\lambda$ = " + f"{lam:g})", fontsize=16, fontweight="bold", pad=15)
         ax.grid(True, which="both", linestyle="--", alpha=0.35)
         fig.tight_layout()
         fig.savefig(OUT_DIR / f"longrun_improvement_vs_best_regular_lam_{lam:g}_longrun.png", dpi=180)
@@ -315,9 +359,23 @@ def plot_longrun_improvement_vs_mu0(df: pd.DataFrame) -> None:
         )
         ax.axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
         ax.set_xscale("log")
-        ax.set_xlabel("Budget")
-        ax.set_ylabel("Improvement vs single level baseline [%]")
-        ax.set_title(r"Longrun improvement vs single level baseline ($\lambda$ = " + f"{lam:g})", fontweight="bold")
+        budgets_ticks = sorted(df_lam["budget"].unique())
+        ax.set_xticks(budgets_ticks)
+        
+        def format_budget(b: float) -> str:
+            if b >= 1e6:
+                return f"{b/1e6:g}M"
+            elif b >= 1e3:
+                return f"{b/1e3:g}k"
+            return f"{b:g}"
+        
+        ax.set_xticklabels([format_budget(b) for b in budgets_ticks])
+        ax.yaxis.set_major_locator(plt.MaxNLocator(nbins=10))
+        
+        ax.tick_params(axis="both", which="both", labelsize=12)
+        ax.set_xlabel("Budget", fontsize=14, fontweight="bold")
+        ax.set_ylabel("Improvement vs single level baseline [%]", fontsize=14, fontweight="bold")
+        ax.set_title(r"Longrun improvement vs single level baseline ($\lambda$ = " + f"{lam:g})", fontsize=16, fontweight="bold", pad=15)
         ax.grid(True, which="both", linestyle="--", alpha=0.35)
         fig.tight_layout()
         fig.savefig(OUT_DIR / f"longrun_improvement_pct_vs_mu0_lam_{lam:g}_longrun.png", dpi=180)
@@ -418,16 +476,17 @@ def plot_comp_time_by_budget(df: pd.DataFrame) -> None:
         return f"{b:g}"
 
     ax.set_xticks(x)
-    ax.set_xticklabels([format_budget(b) for b in budgets], fontsize=10, fontweight="bold")
-    ax.set_xlabel("Budget", fontsize=11, fontweight="bold", labelpad=10)
-    ax.set_ylabel("Computational Time (seconds)", fontsize=11, fontweight="bold", labelpad=10)
-    ax.set_title(r"Computational Time Comparison by Budget ($\lambda$ = 10)", fontsize=13, fontweight="bold", pad=15)
+    ax.set_xticklabels([format_budget(b) for b in budgets], fontsize=12, fontweight="bold")
+    ax.set_xlabel("Budget", fontsize=14, fontweight="bold", labelpad=10)
+    ax.set_ylabel("Computational Time (seconds)", fontsize=14, fontweight="bold", labelpad=10)
+    ax.set_title(r"Computational Time Comparison by Budget ($\lambda$ = 10)", fontsize=16, fontweight="bold", pad=15)
     
     # Grid lines behind the bars
     ax.grid(True, which="major", axis="y", linestyle="--", alpha=0.35)
     ax.set_axisbelow(True)
     
-    ax.legend(fontsize=12, loc="upper left", framealpha=0.9)
+    ax.tick_params(axis="y", labelsize=12)
+    ax.legend(fontsize=13, loc="lower right", framealpha=0.9)
     fig.tight_layout()
     
     # Save the plot

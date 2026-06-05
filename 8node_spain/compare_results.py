@@ -171,7 +171,7 @@ def plot_results(results, output_path):
         alpha=0.8,
         edgecolor="black",
         linewidth=0.7,
-        label="Optimality gap MIP (.mat)",
+        label="Optimality gap MIP",
     )
     bars_blo = ax.bar(
         budgets + width / 2,
@@ -181,17 +181,18 @@ def plot_results(results, output_path):
         alpha=0.8,
         edgecolor="black",
         linewidth=0.7,
-        label="Gap BLO vs MIP",
+        label=r"$\delta$ BLOND vs MIP",
     )
 
-    ax.set_xlabel("Budget", fontsize=11, fontweight="bold")
-    ax.set_ylabel("Gap [%]", fontsize=11, fontweight="bold")
+    ax.set_xlabel("Budget", fontsize=14, fontweight="bold")
+    ax.set_ylabel("Gap [%]", fontsize=14, fontweight="bold")
     ax.set_yscale("symlog", linthresh=0.01)
-    ax.set_title("8-node Spain: Optimality Gap Comparison", fontsize=13, fontweight="bold", pad=15)
+    ax.set_title("8-node Spain: Objective Comparison", fontsize=16, fontweight="bold", pad=15)
     ax.set_xticks(budgets)
+    ax.tick_params(axis="both", which="major", labelsize=12)
     ax.grid(True, which="both", axis="y", linestyle="--", alpha=0.3)
     ax.set_axisbelow(True)
-    ax.legend(loc="upper right", fontsize=12)
+    ax.legend(loc="upper right", fontsize=13)
 
     fig.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -224,16 +225,17 @@ def plot_time_results(results, output_path):
         width=width,
         color="#2e7d32",
         alpha=0.8,
-        label="BLO python-euler",
+        label="BLOND",
     )
 
     ax.set_yscale("log")
-    ax.set_xlabel("Budget")
-    ax.set_ylabel("Computation time [s]")
-    ax.set_title("8-node Spain: Computation Time BLO vs MIP", fontsize=13, fontweight="bold", pad=15)
+    ax.set_xlabel("Budget", fontsize=14, fontweight="bold")
+    ax.set_ylabel("Computation time [s]", fontsize=14, fontweight="bold")
+    ax.set_title("8-node Spain: Computation Time BLOND vs MIP", fontsize=16, fontweight="bold", pad=15)
     ax.set_xticks(budgets)
+    ax.tick_params(axis="both", which="major", labelsize=12)
     ax.grid(True, which="both", axis="y", alpha=0.3)
-    ax.legend(loc="upper right", fontsize=12)
+    ax.legend(loc="upper right", fontsize=13)
 
     fig.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,4 +1,4 @@
-lam,budget,$\mu_\alpha$=1e-07 | $\mu_\beta$=1e-01 | bliters=3,$\mu_\alpha$=1e-07 | $\mu_\beta$=5e-03 | bliters=10,$\mu_\alpha$=1e-07 | $\mu_\beta$=5e-03 | bliters=3,$\mu_\alpha$=1e-08 | $\mu_\beta$=1e-03 | bliters=10,$\mu_\alpha$=1e-08 | $\mu_\beta$=1e-03 | bliters=3,single level
+lam,budget,$\mu_\alpha = 10^{-7}$ | $\mu_\beta = 10^{-1}$ | T=3,$\mu_\alpha = 10^{-7}$ | $\mu_\beta = 5 \times 10^{-3}$ | T=10,$\mu_\alpha = 10^{-7}$ | $\mu_\beta = 5 \times 10^{-3}$ | T=3,$\mu_\alpha = 10^{-8}$ | $\mu_\beta = 10^{-3}$ | T=10,$\mu_\alpha = 10^{-8}$ | $\mu_\beta = 10^{-3}$ | T=3,single level
 4.0,100000.0,,,,,,-32195.13189957678
 4.0,150000.0,,,,,,-49226.480358387635
 4.0,200000.0,,,,,,-54709.27719450282
